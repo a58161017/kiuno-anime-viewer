@@ -68,7 +68,7 @@ _CN_NUM = {
     "一": 1, "二": 2, "三": 3, "四": 4, "五": 5,
     "六": 6, "七": 7, "八": 8, "九": 9, "十": 10,
 }
-# 多種季別表達:「第二季」、「Season 2」、「2nd Season」、" 2"/" 3" 結尾、「II」「III」、「S2」
+# 多種季別表達:「第二季」、「Season 2」、「2nd Season」、結尾「 2」「妹4」、「II」「III」、「S2」
 _SEASON_PATTERNS = [
     re.compile(r"第\s*(\d+)\s*[季期部]"),
     re.compile(r"第\s*([一二三四五六七八九十])\s*[季期部]"),
@@ -76,7 +76,9 @@ _SEASON_PATTERNS = [
     re.compile(r"\b(\d+)(?:nd|rd|th|st)\s+Season\b", re.IGNORECASE),
     re.compile(r"\bS(\d+)\b"),
     re.compile(r"\s+(\d+)$"),                           # "Shukufuku wo! 2"
+    re.compile(r"(?<=[一-鿿!！\?？\)）])(\d{1,2})$"),  # 中文字接數字「南家三姊妹4」
     re.compile(r"\s+(II|III|IV|V|VI|VII|VIII|IX)\b"),  # "Foo II"
+    re.compile(r"(?<=[一-鿿])(II|III|IV|V|VI|VII|VIII|IX)$"),  # 中文接羅馬「灼眼的夏娜II」
 ]
 _ROMAN = {"II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9}
 
@@ -196,12 +198,23 @@ def _score_candidate(entry: dict, anilist_media: dict, bangumi_subject: Optional
 
     # ----- season number match (critical for franchises with same episode counts) -----
     entry_season = _extract_season(entry.get("title_raw") or entry.get("title_main_zh"))
-    cand_season = max(
-        _extract_season(titles.get("english")),
-        _extract_season(titles.get("romaji")),
-        _extract_season(titles.get("native")),
-    )
-    season_conflict = (entry_season != cand_season)
+    # 候選的 season 必須是「明確標示」(romaji/english/native 任一帶有明確的 season marker)
+    # 才能用於衝突判定。Japanese 副標型 (Okawari/Tadaima/Okaeri) 沒有數字標記，
+    # 不算明確 → 此時不做季別罰分，留給「衝突重指派」 pass 處理。
+    def _has_explicit(s):
+        if not s:
+            return False
+        for pat in _SEASON_PATTERNS:
+            if pat.search(s):
+                return True
+        return False
+
+    cand_titles = (titles.get("english"), titles.get("romaji"), titles.get("native"))
+    cand_has_explicit_season = any(_has_explicit(t) for t in cand_titles)
+    cand_season = max(_extract_season(t) for t in cand_titles)
+    # 只有候選有明確 season marker 時才算衝突
+    season_conflict = cand_has_explicit_season and (entry_season != cand_season)
+    season_match = cand_has_explicit_season and (entry_season > 1) and (entry_season == cand_season)
 
     # Combine: episode-match is the strongest discriminator (very low collision rate
     # for non-trivial counts), so it acts as a near-confirmation when paired with any
@@ -233,9 +246,13 @@ def _score_candidate(entry: dict, anilist_media: dict, bangumi_subject: Optional
     # episode count happens to match). When we know the entry's season AND the
     # candidate's season but they disagree, slash the score.
     if season_conflict:
-        score *= 0.4  # downgrade rather than zero — no-marker entries should still match
-    elif entry_season > 1 and cand_season == entry_season:
-        score = min(score + 0.05, 1.0)  # explicit-season match: small bonus
+        score *= 0.4   # 顯式季別衝突 (e.g. S2 entry vs S3 candidate)
+    elif entry_season > 1 and not cand_has_explicit_season:
+        # Entry 說 S2+ 但候選無 marker（多半是 S1 或副標型）→ 中度降權，
+        # 讓有明確標示的候選能勝出（e.g. 「Konosuba 第二季」優先匹到「Kono Subarashii ... 2」而非無標記的 S1）
+        score *= 0.85
+    elif season_match:
+        score = min(score + 0.05, 1.0)
 
     return min(score, 1.0)
 
@@ -479,9 +496,60 @@ def run(retry_unresolved: bool = False, only_new: bool = False) -> None:
         if i % 20 == 0 or i == total:
             print(f"[match] {i}/{total} — auto={auto} review={manual_review} unresolved={no_match} skipped={skipped}")
 
+    # ---- 衝突重指派：多個 slug 對同一 anilist_id 時，後者改用其候選裡未被占用的 id ----
+    # 例：「南家三姊妹4」搶輸 S1 → 換用候選裡的 S4 id（如果有）
+    matched, reassigned, still_dup = _resolve_duplicate_anilist_ids(matched)
+    print(f"[match] 衝突重指派：成功 {reassigned} 筆換到候選的另一個 id，{still_dup} 筆仍重複")
+
     _save(ENTRIES_MATCHED, {"version": 1, "matched": matched, "updated_at": datetime.now().isoformat(timespec="seconds")})
     _save(UNRESOLVED, unresolved)
     print(f"[match] done. auto-accepted={auto} needs-review={manual_review} unresolved={no_match} skipped={skipped}")
+
+
+def _resolve_duplicate_anilist_ids(matched: dict) -> tuple[dict, int, int]:
+    """When multiple slugs map to the same anilist_id, keep the highest-confidence
+    one and try to re-route the losers to a different id from their `candidates`.
+    Returns (matched_db, reassigned_count, still_dup_count)."""
+    by_id: dict[int, list[str]] = {}
+    for slug, m in matched.items():
+        if m.get("manual"):
+            continue
+        aid = (m.get("best") or {}).get("anilist_id")
+        if aid:
+            by_id.setdefault(aid, []).append(slug)
+
+    # First pass: pick winner per id by confidence
+    taken: set[int] = set()
+    losers: list[str] = []
+    for aid, slugs in by_id.items():
+        if len(slugs) == 1:
+            taken.add(aid)
+        else:
+            slugs.sort(key=lambda s: -matched[s]["confidence"])
+            taken.add(matched[slugs[0]]["best"]["anilist_id"])
+            losers.extend(slugs[1:])
+
+    # Second pass: each loser tries its alternate candidates
+    reassigned = 0
+    still_dup = 0
+    for slug in losers:
+        m = matched[slug]
+        cands = m.get("candidates", [])
+        chosen = None
+        for cand in cands:
+            cid = cand.get("anilist_id")
+            if cid and cid not in taken:
+                chosen = cand
+                break
+        if chosen:
+            m["best"] = chosen
+            m["confidence"] = chosen.get("confidence", m["confidence"])
+            taken.add(chosen["anilist_id"])
+            reassigned += 1
+        else:
+            still_dup += 1
+
+    return matched, reassigned, still_dup
 
 
 def _parse_override(s: str) -> Optional[int]:
