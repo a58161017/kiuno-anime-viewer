@@ -61,12 +61,15 @@
     <span class="star-glyph">★</span>
     <span>推薦清單</span>
     <span class="count" x-text="`(${recommendList.length})`"></span>
-    <button class="expand-btn" x-show="recommendList.length > 10" @click="recommendExpanded = !recommendExpanded">
-      <span x-text="recommendExpanded ? '收合' : `展開 (+${recommendList.length - 10})`"></span>
+    <button class="expand-btn" x-show="recommendList.length > 5" @click="recommendExpanded = !recommendExpanded">
+      <span x-text="recommendExpanded ? '收合' : `展開 (+${recommendList.length - 5})`"></span>
+    </button>
+    <button class="expand-btn" x-show="recommendList.length > 1" @click="reshuffleRecommend()" title="重新隨機排序">
+      <span>🔀 換一批</span>
     </button>
   </div>
   <div class="recommend-cards">
-    <template x-for="id in (recommendExpanded ? recommendList : recommendList.slice(0, 10))" :key="id">
+    <template x-for="id in (recommendExpanded ? shuffledRecommend : shuffledRecommend.slice(0, 5))" :key="id">
       <div class="mini-card" @click="selectById(id)" x-show="animeById(id)">
         <div class="cover" :style="`background-image:url('${animeById(id) ? coverFor(animeById(id)) : ''}')`"></div>
         <div class="title" x-text="animeById(id)?.titles?.primary_zh || animeById(id)?.titles?.ja_romaji || id"></div>
@@ -216,7 +219,8 @@ function viewer() {
     loadError: "",
     topCategories: [],
     // user state (persisted in localStorage)
-    recommendList: [],       // anime ids in click order (newest first)
+    recommendList: [],         // canonical order: click order (newest first)
+    shuffledRecommend: [],     // shuffled copy used for display (re-shuffled per page load)
     favoritesList: [],
     showFavoritesOnly: false,
     recommendExpanded: false,
@@ -246,6 +250,7 @@ function viewer() {
         this.favoritesList = this.favoritesList.filter(id => this.byId[id]);
         const after = this.recommendList.length + this.favoritesList.length;
         if (before !== after) { this.persistRecommend(); this.persistFavorites(); }
+        this.reshuffleRecommend();
 
         // 支援 ?id=anilist:127230 直接打開該動畫的詳情
         const params = new URLSearchParams(location.search);
@@ -459,6 +464,17 @@ function viewer() {
       if (i >= 0) this.recommendList.splice(i, 1);
       else this.recommendList.unshift(id);
       this.persistRecommend();
+      this.reshuffleRecommend();
+    },
+
+    // Fisher-Yates shuffle 一份 recommendList 副本，用於顯示。每次重整都會重新洗牌
+    reshuffleRecommend() {
+      const a = this.recommendList.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      this.shuffledRecommend = a;
     },
     toggleFavorite(id) {
       const i = this.favoritesList.indexOf(id);
