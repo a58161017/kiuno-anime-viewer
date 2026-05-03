@@ -40,17 +40,26 @@
       <span class="form-hint" x-text="`${form.nickname.length}/20`"></span>
     </label>
 
-    <label class="form-row">
+    <div class="form-row">
       <span class="form-label">推薦動畫</span>
-      <input type="text" x-model="form.anime_title" maxlength="100" required
-             placeholder="從清單裡選或自由輸入"
-             autocomplete="off"
-             @input="onAnimeInput()"
-             @focus="onAnimeInput()" />
-      <span class="form-hint">
-        <span x-show="form.anime_id" style="color: var(--accent)">✓ 已選擇收錄項目</span>
-        <span x-show="!form.anime_id && form.anime_title.length > 0" style="color: var(--fg-faint)">未收錄項目</span>
-      </span>
+      <div class="chip-input" @click="$refs.bufferInput.focus()">
+        <template x-for="(p, idx) in form.picks" :key="idx + ':' + (p.id || p.title)">
+          <span class="chip-pill" :class="p.id ? 'matched' : 'unmatched'">
+            <span class="chip-pill__title" x-text="p.title"></span>
+            <span class="chip-pill__tag" x-text="p.id ? '✓' : '未收錄'"></span>
+            <button type="button" class="chip-pill__remove"
+                    @click.stop="removePick(idx)" :aria-label="`移除 ${p.title}`">×</button>
+          </span>
+        </template>
+        <input type="text" x-ref="bufferInput"
+               x-model="form.buffer" maxlength="100"
+               :placeholder="form.picks.length === 0 ? '從清單裡選；自由輸入按空格成標籤' : ''"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+               @input="onAnimeInput()" @focus="onAnimeInput()"
+               @keydown="onBufferKeydown($event)"
+               :disabled="form.picks.length >= maxPicks" />
+      </div>
+      <span class="form-hint" x-text="`${form.picks.length}/${maxPicks} 部`"></span>
       <ul class="autocomplete-list" x-show="autocompleteOpen && autocompleteResults.length > 0">
         <template x-for="r in autocompleteResults" :key="r.id">
           <li @mousedown.prevent="pickAnime(r)">
@@ -59,7 +68,7 @@
           </li>
         </template>
       </ul>
-    </label>
+    </div>
 
     <label class="form-row">
       <span class="form-label">說明</span>
@@ -129,10 +138,11 @@
 import { firebaseConfig, isConfigured } from "./firebase-config.js?v=1";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, query, orderBy, limit, startAfter,
-  onSnapshot, getDocs, serverTimestamp,
+  getFirestore, collection, query, orderBy, limit, startAfter,
+  onSnapshot, getDocs, serverTimestamp, writeBatch, doc,
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
+import { collectAudit, showToast, formatTime } from "./js/utils.js?v=1";
 
 let db = null;
 if (isConfigured) {
@@ -156,11 +166,12 @@ Alpine.data("recommends", () => ({
 
     form: {
       nickname: "",
-      anime_id: null,
-      anime_title: "",
+      picks: [],          // [{id: string|null, title: string}, ...]
+      buffer: "",          // 還沒成 chip 的輸入字
       description: "",
-      website: "",  // honeypot
+      website: "",         // honeypot
     },
+    maxPicks: 10,
     autocompleteOpen: false,
     autocompleteResults: [],
     appVersion: "",
@@ -233,33 +244,71 @@ Alpine.data("recommends", () => ({
     },
 
     onAnimeInput() {
-      const q = this.form.anime_title.trim();
-      // 變更輸入字 → 清掉之前選中的 anime_id (除非完全一致)
-      if (this.form.anime_id) {
-        const matched = this.animeIndex.find(a => a.id === this.form.anime_id);
-        if (!matched || matched.title !== q) {
-          this.form.anime_id = null;
-        }
-      }
+      const q = this.form.buffer.trim();
       if (!q || !this.fuse) {
         this.autocompleteResults = [];
         this.autocompleteOpen = false;
         return;
       }
-      const hits = this.fuse.search(q).slice(0, 8).map(h => h.item);
+      const pickedIds = new Set(this.form.picks.filter(p => p.id).map(p => p.id));
+      const pickedTitles = new Set(this.form.picks.map(p => p.title));
+      const hits = this.fuse.search(q).slice(0, 12)
+        .map(h => h.item)
+        .filter(item => !pickedIds.has(item.id) && !pickedTitles.has(item.title))
+        .slice(0, 8);
       this.autocompleteResults = hits;
       this.autocompleteOpen = true;
     },
 
     pickAnime(item) {
-      this.form.anime_id = item.id;
-      this.form.anime_title = item.title;
+      if (this.form.picks.length >= this.maxPicks) return;
+      const dup = this.form.picks.some(p => (p.id && p.id === item.id) || p.title === item.title);
+      if (!dup) this.form.picks.push({ id: item.id, title: item.title });
+      this.form.buffer = "";
       this.autocompleteOpen = false;
+      this.autocompleteResults = [];
+    },
+
+    addPickFromBuffer() {
+      const t = this.form.buffer.trim();
+      if (!t) return;
+      if (t.length > 100) return;
+      if (this.form.picks.length >= this.maxPicks) return;
+      const dup = this.form.picks.some(p => p.title === t);
+      if (!dup) this.form.picks.push({ id: null, title: t });
+      this.form.buffer = "";
+      this.autocompleteOpen = false;
+      this.autocompleteResults = [];
+    },
+
+    removePick(idx) {
+      this.form.picks.splice(idx, 1);
+      this.onAnimeInput();
+    },
+
+    onBufferKeydown(e) {
+      if (e.key === " " || e.key === "Spacebar") {
+        if (this.form.buffer.trim().length > 0) {
+          e.preventDefault();
+          this.addPickFromBuffer();
+        }
+      } else if (e.key === "Enter") {
+        if (this.form.buffer.trim().length > 0) {
+          e.preventDefault();
+          this.addPickFromBuffer();
+        }
+      } else if (e.key === "Backspace" &&
+                 this.form.buffer.length === 0 &&
+                 this.form.picks.length > 0) {
+        e.preventDefault();
+        this.form.picks.pop();
+      }
     },
 
     get canSubmit() {
+      const hasPick = this.form.picks.length > 0 || this.form.buffer.trim().length > 0;
       return this.form.nickname.trim().length > 0 &&
-             this.form.anime_title.trim().length > 0 &&
+             hasPick &&
              this.form.description.trim().length >= 5;
     },
 
@@ -269,13 +318,21 @@ Alpine.data("recommends", () => ({
         this.error = "留言系統尚未設定（Firebase config 未填）";
         return;
       }
-      // honeypot
-      if (this.form.website) return;  // bot 填了，靜默丟掉
-      // 驗證
-      if (!this.canSubmit) { this.error = "請完整填寫所有欄位（說明至少 5 字）"; return; }
+      if (this.form.website) return;  // honeypot
+
+      // 把還在 buffer 的內容也 commit 成 pick
+      if (this.form.buffer.trim().length > 0) this.addPickFromBuffer();
+
+      if (this.form.picks.length === 0) { this.error = "至少要選一部動畫"; return; }
+      if (this.form.picks.length > this.maxPicks) { this.error = `最多 ${this.maxPicks} 部`; return; }
+      if (!this.form.nickname.trim()) { this.error = "請填暱稱"; return; }
       if (this.form.nickname.length > 20) { this.error = "暱稱最多 20 字"; return; }
-      if (this.form.anime_title.length > 100) { this.error = "動畫名最多 100 字"; return; }
+      if (this.form.description.trim().length < 5) { this.error = "說明至少 5 字"; return; }
       if (this.form.description.length > 500) { this.error = "說明最多 500 字"; return; }
+      for (const p of this.form.picks) {
+        if (!p.title || p.title.length > 100) { this.error = `動畫名長度錯誤：${p.title}`; return; }
+      }
+
       // client rate limit
       const lastSubmit = parseInt(localStorage.getItem("recommendsLastSubmit") || "0", 10);
       const now = Date.now();
@@ -287,50 +344,36 @@ Alpine.data("recommends", () => ({
 
       this.submitting = true;
       try {
-        const audit = await this.collectAudit();
-        await addDoc(collection(db, "recommends"), {
-          nickname: this.form.nickname.trim(),
-          anime_id: this.form.anime_id || null,
-          anime_title: this.form.anime_title.trim(),
-          description: this.form.description.trim(),
-          createdAt: serverTimestamp(),
-          audit,
-        });
+        const audit = await collectAudit();
+        const nick = this.form.nickname.trim();
+        const desc = this.form.description.trim();
+        const batch = writeBatch(db);
+        const colRef = collection(db, "recommends");
+        for (const p of this.form.picks) {
+          const docRef = doc(colRef);
+          batch.set(docRef, {
+            nickname: nick,
+            anime_id: p.id || null,
+            anime_title: p.title,
+            description: desc,
+            createdAt: serverTimestamp(),
+            audit,
+          });
+        }
+        await batch.commit();
         localStorage.setItem("recommendsLastSubmit", String(now));
-        // 記住暱稱方便下次帶入；不清空 form.nickname
-        const savedNick = this.form.nickname.trim();
-        try { localStorage.setItem("recommendsNickname", savedNick); } catch (e) {}
-        this.form.anime_id = null;
-        this.form.anime_title = "";
+        try { localStorage.setItem("recommendsNickname", nick); } catch (e) {}
+        const count = this.form.picks.length;
+        this.form.picks = [];
+        this.form.buffer = "";
         this.form.description = "";
-        this.showToast("留言已送出，謝謝！");
+        showToast(`已送出 ${count} 部推薦，謝謝！`);
       } catch (e) {
         console.error(e);
         this.error = "送出失敗：" + (e.message || e);
       } finally {
         this.submitting = false;
       }
-    },
-
-    async collectAudit() {
-      let ip = null;
-      try {
-        const r = await fetch("https://api.ipify.org/?format=json");
-        if (r.ok) {
-          const d = await r.json();
-          ip = d.ip || null;
-        }
-      } catch (e) { /* ignore */ }
-      return {
-        ip,
-        user_agent: (navigator.userAgent || "").slice(0, 500),
-        platform: navigator.platform || "",
-        languages: (navigator.languages || []).slice(0, 5),
-        screen: `${screen.width}x${screen.height}`,
-        viewport: `${window.innerWidth}x${window.innerHeight}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
-        referrer: (document.referrer || "").slice(0, 500),
-      };
     },
 
     async loadMore() {
@@ -358,28 +401,7 @@ Alpine.data("recommends", () => ({
       }
     },
 
-    formatTime(ts) {
-      if (!ts) return "";
-      try {
-        const d = ts.toDate ? ts.toDate() : new Date(ts);
-        const now = new Date();
-        const diffSec = Math.floor((now - d) / 1000);
-        if (diffSec < 60) return "剛剛";
-        if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分鐘前`;
-        if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} 小時前`;
-        if (diffSec < 86400 * 7) return `${Math.floor(diffSec / 86400)} 天前`;
-        return d.toLocaleDateString("zh-Hant", { year: "numeric", month: "2-digit", day: "2-digit" });
-      } catch (e) { return ""; }
-    },
-
-    showToast(msg, ms = 1800) {
-      const el = document.getElementById("globalToast");
-      if (!el) return;
-      el.textContent = msg;
-      el.classList.add("show");
-      clearTimeout(this._toastTimer);
-      this._toastTimer = setTimeout(() => el.classList.remove("show"), ms);
-    },
+    formatTime,  // 借用 utils.js 的 export 給 template 使用
   }));
 
 // 都註冊好才啟動 Alpine

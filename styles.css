@@ -597,6 +597,124 @@ select.pill-btn {
   font-size: 13px;
 }
 
+/* ========== Detail drawer · 個別動漫留言 ========== */
+.detail__comments {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.anime-comment__count {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fg-faint);
+  font-weight: 400;
+  font-size: 11px;
+  margin-left: 4px;
+}
+.detail__comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.anime-comment {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.anime-comment__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+.anime-comment__name { color: var(--accent); font-weight: 700; font-size: 13px; }
+.anime-comment__time { color: var(--fg-faint); font-size: 11px; margin-left: auto; }
+.anime-comment__body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--fg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.anime-comment__empty {
+  color: var(--fg-faint);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px 0;
+}
+.anime-comment__banner {
+  background: var(--bg-elev-2);
+  border-left: 3px solid var(--review);
+  color: var(--fg-muted);
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  line-height: 1.5;
+}
+
+.anime-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.anime-comment-form input[type="text"],
+.anime-comment-form textarea {
+  width: 100%;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--fg);
+  padding: 8px 10px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.anime-comment-form input[type="text"]:focus,
+.anime-comment-form textarea:focus { border-color: var(--accent); }
+.anime-comment-form textarea { resize: vertical; min-height: 70px; }
+.anime-comment-form__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.anime-comment-form__count {
+  font-size: 11px;
+  color: var(--fg-faint);
+  flex: 1;
+}
+.anime-comment-form .submit-btn {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 600;
+  padding: 8px 18px;
+}
+.anime-comment-form .submit-btn:disabled {
+  background: var(--bg-elev-2);
+  color: var(--fg-faint);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+.anime-comment-form__note {
+  margin: 4px 0 0;
+  padding: 6px 8px;
+  background: var(--bg-elev-2);
+  border-left: 2px solid var(--accent);
+  font-size: 10px;
+  color: var(--fg-muted);
+  border-radius: 4px;
+  line-height: 1.5;
+}
+
 /* ========== Toast ========== */
 .toast {
   position: fixed;
@@ -664,6 +782,79 @@ select.pill-btn {
   color: var(--fg-faint);
   text-align: right;
 }
+
+/* chip-input：picks 顯示為 inline chip + 後接 input */
+.chip-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  min-height: 42px;
+  cursor: text;
+  transition: border-color 0.15s;
+}
+.chip-input:focus-within { border-color: var(--accent); }
+.chip-input input[type="text"] {
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  border: none;
+  padding: 4px 2px;
+  color: var(--fg);
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+}
+.chip-input input[type="text"]:disabled { color: var(--fg-faint); }
+
+.chip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 4px 3px 10px;
+  font-size: 12px;
+  max-width: 100%;
+}
+.chip-pill.matched { border-color: var(--accent); }
+.chip-pill.unmatched { border-color: var(--fg-faint); opacity: 0.85; }
+.chip-pill__title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+.chip-pill__tag {
+  font-size: 10px;
+  color: var(--fg-faint);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+.chip-pill.matched .chip-pill__tag { color: var(--accent); }
+.chip-pill__remove {
+  background: transparent;
+  border: none;
+  color: var(--fg-muted);
+  font-size: 16px;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.chip-pill__remove:hover { background: var(--bg-elev-2); color: var(--review); }
 
 .recommend-form .autocomplete-list {
   list-style: none;

@@ -7,10 +7,9 @@
 <title>kiuno-anime-viewer</title>
 <link rel="stylesheet" href="styles.css?v=3" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📺%3C/text%3E%3C/svg%3E">
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 </head>
-<body x-data="viewer()" x-cloak x-init="init()">
+<body x-data="viewer" x-cloak>
 
 <header class="header">
   <div class="header__row1">
@@ -249,6 +248,61 @@
               <a :href="url" target="_blank" rel="noopener" x-text="k"></a>
             </template>
           </div>
+
+          <div class="detail__section detail__comments">
+            <div class="detail__label">
+              留言
+              <span class="anime-comment__count" x-show="animeComments.length > 0"
+                    x-text="`(${animeComments.length})`"></span>
+            </div>
+
+            <div class="anime-comment__banner" x-show="!fbConfigured" x-cloak>
+              ⚠ 留言系統尚未設定（本機 firebase-config.js 未填值）
+            </div>
+            <div class="anime-comment__empty"
+                 x-show="fbConfigured && !firebaseReady" x-cloak>載入留言系統中…</div>
+
+            <template x-if="firebaseReady">
+              <div>
+                <div class="detail__comments-list">
+                  <template x-for="c in animeComments" :key="c.id">
+                    <article class="anime-comment">
+                      <div class="anime-comment__head">
+                        <strong class="anime-comment__name" x-text="c.nickname"></strong>
+                        <time class="anime-comment__time"
+                              :datetime="c.createdAt?.toDate?.().toISOString()"
+                              x-text="formatTime(c.createdAt)"></time>
+                      </div>
+                      <p class="anime-comment__body" x-text="c.comment"></p>
+                    </article>
+                  </template>
+                  <div class="anime-comment__empty"
+                       x-show="!commentLoading && animeComments.length === 0">
+                    還沒有留言，當第一個吧
+                  </div>
+                  <div class="anime-comment__empty" x-show="commentLoading">載入中…</div>
+                </div>
+                <form class="anime-comment-form" @submit.prevent="submitAnimeComment()">
+                  <input type="text" x-model="commentForm.nickname" maxlength="20" required
+                         placeholder="暱稱" autocomplete="off"
+                         :disabled="commentSubmitting" />
+                  <textarea x-model="commentForm.text" rows="3" maxlength="500" required
+                            placeholder="說點什麼…(5-500 字)"
+                            :disabled="commentSubmitting"></textarea>
+                  <div class="anime-comment-form__row">
+                    <span class="anime-comment-form__count"
+                          x-text="`${commentForm.text.length}/500`"></span>
+                    <button type="submit" class="pill-btn submit-btn"
+                            :disabled="commentSubmitting"
+                            x-text="commentSubmitting ? '送出中…' : '送出留言'"></button>
+                  </div>
+                  <p class="anime-comment-form__note">
+                    📋 提交即同意儲存 IP / 瀏覽器資訊作為防濫用紀錄。
+                  </p>
+                </form>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
     </template>
@@ -258,9 +312,12 @@
 <!-- Toast -->
 <div class="toast" id="globalToast"></div>
 
-<script>
-function viewer() {
-  return {
+<script type="module">
+import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
+import { collectAudit, showToast, formatTime } from "./js/utils.js?v=1";
+import { firebaseConfig, isConfigured as fbIsConfigured } from "./firebase-config.js?v=1";
+
+Alpine.data("viewer", () => ({
     all: [],
     byId: {},
     selected: null,
@@ -289,6 +346,17 @@ function viewer() {
     pageSize: 40,
     displayLimit: 40,
     _scrollObserver: null,
+    // 個別動漫留言板
+    fbConfigured: fbIsConfigured,
+    firebaseReady: false,
+    _fbDb: null,
+    _fb: null,
+    animeComments: [],
+    commentForm: { nickname: "", text: "" },
+    commentSubmitting: false,
+    commentLoading: false,
+    _commentUnsub: null,
+    formatTime,
 
     async init() {
       const h = location.hostname;
@@ -301,6 +369,9 @@ function viewer() {
         const vr = await fetch("data/version.json", { cache: "no-cache" });
         if (vr.ok) { const v = await vr.json(); this.appVersion = v.current || ""; }
       } catch (e) {}
+
+      // Firebase 後端 (lazy init，背景跑，不阻塞頁面渲染)
+      this._initFirebase();
 
       await this.loadUserState();
       try {
@@ -455,7 +526,7 @@ function viewer() {
       const dateStr = new Date().toISOString().slice(0, 10);
       a.href = url; a.download = `my_favorites_${dateStr}.json`; a.click();
       URL.revokeObjectURL(url);
-      this.showToast(`已匯出 ${this.favoritesList.length} 部最愛`);
+      showToast(`已匯出 ${this.favoritesList.length} 部最愛`);
     },
 
     async importFavorites(event) {
@@ -480,7 +551,7 @@ function viewer() {
           this.favoritesList = valid;
         }
         this.persistFavorites();
-        this.showToast(`匯入完成 → ${this.favoritesList.length} 部`);
+        showToast(`匯入完成 → ${this.favoritesList.length} 部`);
       } catch (e) {
         alert('匯入失敗：' + e.message);
       }
@@ -507,19 +578,10 @@ function viewer() {
       const fullText = `${text}\n\n${shareUrl}`;
       try {
         await navigator.clipboard.writeText(fullText);
-        this.showToast('已複製分享內容');
+        showToast('已複製分享內容');
       } catch (e) {
         prompt('複製以下內容分享：', fullText);
       }
-    },
-
-    showToast(msg, ms = 1800) {
-      const el = document.getElementById('globalToast');
-      if (!el) return;
-      el.textContent = msg;
-      el.classList.add('show');
-      clearTimeout(this._toastTimer);
-      this._toastTimer = setTimeout(() => el.classList.remove('show'), ms);
     },
 
     get recommendDefaultLimit() {
@@ -604,11 +666,105 @@ function viewer() {
         const body = document.querySelector('.drawer__body');
         if (body) body.scrollTop = 0;
       });
+      if (this.firebaseReady) this._subscribeAnimeComments(rec.id);
     },
-    close() { this.selected = null; },
+    close() {
+      this.selected = null;
+      this._unsubscribeAnimeComments();
+      this.commentForm.text = "";
+    },
     coverFor(rec) {
       const c = rec.cover || {};
       return c.local || c.url || "";
+    },
+
+    async _initFirebase() {
+      if (!fbIsConfigured) return;
+      try {
+        const [appMod, fsMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js"),
+        ]);
+        const apps = appMod.getApps();
+        const app = apps.length ? apps[0] : appMod.initializeApp(firebaseConfig);
+        this._fbDb = fsMod.getFirestore(app);
+        this._fb = fsMod;
+        // 暱稱沿用 recommends.html 的 localStorage
+        try {
+          const savedNick = localStorage.getItem("recommendsNickname");
+          if (savedNick) this.commentForm.nickname = savedNick;
+        } catch (e) {}
+        this.firebaseReady = true;
+        // drawer 已經開著 → 立刻訂閱該動漫的留言
+        if (this.selected) this._subscribeAnimeComments(this.selected.id);
+      } catch (e) {
+        console.warn("Firebase init failed", e);
+      }
+    },
+
+    _subscribeAnimeComments(animeId) {
+      this._unsubscribeAnimeComments();
+      if (!this.firebaseReady || !this._fbDb || !animeId) return;
+      this.commentLoading = true;
+      const fs = this._fb;
+      const q = fs.query(
+        fs.collection(this._fbDb, "anime_comments"),
+        fs.where("anime_id", "==", animeId),
+        fs.orderBy("createdAt", "desc"),
+        fs.limit(50)
+      );
+      this._commentUnsub = fs.onSnapshot(q, (snap) => {
+        this.animeComments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        this.commentLoading = false;
+      }, (err) => {
+        console.error("anime_comments listener error", err);
+        this.commentLoading = false;
+      });
+    },
+
+    _unsubscribeAnimeComments() {
+      if (this._commentUnsub) {
+        try { this._commentUnsub(); } catch (e) {}
+        this._commentUnsub = null;
+      }
+      this.animeComments = [];
+    },
+
+    async submitAnimeComment() {
+      if (!this.firebaseReady || !this._fbDb || !this.selected) return;
+      const nick = this.commentForm.nickname.trim();
+      const text = this.commentForm.text.trim();
+      if (nick.length < 1 || nick.length > 20) { showToast("暱稱 1-20 字"); return; }
+      if (text.length < 5) { showToast("留言至少 5 字"); return; }
+      if (text.length > 500) { showToast("留言最多 500 字"); return; }
+      const lastSubmit = parseInt(localStorage.getItem("recommendsLastSubmit") || "0", 10);
+      const now = Date.now();
+      if (now - lastSubmit < 60_000) {
+        const wait = Math.ceil((60_000 - (now - lastSubmit)) / 1000);
+        showToast(`請稍候 ${wait} 秒再留言`);
+        return;
+      }
+      this.commentSubmitting = true;
+      try {
+        const audit = await collectAudit();
+        const fs = this._fb;
+        await fs.addDoc(fs.collection(this._fbDb, "anime_comments"), {
+          anime_id: this.selected.id,
+          nickname: nick,
+          comment: text,
+          createdAt: fs.serverTimestamp(),
+          audit,
+        });
+        try { localStorage.setItem("recommendsNickname", nick); } catch (e) {}
+        localStorage.setItem("recommendsLastSubmit", String(now));
+        this.commentForm.text = "";
+        showToast("留言已送出，謝謝！");
+      } catch (e) {
+        console.error(e);
+        showToast("送出失敗：" + (e.message || e));
+      } finally {
+        this.commentSubmitting = false;
+      }
     },
     renderStars(score) {
       if (score == null) return "—";
@@ -655,8 +811,10 @@ function viewer() {
       }[this.sortBy];
       return [...pool].sort(sortFn);
     },
-  };
-}
+  }));
+
+window.Alpine = Alpine;
+Alpine.start();
 </script>
 <script type="module" src="indicator.js?v=1"></script>
 </body>

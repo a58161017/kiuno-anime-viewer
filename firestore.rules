@@ -39,5 +39,29 @@ service cloud.firestore {
 
       allow update, delete: if false;
     }
+
+    match /anime_comments/{doc} {
+      allow read: if true;
+
+      allow create: if
+        request.resource.data.keys().hasOnly(
+          ['anime_id','nickname','comment','createdAt','audit']
+        )
+        && request.resource.data.anime_id is string
+        && request.resource.data.anime_id.size() >= 1
+        && request.resource.data.anime_id.size() <= 80
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() >= 1
+        && request.resource.data.nickname.size() <= 20
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() >= 5
+        && request.resource.data.comment.size() <= 500
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.audit is map
+        && request.resource.data.audit.user_agent is string
+        && request.resource.data.audit.user_agent.size() <= 500;
+
+      allow update, delete: if false;
+    }
   }
 }

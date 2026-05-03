@@ -1,6 +1,28 @@
 {
   "versions": [
     {
+      "version": "1.0.5",
+      "date": "2026-05-03",
+      "summary": "個別動漫留言板 + recommends.html 一次推薦多部 (chip-input)",
+      "changes": {
+        "added": [
+          "Detail drawer 內加入「對這部動漫的留言」區塊：列表 + 提交表單，按 createdAt desc 顯示，onSnapshot 即時同步",
+          "Firestore 新 collection: anime_comments (anime_id / nickname / comment / audit)"
+        ],
+        "fixed": [],
+        "removed": [],
+        "ui": [
+          "recommends.html 動畫選擇改為 chip-input：autocomplete 點選或自由輸入按空格成標籤，Backspace 移除最後一個 chip",
+          "一次最多可推薦 10 部，writeBatch 批次寫入"
+        ],
+        "infra": [
+          "新增 js/utils.js 共用 module：collectAudit / showToast / formatTime",
+          "index.html 主腳本改為 ESM module，Alpine 透過 import + Alpine.data 註冊（與 recommends.html 一致）",
+          "Firestore rules 新增 anime_comments 規則 (需手動貼到 Firebase Console Publish)"
+        ]
+      }
+    },
+    {
       "version": "1.0.4",
       "date": "2026-05-03",
       "summary": "首頁卡片改為無限捲動分頁載入，緩解一次性下載 1000 張封面的問題",
