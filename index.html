@@ -280,6 +280,11 @@ function viewer() {
       if (hasLocalRecommendEdits) {
         this.recommendList = localRecommend;
         this.isReadOnlyShared = false;
+        // 本機有未同步編輯：嘗試 POST 一次回 server，把 localStorage 內容寫到 user_lists.json
+        // (e.g. server 之前未啟動或重置過檔案；POST 成功後 recommendEdited 旗標會被清掉)
+        if (localRecommend.length > 0) {
+          this._syncRecommendToFile(localRecommend);
+        }
       } else if (fileRecommend && fileRecommend.length) {
         this.recommendList = fileRecommend;
         this.isReadOnlyShared = true;
@@ -287,6 +292,19 @@ function viewer() {
         this.recommendList = localRecommend;
         this.isReadOnlyShared = false;
       }
+    },
+
+    _syncRecommendToFile(list) {
+      fetch("api/user_lists", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recommend: list }),
+      }).then(r => {
+        if (r.ok) {
+          this.storageMode = "host";
+          localStorage.removeItem('animeViewer.recommendEdited');
+          console.log(`[viewer] 已將 ${list.length} 筆本機推薦同步到 data/user_lists.json`);
+        }
+      }).catch(() => { /* offline / static host: leave localStorage as-is */ });
     },
 
     persistRecommend() {
