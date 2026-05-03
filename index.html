@@ -94,7 +94,7 @@
   <span>👀 你目前在看分享的推薦清單。點 ★ 後會切到「本機模式」儲存你自己的選擇。我的最愛永遠是本機資料。</span>
 </div>
 <div class="summary-bar"
-     x-show="!isReadOnlyShared && storageMode === 'local' && recommendList.length > 0"
+     x-show="isOwnerMode && !isReadOnlyShared && storageMode === 'local' && recommendList.length > 0"
      style="display: flex; gap: 12px; align-items: center; background: rgba(255,174,93,0.08);">
   <span>💾 推薦清單為本機模式 — 編輯只存在這個瀏覽器裡。</span>
   <button @click="resetToShared()" style="margin-left:auto; background:transparent; border:1px solid var(--border); color: var(--fg-dim); padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">重新讀取分享清單</button>
@@ -106,9 +106,11 @@
       <div class="card" @click="select(rec)">
         <div class="cover" :style="`background-image:url('${coverFor(rec)}')`">
           <div class="icon star"
+               x-show="isOwnerMode || isRecommended(rec.id)"
                :class="isRecommended(rec.id) ? 'filled' : 'empty'"
-               @click.stop="toggleRecommend(rec.id)"
-               :title="isRecommended(rec.id) ? '從推薦移除' : '加入推薦'"
+               :style="!isOwnerMode ? 'pointer-events:none; cursor:default; opacity:0.85;' : ''"
+               @click.stop="isOwnerMode && toggleRecommend(rec.id)"
+               :title="!isOwnerMode ? '推薦' : (isRecommended(rec.id) ? '從推薦移除' : '加入推薦')"
                x-text="isRecommended(rec.id) ? '★' : '☆'"></div>
           <div class="icon share"
                @click.stop="shareAnime(rec)"
@@ -216,8 +218,17 @@ function viewer() {
     favoritesList: [],
     showFavoritesOnly: false,
     recommendExpanded: false,
+    // owner mode = 在本機 server 跑（127.0.0.1 / localhost）；其他環境（GitHub Pages）
+    // 視為訪客 read-only：★ 只顯示，不能編輯
+    isOwnerMode: false,
 
     async init() {
+      const h = location.hostname;
+      // 加 ?owner=1 query 也視為 owner，方便偶爾在別處本機測試
+      const params0 = new URLSearchParams(location.search);
+      this.isOwnerMode = (h === '127.0.0.1' || h === 'localhost' || h === '' ||
+                          params0.get('owner') === '1');
+
       await this.loadUserState();
       try {
         const resp = await fetch("data/anime.json");
@@ -280,9 +291,8 @@ function viewer() {
       if (hasLocalRecommendEdits) {
         this.recommendList = localRecommend;
         this.isReadOnlyShared = false;
-        // 本機有未同步編輯：嘗試 POST 一次回 server，把 localStorage 內容寫到 user_lists.json
-        // (e.g. server 之前未啟動或重置過檔案；POST 成功後 recommendEdited 旗標會被清掉)
-        if (localRecommend.length > 0) {
+        // owner 才嘗試 POST 同步本機編輯回檔案；訪客（GitHub Pages）跳過
+        if (this.isOwnerMode && localRecommend.length > 0) {
           this._syncRecommendToFile(localRecommend);
         }
       } else if (fileRecommend && fileRecommend.length) {
