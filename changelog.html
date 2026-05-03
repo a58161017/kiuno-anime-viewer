@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1115" />
+<title>更新紀錄 · kiuno-anime-viewer</title>
+<link rel="stylesheet" href="styles.css?v=3" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📋%3C/text%3E%3C/svg%3E">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<style>
+  .changelog-page { padding: 16px 12px 80px; max-width: 880px; margin: 0 auto; }
+  .changelog-page h1 {
+    font-size: 22px; margin: 0 0 16px; color: var(--accent);
+  }
+  .version-block {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .version-block.current {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(93,210,255,0.15);
+  }
+  .version-block__head {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .version-block__num {
+    font-size: 18px; font-weight: 700; color: var(--accent);
+    font-family: ui-monospace, "SF Mono", monospace;
+  }
+  .version-block.current .version-block__num::after {
+    content: " · 目前版本";
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: normal;
+    color: #1a1f2e;
+    background: var(--accent);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .version-block__date { color: var(--fg-faint); font-size: 12px; }
+  .version-block__summary {
+    color: var(--fg);
+    font-size: 14px;
+    margin: 0 0 10px;
+    line-height: 1.6;
+  }
+  .change-section { margin-top: 12px; }
+  .change-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .change-label.added    { background: rgba(93,210,255,0.18); color: var(--accent); }
+  .change-label.fixed    { background: rgba(255,200,87,0.2); color: var(--star); }
+  .change-label.removed  { background: rgba(255,107,138,0.18); color: var(--heart); }
+  .change-label.ui       { background: rgba(160,127,255,0.18); color: #a07fff; }
+  .change-label.infra    { background: rgba(120,140,180,0.2); color: #8aa4d4; }
+  .change-list {
+    list-style: none;
+    padding: 0; margin: 4px 0 0;
+  }
+  .change-list li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .change-list li::before {
+    content: "·";
+    position: absolute; left: 6px;
+    color: var(--fg-faint);
+    font-weight: 700;
+  }
+
+  @media (min-width: 600px) {
+    .changelog-page { padding: 20px; }
+    .changelog-page h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body x-data="changelog()" x-cloak x-init="init()" data-mark-seen="version">
+
+<header class="header">
+  <div class="header__row1">
+    <div class="header__title">📋 更新紀錄<small>kiuno</small></div>
+    <div class="header__nav">
+      <a href="index.html">卡片</a>
+      <a href="graph.html">知識圖</a>
+      <a href="recommends.html" class="nav-link-recommends">留言</a>
+      <a href="changelog.html" class="active version-link nav-link-changelog" x-text="version ? `v${version}` : '更新紀錄'"></a>
+    </div>
+  </div>
+</header>
+
+<main class="changelog-page">
+  <h1>📋 更新紀錄</h1>
+  <p style="color: var(--fg-muted); font-size: 13px; margin: 0 0 16px;">
+    每次推上 GitHub 後版號 +1，新增/修改/刪除動畫都會在此頁面記下。
+  </p>
+  <div x-show="loadError" style="color: var(--review); padding: 12px; background: var(--bg-elev); border-radius: 8px;" x-text="loadError"></div>
+  <template x-for="(v, idx) in versions" :key="v.version">
+    <article class="version-block" :class="{current: idx === 0}">
+      <div class="version-block__head">
+        <span class="version-block__num" x-text="`v${v.version}`"></span>
+        <span class="version-block__date" x-text="v.date"></span>
+      </div>
+      <p class="version-block__summary" x-text="v.summary"></p>
+
+      <template x-for="(items, label) in v.changes" :key="label">
+        <div class="change-section" x-show="items && items.length > 0">
+          <span class="change-label" :class="label" x-text="labelText(label)"></span>
+          <ul class="change-list">
+            <template x-for="item in items" :key="item">
+              <li x-text="item"></li>
+            </template>
+          </ul>
+        </div>
+      </template>
+    </article>
+  </template>
+</main>
+
+<script>
+function changelog() {
+  return {
+    version: "",
+    versions: [],
+    loadError: "",
+
+    async init() {
+      try {
+        const v = await (await fetch("data/version.json", {cache:"no-cache"})).json();
+        this.version = v.current || "";
+      } catch (e) {}
+      try {
+        const c = await (await fetch("data/changelog.json", {cache:"no-cache"})).json();
+        this.versions = c.versions || [];
+      } catch (e) {
+        this.loadError = "讀 changelog 失敗：" + e.message;
+      }
+    },
+
+    labelText(key) {
+      return {
+        added: "✨ 新增",
+        fixed: "🔧 修正",
+        removed: "🗑 刪除",
+        ui: "🎨 介面",
+        infra: "🛠 基礎建設",
+      }[key] || key;
+    },
+  };
+}
+</script>
+<script type="module" src="indicator.js?v=1"></script>
+</body>
+</html>

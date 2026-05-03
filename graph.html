@@ -110,7 +110,8 @@
     <div class="header__nav">
       <a href="index.html">卡片</a>
       <a href="graph.html" class="active">知識圖</a>
-      <a href="recommends.html">留言</a>
+      <a href="recommends.html" class="nav-link-recommends">留言</a>
+      <a href="changelog.html" class="version-link nav-link-changelog" id="versionLink"></a>
     </div>
     <span class="count" id="counts" style="margin-left:auto;"></span>
   </div>
@@ -145,6 +146,16 @@ const ZOOM_OUT_RATIO = 0.45;        // current/initial < this → drill out
 let initialZoomForLevel = 1;
 
 async function load() {
+  // 版本號顯示
+  try {
+    const vr = await fetch('data/version.json', { cache: 'no-cache' });
+    if (vr.ok) {
+      const v = await vr.json();
+      const link = document.getElementById('versionLink');
+      if (link && v.current) link.textContent = 'v' + v.current;
+    }
+  } catch (e) {}
+
   const [aR, gR] = await Promise.all([
     fetch('data/anime.json', { cache: 'no-cache' }),
     fetch('data/graph.json', { cache: 'no-cache' }),
@@ -557,5 +568,6 @@ function hideInfo() {
 
 load();
 </script>
+<script type="module" src="indicator.js?v=1"></script>
 </body>
 </html>

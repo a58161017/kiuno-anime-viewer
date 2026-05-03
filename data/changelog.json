@@ -1,0 +1,106 @@
+{
+  "versions": [
+    {
+      "version": "1.0.3",
+      "date": "2026-05-03",
+      "summary": "封面修正、季別推薦、版號系統、Firebase secrets 改用 GitHub Actions",
+      "changes": {
+        "added": [
+          "2026 四月新番推薦橫幅 (data/season_picks.json，由 owner 策劃)",
+          "歡迎來到實力至上主義的教室 第四季 2年級篇 第一學期 (anilist:180745)",
+          "關於我轉生變成史萊姆這檔事 第四季 (anilist:182205)",
+          "婚姻劇毒 (anilist:199547)",
+          "白箱OVA (anilist:20938) — 後因封面錯刪除"
+        ],
+        "fixed": [
+          "白箱 (anilist:20812) — 封面/標題修正",
+          "完美到難以接近的聖女遭到解除婚約後被賣到鄰國 (anilist:183275)",
+          "鄰座同學是怪咖OAD (anilist:20600)",
+          "地下城與勇士 (anilist:124341)",
+          "坂本日常 (anilist:177709)",
+          "我的妹妹是大阪大媽 (anilist:16405)",
+          "我的妹妹哪有這麼可愛 (anilist:8769) — 與大阪大媽 swap 修正",
+          "孤單一人的異世界攻略 (anilist:173693)",
+          "泛而不精的我被逐出了勇者隊伍 (anilist:187264)",
+          "要聽爸爸的話OVA (anilist:17875)",
+          "飛輪少年OVA (anilist:9201)",
+          "槍彈辯駁3 未來篇 (anilist:21509)",
+          "槍彈辯駁3 絕望篇 (anilist:21825)",
+          "漫畫少女 (anilist:14045)",
+          "漫研部 (anilist:16169)",
+          "轉生就是劍 (anilist:139587)",
+          "戀上換裝娃娃 (anilist:132405)",
+          "CHAOS;HEAD (anilist:4975)",
+          "人魚又上鉤 (anilist:16910)",
+          "七大罪OVA (anilist:21104)",
+          "七大罪 第二季 戒律的復活 (anilist:99539)"
+        ],
+        "removed": [
+          "肯普法 (anilist:967) — 重複條目",
+          "白箱OVA (anilist:20938) — 封面錯誤暫時移除"
+        ],
+        "ui": [
+          "推薦清單標題改為「久野的推薦清單」",
+          "新增季別推薦橫幅 (粉色標題, 不洗牌, owner 策劃)",
+          "Mini-card 標題從 2 行改 3 行 clamp",
+          "卡片 icon 修正手機渲染 oval bug",
+          "新增頁面版號 + changelog 頁面"
+        ],
+        "infra": [
+          "anime.json/graph.json fetch 改為 cache: no-cache 避免瀏覽器拿舊版",
+          "新增更新提醒：版號跟留言有變動會在 nav 顯示紅點"
+        ]
+      }
+    },
+    {
+      "version": "1.0.2",
+      "date": "2026-05-02",
+      "summary": "Mobile-first 設計改造、訪客留言功能、訪客模式星號隱藏",
+      "changes": {
+        "added": [
+          "訪客推薦留言功能 (Firebase Firestore)",
+          "卡片每張多分享 icon (產生連結)",
+          "★ 推薦 與 ♥ 最愛 分離 (推薦走檔案分享、最愛純本機)",
+          "我的最愛 匯入/匯出 JSON",
+          "?id=anilist:<n> URL 參數直接打開動畫詳情"
+        ],
+        "fixed": [
+          "Konosuba S1/S2 互換修正",
+          "標題截斷時第二行文字會被切掉的問題",
+          "知識圖 hover 在快速移動時的閃爍"
+        ],
+        "ui": [
+          "Mobile-first redesign — 詳情面板手機底部 drawer / 桌機側欄",
+          "Header 重構 (sticky, 橫向滾動 toolbar)",
+          "知識圖層級式：分類 → 標籤 → 動畫"
+        ]
+      }
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-05-02",
+      "summary": "首次填入推薦清單、新增動畫資料庫條目",
+      "changes": {
+        "added": [
+          "1041 條動漫資料 → 999 個唯一 anime records",
+          "推薦清單 27 條",
+          "知識圖 (Cytoscape.js)",
+          "我的最愛 / 推薦清單 / 卡片 viewer"
+        ]
+      }
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-02",
+      "summary": "kiuno-anime-viewer 第一版上線",
+      "changes": {
+        "added": [
+          "個人動漫資料庫 + 卡片 Viewer + 知識圖",
+          "AniList / MAL / Bangumi 三來源評分匯總",
+          "Pipeline (parse → match → enrich → download → graph)",
+          "GitHub Pages 部署"
+        ]
+      }
+    }
+  ]
+}

@@ -88,6 +88,29 @@ a { color: var(--accent); text-decoration: none; }
   background: var(--bg-elev-2);
   color: var(--fg);
 }
+.header__nav a.version-link {
+  color: var(--fg-faint);
+  font-size: 11px;
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+  padding: 6px 8px;
+}
+.header__nav a.version-link:hover { color: var(--accent); }
+
+/* 更新提醒紅點 (留言 / 版號 nav link) */
+.header__nav a {
+  position: relative;
+}
+.header__nav a.has-new::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  background: #ff4757;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--bg);
+}
 
 .search {
   flex: 1;

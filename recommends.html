@@ -17,7 +17,8 @@
     <div class="header__nav">
       <a href="index.html">卡片</a>
       <a href="graph.html">知識圖</a>
-      <a href="recommends.html" class="active">留言</a>
+      <a href="recommends.html" class="active nav-link-recommends">留言</a>
+      <a href="changelog.html" class="version-link nav-link-changelog" x-text="appVersion ? `v${appVersion}` : ''"></a>
     </div>
     <span class="count" style="margin-left:auto;" x-text="`${comments.length} 則`"></span>
   </div>
@@ -162,8 +163,15 @@ Alpine.data("recommends", () => ({
     },
     autocompleteOpen: false,
     autocompleteResults: [],
+    appVersion: "",
 
     async init() {
+      // 版本號
+      try {
+        const vr = await fetch("data/version.json", { cache: "no-cache" });
+        if (vr.ok) { const v = await vr.json(); this.appVersion = v.current || ""; }
+      } catch (e) {}
+
       // 帶入上次留言的暱稱（純本機 localStorage）
       try {
         const savedNick = localStorage.getItem("recommendsNickname");
@@ -211,6 +219,10 @@ Alpine.data("recommends", () => ({
         if (snap.docs.length > 0) {
           this.lastDoc = snap.docs[snap.docs.length - 1];
           this.hasMore = snap.docs.length === this.pageSize;
+          // 標記留言已看 → 清掉 nav 紅點
+          const ts = snap.docs[0].data().createdAt;
+          const millis = ts && ts.toMillis ? ts.toMillis() : 0;
+          if (millis && window.markCommentsSeen) window.markCommentsSeen(millis);
         }
         this.loading = false;
       }, (err) => {
@@ -374,5 +386,6 @@ Alpine.data("recommends", () => ({
 window.Alpine = Alpine;
 Alpine.start();
 </script>
+<script type="module" src="indicator.js?v=1"></script>
 </body>
 </html>
