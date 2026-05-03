@@ -1,0 +1,21 @@
+{
+  "Action": "動作",
+  "Adventure": "冒險",
+  "Comedy": "喜劇",
+  "Drama": "戲劇",
+  "Ecchi": "福利",
+  "Fantasy": "奇幻",
+  "Hentai": "成人",
+  "Horror": "恐怖",
+  "Mahou Shoujo": "魔法少女",
+  "Mecha": "機械",
+  "Music": "音樂",
+  "Mystery": "懸疑",
+  "Psychological": "心理",
+  "Romance": "戀愛",
+  "Sci-Fi": "科幻",
+  "Slice of Life": "日常",
+  "Sports": "運動",
+  "Supernatural": "超自然",
+  "Thriller": "驚悚"
+}

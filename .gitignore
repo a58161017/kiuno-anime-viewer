@@ -1,0 +1,21 @@
+# Pipeline intermediate files (regenerable from raw + cache, large/noisy)
+data/cache/
+data/checkpoint.json
+data/entries.matched.json
+data/entries.raw.json
+data/unresolved.json
+data/unmapped_tags.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

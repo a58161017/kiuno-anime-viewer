@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>kiuno-anime-viewer · 知識圖</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cose-base@2.2.0/cose-base.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js"></script>
+  <style>
+    body, html { background: #0a0d14; }
+    #cy {
+      width: 100%; height: calc(100vh - 142px);
+      background: radial-gradient(ellipse at center, #1a1f2e 0%, #0a0d14 70%);
+    }
+    .controls {
+      display: flex; gap: 16px; align-items: center; padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(20, 24, 36, 0.85); backdrop-filter: blur(8px);
+      flex-wrap: wrap; font-size: 13px;
+    }
+    .breadcrumb { display: flex; gap: 6px; align-items: center; flex: 1; min-width: 0; }
+    .breadcrumb .crumb {
+      cursor: pointer; padding: 4px 12px; border-radius: 16px;
+      background: linear-gradient(180deg, rgba(70,80,110,0.6), rgba(40,48,72,0.6));
+      border: 1px solid rgba(120,140,180,0.3); color: var(--fg);
+      transition: all 0.15s;
+    }
+    .breadcrumb .crumb:hover {
+      background: linear-gradient(180deg, var(--accent), #4ab5e0);
+      color: #000; border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(93,210,255,0.5);
+    }
+    .breadcrumb .crumb.current {
+      background: linear-gradient(180deg, var(--accent), #4ab5e0);
+      color: #000; cursor: default;
+      box-shadow: 0 0 12px rgba(93,210,255,0.5);
+    }
+    .breadcrumb .sep { color: var(--fg-dim); }
+    .controls .hint { color: var(--fg-dim); font-size: 11px; }
+
+    #node-info {
+      position: absolute; right: 12px; top: 162px; width: 320px; max-height: 75vh;
+      background: rgba(20, 24, 36, 0.95); backdrop-filter: blur(12px);
+      border: 1px solid rgba(120,140,180,0.3); padding: 14px;
+      border-radius: 10px; display: none; overflow-y: auto; font-size: 13px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    #node-info img { width: 100%; max-height: 240px; object-fit: contain; background: #000; border-radius: 6px; }
+    #node-info h3 { margin: 10px 0 4px; font-size: 16px; }
+    #node-info .close {
+      position: absolute; right: 10px; top: 6px; cursor: pointer; color: var(--fg-dim);
+      font-size: 18px; line-height: 1;
+    }
+    #node-info .close:hover { color: var(--fg); }
+
+    .level-toast {
+      position: fixed; left: 50%; top: 100px; transform: translateX(-50%);
+      background: rgba(93,210,255,0.95); color: #000;
+      padding: 10px 24px; border-radius: 999px;
+      font-weight: bold; font-size: 14px;
+      box-shadow: 0 4px 16px rgba(93,210,255,0.4);
+      pointer-events: none; opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 100;
+    }
+    .level-toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html">卡片</a>
+    <a href="graph.html" class="active">知識圖</a>
+    <span style="margin-left:auto; color: var(--fg-dim); font-size: 12px;" id="counts"></span>
+  </nav>
+</header>
+
+<div class="controls">
+  <div class="breadcrumb" id="breadcrumb"></div>
+  <span class="hint">點節點 / 滾輪縮放越過閾值都會切換層級</span>
+  <button onclick="cy && cy.fit(null, 60)">置中</button>
+</div>
+
+<div id="cy"></div>
+<div id="node-info"></div>
+<div class="level-toast" id="toast"></div>
+
+<script>
+let anime = {};
+let graphAll = null;
+let cy = null;
+let level = 0;
+let path = { category: null, tag: null };
+
+const DERIVED_TAG_PREFIXES = ['年份-', 'studio-', 'format-', '星級-'];
+const SECTION_TAGS = new Set(['劇場版', '季番', '已完結']);
+
+// Track zoom for drill detection
+let zoomCheckTimer = null;
+let lastDrillTime = 0;
+const ZOOM_DRILL_COOLDOWN = 1500;  // ms between drills
+const ZOOM_IN_RATIO = 2.6;          // current/initial zoom > this → drill in
+const ZOOM_OUT_RATIO = 0.45;        // current/initial < this → drill out
+
+let initialZoomForLevel = 1;
+
+async function load() {
+  const [aR, gR] = await Promise.all([
+    fetch('data/anime.json'),
+    fetch('data/graph.json'),
+  ]);
+  anime = (await aR.json()).anime || {};
+  graphAll = await gR.json();
+  document.getElementById('counts').textContent =
+    `${Object.keys(anime).length} 部動畫 · ${graphAll.edges.length} 邊`;
+  initCytoscape();
+  renderLevel0();
+}
+
+function initCytoscape() {
+  cy = cytoscape({
+    container: document.getElementById('cy'),
+    minZoom: 0.05, maxZoom: 6,
+    wheelSensitivity: 0.3,
+    style: [
+      // ---- category ----
+      {
+        selector: 'node[type = "category"]',
+        style: {
+          'background-color': '#7c8eff',
+          'background-fit': 'cover',
+          'background-opacity': 0.95,
+          'background-blacken': -0.1,
+          'label': 'data(label)',
+          'color': '#fff',
+          'font-size': 16, 'font-weight': 'bold',
+          'text-halign': 'center', 'text-valign': 'center',
+          'text-wrap': 'wrap', 'text-max-width': 100,
+          'text-outline-color': '#1a1f2e', 'text-outline-width': 2,
+          'width': ele => 70 + Math.sqrt(ele.data('count')) * 8,
+          'height': ele => 70 + Math.sqrt(ele.data('count')) * 8,
+          'border-width': 3,
+          'border-color': '#a07fff',
+          'border-opacity': 0.85,
+          'shadow-blur': 30,
+          'shadow-color': '#7c8eff',
+          'shadow-opacity': 0.6,
+          'shadow-offset-x': 0, 'shadow-offset-y': 0,
+        },
+      },
+      // ---- tag ----
+      {
+        selector: 'node[type = "tag"]',
+        style: {
+          'background-color': '#ffae5d',
+          'background-opacity': 0.95,
+          'label': 'data(label)',
+          'color': '#1a1f2e',
+          'font-size': 12, 'font-weight': 'bold',
+          'text-halign': 'center', 'text-valign': 'center',
+          'text-wrap': 'wrap', 'text-max-width': 80,
+          'width': ele => 44 + Math.sqrt(ele.data('count')) * 6,
+          'height': ele => 44 + Math.sqrt(ele.data('count')) * 6,
+          'border-width': 2.5,
+          'border-color': '#ffc857',
+          'shadow-blur': 22,
+          'shadow-color': '#ffae5d',
+          'shadow-opacity': 0.55,
+          'shadow-offset-x': 0, 'shadow-offset-y': 0,
+        },
+      },
+      // ---- anime ----
+      {
+        selector: 'node[type = "anime"]',
+        style: {
+          'background-color': '#5dd2ff',
+          'background-image': 'data(cover)',
+          'background-fit': 'cover cover',
+          'label': 'data(label)',
+          'color': '#e6e8ee',
+          'font-size': 9,
+          'text-outline-color': '#0a0d14',
+          'text-outline-width': 2,
+          'text-valign': 'bottom',
+          'text-margin-y': 6,
+          'text-wrap': 'wrap', 'text-max-width': 100,
+          'width': ele => 36 + (ele.data('score') || 0) * 5,
+          'height': ele => 36 + (ele.data('score') || 0) * 5,
+          'border-width': 2,
+          'border-color': ele => {
+            const s = ele.data('score') || 0;
+            if (s >= 4.5) return '#ffc857';
+            if (s >= 4.0) return '#5dd2ff';
+            return '#5a627a';
+          },
+          'shadow-blur': 14,
+          'shadow-color': '#000',
+          'shadow-opacity': 0.5,
+        },
+      },
+      { selector: 'node.hover', style: { 'border-width': 5, 'border-color': '#ffae5d', 'z-compound-depth': 'top' } },
+      { selector: 'node.dim', style: { opacity: 0.18 } },
+
+      // ---- edges ----
+      {
+        selector: 'edge[etype = "category-link"]',
+        style: {
+          'line-color': '#a07fff', 'opacity': 'data(opacity)',
+          'width': ele => 1 + Math.sqrt(ele.data('weight') || 1),
+          'curve-style': 'haystack',
+        },
+      },
+      {
+        selector: 'edge[etype = "tag-link"]',
+        style: {
+          'line-color': '#ffc857', 'opacity': 'data(opacity)',
+          'width': ele => 1 + Math.sqrt(ele.data('weight') || 1) * 0.7,
+          'curve-style': 'haystack',
+        },
+      },
+      { selector: 'edge[etype = "franchise"]', style: { 'line-color': '#ff7a59', 'width': 2.5, 'target-arrow-color': '#ff7a59', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'opacity': 0.9 } },
+      { selector: 'edge[etype = "same_studio"]', style: { 'line-color': '#5dd2ff', 'width': 1, 'opacity': 0.5, 'curve-style': 'haystack' } },
+      { selector: 'edge[etype = "shared_tag"]', style: { 'line-color': '#ffae5d', 'width': 1, 'opacity': 0.4, 'curve-style': 'haystack' } },
+      { selector: 'edge.dim', style: { 'opacity': 0.05 } },
+    ],
+  });
+
+  cy.on('tap', 'node', evt => onNodeTap(evt.target));
+
+  // Stable hover: 快速經過多節點時不閃爍。把「移除 dim/hover」延後 220ms，
+  // 在期間進入新節點 → 直接 swap，避免閃黑→白的閃爍。
+  let hoveredNode = null;
+  let hoverClearTimer = null;
+  cy.on('mouseover', 'node', evt => {
+    if (hoverClearTimer) { clearTimeout(hoverClearTimer); hoverClearTimer = null; }
+    const n = evt.target;
+    if (hoveredNode === n) return;
+    if (hoveredNode) hoveredNode.removeClass('hover');
+    n.addClass('hover');
+    hoveredNode = n;
+    if (level === 2) {
+      const nbr = n.neighborhood().add(n);
+      cy.elements().removeClass('dim');
+      cy.elements().not(nbr).addClass('dim');
+    }
+  });
+  cy.on('mouseout', 'node', () => {
+    if (hoverClearTimer) clearTimeout(hoverClearTimer);
+    hoverClearTimer = setTimeout(() => {
+      if (hoveredNode) { hoveredNode.removeClass('hover'); hoveredNode = null; }
+      cy.elements().removeClass('dim');
+      hoverClearTimer = null;
+    }, 220);
+  });
+
+  cy.on('tap', evt => { if (evt.target === cy) hideInfo(); });
+
+  // Zoom-based drill
+  cy.on('zoom', () => {
+    if (zoomCheckTimer) clearTimeout(zoomCheckTimer);
+    zoomCheckTimer = setTimeout(checkZoomDrill, 250);  // settle 250ms before testing
+  });
+}
+
+function showToast(text) {
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1300);
+}
+
+function checkZoomDrill() {
+  const now = Date.now();
+  if (now - lastDrillTime < ZOOM_DRILL_COOLDOWN) return;
+  const z = cy.zoom();
+  const ratio = z / initialZoomForLevel;
+
+  if (ratio > ZOOM_IN_RATIO && level < 2) {
+    // Find the node nearest to viewport center
+    const cx = cy.width() / 2, cy_ = cy.height() / 2;
+    let best = null, bestD = Infinity;
+    cy.nodes().forEach(n => {
+      const p = n.renderedPosition();
+      const d = (p.x - cx) ** 2 + (p.y - cy_) ** 2;
+      if (d < bestD) { bestD = d; best = n; }
+    });
+    if (best) {
+      lastDrillTime = now;
+      onNodeTap(best);
+    }
+  } else if (ratio < ZOOM_OUT_RATIO && level > 0) {
+    lastDrillTime = now;
+    if (level === 1) drillTo(0, {});
+    else if (level === 2) drillTo(1, { category: path.category });
+  }
+}
+
+function onNodeTap(node) {
+  const t = node.data('type');
+  if (t === 'category') drillTo(1, { category: node.data('cat') });
+  else if (t === 'tag') drillTo(2, { category: path.category, tag: node.data('tag') });
+  else if (t === 'anime') showAnimeInfo(node);
+}
+
+function drillTo(newLevel, newPath) {
+  level = newLevel;
+  path = { category: newPath.category || null, tag: newPath.tag || null };
+  hideInfo();
+  if (level === 0) { showToast('返回所有分類'); renderLevel0(); }
+  else if (level === 1) { showToast(`進入分類：${path.category}`); renderLevel1(path.category); }
+  else if (level === 2) { showToast(`進入標籤：${path.tag}`); renderLevel2(path.category, path.tag); }
+  renderBreadcrumb();
+}
+
+function renderBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  const parts = [];
+  parts.push(`<span class="crumb${level === 0 ? ' current' : ''}" data-l="0">所有分類</span>`);
+  if (path.category) {
+    parts.push('<span class="sep">›</span>');
+    parts.push(`<span class="crumb${level === 1 ? ' current' : ''}" data-l="1" data-cat="${path.category}">${escapeHtml(path.category)}</span>`);
+  }
+  if (path.tag) {
+    parts.push('<span class="sep">›</span>');
+    parts.push(`<span class="crumb${level === 2 ? ' current' : ''}" data-l="2">${escapeHtml(path.tag)}</span>`);
+  }
+  bc.innerHTML = parts.join('');
+  bc.querySelectorAll('.crumb').forEach(el => {
+    el.addEventListener('click', () => {
+      const l = parseInt(el.dataset.l, 10);
+      if (l === 0) drillTo(0, {});
+      else if (l === 1) drillTo(1, { category: el.dataset.cat });
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============== LEVEL 0: CATEGORIES ==============
+function renderLevel0() {
+  const counts = {};
+  Object.values(anime).forEach(rec => (rec.categories || []).forEach(c => counts[c] = (counts[c] || 0) + 1));
+  const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+
+  const nodes = cats.map(cat => ({
+    data: { id: 'cat:' + cat, label: `${cat}\n(${counts[cat]})`, count: counts[cat], cat, type: 'category' }
+  }));
+
+  // Edges = pairs of categories sharing >= 5 anime; weight = #shared
+  const edges = [];
+  const idxOf = {};
+  cats.forEach((c, i) => idxOf[c] = i);
+  for (let i = 0; i < cats.length; i++) {
+    for (let j = i + 1; j < cats.length; j++) {
+      let shared = 0;
+      Object.values(anime).forEach(rec => {
+        const cs = rec.categories || [];
+        if (cs.includes(cats[i]) && cs.includes(cats[j])) shared++;
+      });
+      if (shared >= 5) {
+        edges.push({
+          data: {
+            id: `e_cat_${i}_${j}`,
+            source: 'cat:' + cats[i], target: 'cat:' + cats[j],
+            etype: 'category-link', weight: shared,
+            opacity: Math.min(0.7, 0.15 + shared / 200),
+          }
+        });
+      }
+    }
+  }
+
+  cy.elements().remove();
+  cy.add(nodes); cy.add(edges);
+  cy.layout({
+    name: 'fcose', quality: 'proof', animate: true, animationDuration: 500,
+    randomize: true, nodeRepulsion: 9000, idealEdgeLength: 220,
+    edgeElasticity: 0.4, gravity: 0.25, padding: 50,
+  }).run();
+  cy.one('layoutstop', () => { initialZoomForLevel = cy.zoom(); });
+}
+
+// ============== LEVEL 1: TAGS WITHIN CATEGORY ==============
+function renderLevel1(cat) {
+  const recsInCat = Object.values(anime).filter(rec => (rec.categories || []).includes(cat));
+  const tagCounts = {};
+  recsInCat.forEach(rec => {
+    (rec.tags || []).forEach(t => {
+      if (DERIVED_TAG_PREFIXES.some(p => t.startsWith(p))) return;
+      if (SECTION_TAGS.has(t)) return;
+      tagCounts[t] = (tagCounts[t] || 0) + 1;
+    });
+  });
+  const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 50);
+
+  const nodes = sortedTags.map(([tag, n]) => ({
+    data: { id: 'tag:' + tag, label: `${tag}\n(${n})`, count: n, tag, type: 'tag' }
+  }));
+
+  // Edges = tag pairs co-occurring in >= max(2, total/30) anime
+  const tagSet = new Set(sortedTags.map(([t]) => t));
+  const edges = [];
+  const minCo = Math.max(2, Math.floor(recsInCat.length / 30));
+  for (let i = 0; i < sortedTags.length; i++) {
+    const t1 = sortedTags[i][0];
+    for (let j = i + 1; j < sortedTags.length; j++) {
+      const t2 = sortedTags[j][0];
+      let co = 0;
+      recsInCat.forEach(rec => {
+        if ((rec.tags || []).includes(t1) && (rec.tags || []).includes(t2)) co++;
+      });
+      if (co >= minCo) {
+        edges.push({
+          data: {
+            id: `e_tag_${i}_${j}`,
+            source: 'tag:' + t1, target: 'tag:' + t2,
+            etype: 'tag-link', weight: co,
+            opacity: Math.min(0.5, 0.1 + co / 50),
+          }
+        });
+      }
+    }
+  }
+
+  cy.elements().remove();
+  cy.add(nodes); cy.add(edges);
+  cy.layout({
+    name: 'fcose', quality: 'proof', animate: true, animationDuration: 500,
+    randomize: true, nodeRepulsion: 7000, idealEdgeLength: 140,
+    edgeElasticity: 0.3, gravity: 0.3, padding: 40,
+  }).run();
+  cy.one('layoutstop', () => { initialZoomForLevel = cy.zoom(); });
+}
+
+// ============== LEVEL 2: ANIME WITHIN TAG ==============
+function renderLevel2(cat, tag) {
+  const matched = [];
+  for (const [id, rec] of Object.entries(anime)) {
+    if (!(rec.categories || []).includes(cat)) continue;
+    if (!(rec.tags || []).includes(tag)) continue;
+    matched.push([id, rec]);
+  }
+  const idSet = new Set(matched.map(([id]) => id));
+
+  const nodes = matched.map(([id, rec]) => {
+    const cover = rec.cover && (rec.cover.local || rec.cover.url);
+    return {
+      data: {
+        id, type: 'anime',
+        label: rec.titles.primary_zh || rec.titles.ja_romaji || id,
+        cover: cover || '',
+        score: rec.rating ? rec.rating.score : null,
+        year: rec.year,
+      },
+    };
+  });
+
+  // Edges from precomputed graph.json
+  const edges = [];
+  if (graphAll && graphAll.edges) {
+    graphAll.edges.forEach((e, i) => {
+      if (!idSet.has(e.source) || !idSet.has(e.target)) return;
+      // Drop noisy genre overlap edges in level 2; keep meaningful relations
+      if (e.type === 'shared_genre') return;
+      if (e.type === 'same_year') return;
+      if (e.type !== 'franchise' && e.weight < 0.25) return;
+      edges.push({ data: { id: 'e' + i, source: e.source, target: e.target, etype: e.type, weight: e.weight } });
+    });
+  }
+
+  // Layout strength scales with count: more anime = more spread
+  const N = matched.length;
+  const repulsion = Math.max(2500, Math.min(12000, N * 60));
+  const ideal = Math.max(60, Math.min(140, 50 + Math.sqrt(N) * 10));
+
+  cy.elements().remove();
+  cy.add(nodes); cy.add(edges);
+  cy.layout({
+    name: 'fcose', quality: 'proof', animate: true, animationDuration: 600,
+    randomize: true, nodeRepulsion: repulsion, idealEdgeLength: ideal,
+    edgeElasticity: 0.45, gravity: 0.15, padding: 60,
+  }).run();
+  cy.one('layoutstop', () => { initialZoomForLevel = cy.zoom(); });
+}
+
+function showAnimeInfo(node) {
+  const id = node.id();
+  const rec = anime[id];
+  if (!rec) return;
+  const box = document.getElementById('node-info');
+  const cover = (rec.cover && (rec.cover.local || rec.cover.url)) || '';
+  const score = rec.rating ? rec.rating.score : null;
+  const studios = (rec.studios || []).join(' · ');
+  const synopsis = rec.synopsis_zh || '(暫無中文簡介)';
+  box.innerHTML = `
+    <span class="close" onclick="hideInfo()">×</span>
+    ${cover ? `<img src="${escapeHtml(cover)}" />` : ''}
+    <h3>${escapeHtml(rec.titles.primary_zh || rec.titles.ja_romaji || '')}</h3>
+    <div style="color: var(--fg-dim); font-size: 11px;">
+      ${rec.year || '?'} · ${escapeHtml(rec.format || '')} · ${rec.episodes || '?'} 集 · ${escapeHtml(studios)}
+    </div>
+    <div style="color: var(--star); margin: 8px 0; font-size: 16px; font-weight: bold;">
+      ${score != null ? score.toFixed(1) + ' ★' : '—'}
+    </div>
+    <div style="font-size: 12px; color: #cdd2dc; max-height: 220px; overflow-y: auto; margin-top: 8px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(synopsis)}</div>
+    <div style="margin-top: 8px; font-size: 11px; color: var(--fg-dim);">分類: ${(rec.categories || []).join(', ')}</div>
+    <div style="margin-top: 8px;"><a href="index.html" style="color: var(--accent); font-size: 12px;">在卡片視圖開啟</a></div>
+  `;
+  box.style.display = 'block';
+}
+
+function hideInfo() {
+  document.getElementById('node-info').style.display = 'none';
+}
+
+load();
+</script>
+</body>
+</html>

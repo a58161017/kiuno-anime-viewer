@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>kiuno-anime-viewer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+</head>
+<body x-data="viewer()" x-init="init()">
+
+<header>
+  <nav>
+    <a href="index.html" class="active">卡片</a>
+    <a href="graph.html">知識圖</a>
+    <span style="margin-left:auto; color: var(--fg-dim); font-size: 12px;">
+      <span x-text="`${filtered.length} / ${all.length}`"></span> 部
+    </span>
+  </nav>
+</header>
+
+<div class="toolbar">
+  <input type="text" placeholder="搜尋 標題 / 簡介 / tag …" x-model="query" @input.debounce.150ms="rebuildSearch()" />
+  <select x-model="sortBy">
+    <option value="title">排序：標題</option>
+    <option value="year_desc">排序：年份新→舊</option>
+    <option value="year_asc">排序：年份舊→新</option>
+    <option value="score_desc">排序：星級高→低</option>
+    <option value="self_rating_desc">排序：自評高→低</option>
+  </select>
+  <div class="min-stars">
+    <span style="font-size:12px;color:var(--fg-dim)">最低星級</span>
+    <input type="range" min="0" max="5" step="0.5"
+           :value="minStarsRaw"
+           @input="minStarsRaw = $event.target.value"
+           @input.debounce.250ms="minStars = $event.target.value" />
+    <span x-text="minStarsRaw"></span>
+  </div>
+  <button class="fav-btn" :class="{active: showFavoritesOnly}" @click="showFavoritesOnly = !showFavoritesOnly">
+    <span class="heart-glyph" x-text="showFavoritesOnly ? '♥' : '♡'"></span>
+    <span>我的最愛</span>
+    <span x-show="favoritesList.length > 0" x-text="`(${favoritesList.length})`" style="font-size:11px"></span>
+  </button>
+  <div style="display:flex; gap:4px;">
+    <button @click="exportFavorites()"
+            :disabled="favoritesList.length === 0"
+            title="下載我的最愛 JSON 檔案，可分享給朋友"
+            style="padding:8px 10px; font-size:12px;">⇪ 分享</button>
+    <button @click="$refs.favImport.click()"
+            title="從朋友傳來的 JSON 匯入我的最愛"
+            style="padding:8px 10px; font-size:12px;">⇩ 匯入</button>
+    <input type="file" accept="application/json,.json" x-ref="favImport" @change="importFavorites($event)" style="display:none" />
+  </div>
+  <button @click="resetFilters()">重設</button>
+</div>
+
+<div class="toast" id="globalToast"></div>
+
+<div class="recommend-bar" x-show="recommendList.length > 0">
+  <div class="header">
+    <span class="star-glyph">★</span>
+    <span>推薦清單</span>
+    <span class="count" x-text="`(${recommendList.length})`"></span>
+    <button class="expand-btn" x-show="recommendList.length > 10" @click="recommendExpanded = !recommendExpanded">
+      <span x-text="recommendExpanded ? '收合' : `展開 (+${recommendList.length - 10})`"></span>
+    </button>
+  </div>
+  <div class="recommend-cards">
+    <template x-for="id in (recommendExpanded ? recommendList : recommendList.slice(0, 10))" :key="id">
+      <div class="mini-card" @click="selectById(id)" x-show="animeById(id)">
+        <div class="cover" :style="`background-image:url('${animeById(id) ? coverFor(animeById(id)) : ''}')`"></div>
+        <div class="title" x-text="animeById(id)?.titles?.primary_zh || animeById(id)?.titles?.ja_romaji || id"></div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<div class="chips">
+  <template x-for="cat in topCategories" :key="cat">
+    <span class="chip"
+          :class="{active: activeCats.includes(cat)}"
+          @click="toggleCat(cat)" x-text="cat"></span>
+  </template>
+  <template x-for="tag in activeTags" :key="tag">
+    <span class="chip active chip-remove" @click="toggleTag(tag)" x-text="tag"></span>
+  </template>
+</div>
+
+<div class="summary-bar" x-show="loadError" style="color: var(--review)" x-text="loadError"></div>
+
+<div class="summary-bar"
+     x-show="isReadOnlyShared"
+     style="display: flex; gap: 12px; align-items: center; background: rgba(93,210,255,0.08);">
+  <span>👀 你目前在看分享的推薦清單。點 ★ 後會切到「本機模式」儲存你自己的選擇。我的最愛永遠是本機資料。</span>
+</div>
+<div class="summary-bar"
+     x-show="!isReadOnlyShared && storageMode === 'local' && recommendList.length > 0"
+     style="display: flex; gap: 12px; align-items: center; background: rgba(255,174,93,0.08);">
+  <span>💾 推薦清單為本機模式 — 編輯只存在這個瀏覽器裡。</span>
+  <button @click="resetToShared()" style="margin-left:auto; background:transparent; border:1px solid var(--border); color: var(--fg-dim); padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">重新讀取分享清單</button>
+</div>
+
+<main>
+  <div class="cards">
+    <template x-for="rec in filtered" :key="rec.id">
+      <div class="card" @click="select(rec)">
+        <div class="cover" :style="`background-image:url('${coverFor(rec)}')`">
+          <div class="icon star"
+               :class="isRecommended(rec.id) ? 'filled' : 'empty'"
+               @click.stop="toggleRecommend(rec.id)"
+               :title="isRecommended(rec.id) ? '從推薦移除' : '加入推薦'"
+               x-text="isRecommended(rec.id) ? '★' : '☆'"></div>
+          <div class="icon share"
+               @click.stop="shareAnime(rec)"
+               title="分享這部動畫"
+               x-text="'⇪'"></div>
+          <div class="icon heart"
+               :class="isFavorite(rec.id) ? 'filled' : 'empty'"
+               @click.stop="toggleFavorite(rec.id)"
+               :title="isFavorite(rec.id) ? '從我的最愛移除' : '加入我的最愛'"
+               x-text="isFavorite(rec.id) ? '♥' : '♡'"></div>
+        </div>
+        <div class="info">
+          <div class="title" x-text="rec.titles.primary_zh || rec.titles.ja_romaji || rec.id"></div>
+          <div class="meta">
+            <span x-text="rec.year || '?'"></span>
+            <span class="stars" x-text="renderStars(rec.rating?.score)"></span>
+          </div>
+        </div>
+      </div>
+    </template>
+    <div x-show="filtered.length === 0 && !loadError" style="grid-column: 1/-1; text-align:center; color: var(--fg-dim); padding: 40px;">
+      沒有符合的動畫
+    </div>
+  </div>
+
+  <aside class="detail">
+    <div x-show="!selected" class="empty">點選左側卡片查看詳情</div>
+    <template x-if="selected">
+      <div>
+        <img class="cover-large" :src="coverFor(selected)" :alt="selected.titles.primary_zh" onerror="this.style.display='none'" />
+        <h2 x-text="selected.titles.primary_zh || selected.titles.ja_romaji"></h2>
+        <div class="titles-other">
+          <div x-show="selected.titles.ja" x-text="selected.titles.ja"></div>
+          <div x-show="selected.titles.ja_romaji" x-text="selected.titles.ja_romaji"></div>
+          <div x-show="selected.titles.en" x-text="selected.titles.en"></div>
+        </div>
+        <div class="meta-row">
+          <span x-show="selected.year"><span x-text="selected.year"></span> 年</span>
+          <span x-show="selected.season" x-text="selected.season"></span>
+          <span x-show="selected.episodes"><span x-text="selected.episodes"></span> 集</span>
+          <span x-show="selected.format" x-text="selected.format"></span>
+          <span x-show="selected.studios?.length" x-text="selected.studios.join(' · ')"></span>
+        </div>
+        <div class="rating-block">
+          <div class="row" style="grid-column: 1/-1; font-size: 14px;">
+            <span>客觀星級</span>
+            <span class="stars" x-text="renderStars(selected.rating?.score)"></span>
+          </div>
+          <template x-for="[k, v] in Object.entries(selected.rating?.sources || {})" :key="k">
+            <div class="row">
+              <span x-text="k"></span>
+              <span x-text="`${v.score} / ${v.scale}`"></span>
+            </div>
+          </template>
+          <div class="row" x-show="selected.user?.self_rating_raw != null" style="grid-column: 1/-1; color: var(--accent-2);">
+            <span>使用者自評</span>
+            <span x-text="selected.user.self_rating_raw + ' 星'"></span>
+          </div>
+        </div>
+        <div class="synopsis" x-text="selected.synopsis_zh || '(Bangumi 暫無中文簡介，可在 data/manual_overrides.json 自行補上)'"></div>
+        <div>
+          <div style="font-size:12px;color:var(--fg-dim)">分類</div>
+          <div class="tag-row">
+            <template x-for="c in selected.categories || []" :key="c">
+              <span class="tag" @click="toggleCat(c)" x-text="c"></span>
+            </template>
+          </div>
+        </div>
+        <div style="margin-top:8px">
+          <div style="font-size:12px;color:var(--fg-dim)">標籤</div>
+          <div class="tag-row">
+            <template x-for="t in selected.tags || []" :key="t">
+              <span class="tag" @click="toggleTag(t)" x-text="t"></span>
+            </template>
+          </div>
+        </div>
+        <div class="links" style="margin-top:12px">
+          <template x-for="[k, url] in Object.entries(selected.external_links || {})" :key="k">
+            <a :href="url" target="_blank" rel="noopener" x-text="k"></a>
+          </template>
+        </div>
+      </div>
+    </template>
+  </aside>
+</main>
+
+<script>
+function viewer() {
+  return {
+    all: [],
+    byId: {},                // id -> record (for fast lookup from recommend list)
+    selected: null,
+    query: "",
+    sortBy: "title",
+    minStars: 0,             // debounced, drives filter
+    minStarsRaw: 0,          // immediate, drives label only
+    activeCats: [],
+    activeTags: [],
+    fuse: null,
+    matchedIds: null,
+    loadError: "",
+    topCategories: [],
+    // user state (persisted in localStorage)
+    recommendList: [],       // anime ids in click order (newest first)
+    favoritesList: [],
+    showFavoritesOnly: false,
+    recommendExpanded: false,
+
+    async init() {
+      await this.loadUserState();
+      try {
+        const resp = await fetch("data/anime.json");
+        if (!resp.ok) throw new Error(resp.status + " " + resp.statusText);
+        const db = await resp.json();
+        this.all = Object.values(db.anime || {});
+        this.byId = db.anime || {};
+        this.computeTopCategories();
+        this.rebuildSearch();
+        // Prune any stale ids
+        const before = this.recommendList.length + this.favoritesList.length;
+        this.recommendList = this.recommendList.filter(id => this.byId[id]);
+        this.favoritesList = this.favoritesList.filter(id => this.byId[id]);
+        const after = this.recommendList.length + this.favoritesList.length;
+        if (before !== after) { this.persistRecommend(); this.persistFavorites(); }
+
+        // 支援 ?id=anilist:127230 直接打開該動畫的詳情
+        const params = new URLSearchParams(location.search);
+        const targetId = params.get('id');
+        if (targetId && this.byId[targetId]) {
+          this.select(this.byId[targetId]);
+        }
+      } catch (e) {
+        this.loadError = "讀取 anime.json 失敗：" + e.message + "（請先跑 python run.py enrich）";
+      }
+    },
+
+    // Storage modes:
+    //   "host"  — 寫得進 server (本機跑 python run.py serve)，data/user_lists.json 是真理之源
+    //   "local" — POST 失敗 (例：GitHub Pages 純靜態)，編輯只存使用者自己的 localStorage
+    storageMode: "host",     // 開頭樂觀假設 host，第一次 POST 失敗會切 local
+    isReadOnlyShared: false, // 顯示用：「本機沒編輯過、檔案有東西」=> 在看別人分享的清單
+
+    // 推薦清單：可分享，優先 file → localStorage
+    // 我的最愛：純本機，永遠 localStorage（要分享請用「⇪ 分享」匯出 JSON）
+    async loadUserState() {
+      // 我的最愛：純本機
+      try {
+        this.favoritesList = JSON.parse(localStorage.getItem('animeViewer.favorites') || '[]');
+      } catch (e) { this.favoritesList = []; }
+
+      // 推薦清單：file 優先；若使用者本機已編輯過則 localStorage 優先
+      const hasLocalRecommendEdits = localStorage.getItem('animeViewer.recommendEdited') === '1';
+      let localRecommend = [];
+      try {
+        localRecommend = JSON.parse(localStorage.getItem('animeViewer.recommend') || '[]');
+      } catch (e) {}
+
+      let fileRecommend = null;
+      try {
+        const r = await fetch("data/user_lists.json", { cache: "no-store" });
+        if (r.ok) {
+          const d = await r.json();
+          if (d && typeof d === "object" && Array.isArray(d.recommend)) {
+            fileRecommend = d.recommend.slice();
+          }
+        }
+      } catch (e) {}
+
+      if (hasLocalRecommendEdits) {
+        this.recommendList = localRecommend;
+        this.isReadOnlyShared = false;
+      } else if (fileRecommend && fileRecommend.length) {
+        this.recommendList = fileRecommend;
+        this.isReadOnlyShared = true;
+      } else {
+        this.recommendList = localRecommend;
+        this.isReadOnlyShared = false;
+      }
+    },
+
+    persistRecommend() {
+      try {
+        localStorage.setItem('animeViewer.recommend', JSON.stringify(this.recommendList));
+        localStorage.setItem('animeViewer.recommendEdited', '1');
+      } catch (e) {}
+      this.isReadOnlyShared = false;
+
+      fetch("api/user_lists", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recommend: this.recommendList }),
+      }).then(r => {
+        if (r.ok) {
+          this.storageMode = "host";
+          // server 寫成功 → owner 模式，下次開不需要 localStorage 蓋過檔案
+          localStorage.removeItem('animeViewer.recommendEdited');
+        } else {
+          this.storageMode = "local";
+        }
+      }).catch(() => { this.storageMode = "local"; });
+    },
+
+    persistFavorites() {
+      try {
+        localStorage.setItem('animeViewer.favorites', JSON.stringify(this.favoritesList));
+      } catch (e) {}
+    },
+
+    resetToShared() {
+      if (!confirm('放棄本機推薦清單編輯，重新從分享檔案讀取？\n（我的最愛不受影響）')) return;
+      localStorage.removeItem('animeViewer.recommendEdited');
+      localStorage.removeItem('animeViewer.recommend');
+      location.reload();
+    },
+
+    // ====== 我的最愛 匯出 / 匯入 ======
+    exportFavorites() {
+      if (this.favoritesList.length === 0) return;
+      const data = {
+        version: 1,
+        favorites: this.favoritesList,
+        exported_at: new Date().toISOString(),
+        // 順便夾帶顯示用標題，朋友離線看也能讀懂
+        titles: this.favoritesList.map(id => {
+          const r = this.byId[id];
+          return { id, title: r ? (r.titles.primary_zh || r.titles.ja_romaji) : id };
+        }),
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `my_favorites_${dateStr}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      this.showToast(`已匯出 ${this.favoritesList.length} 部最愛`);
+    },
+
+    async importFavorites(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      event.target.value = '';  // reset so same file can be re-selected
+      try {
+        const d = JSON.parse(text);
+        if (!Array.isArray(d.favorites)) throw new Error('JSON 沒有 favorites 陣列');
+        const valid = d.favorites.filter(id => this.byId[id]);
+        const invalid = d.favorites.length - valid.length;
+        const choice = confirm(
+          `匯入 ${valid.length} 部最愛${invalid ? `（${invalid} 部找不到對應動畫被略過）` : ''}\n\n` +
+          `你目前有 ${this.favoritesList.length} 部。\n` +
+          `按「確定」= 合併（保留現有 + 加上新的）\n` +
+          `按「取消」= 取代（清空現有，只保留匯入的）`
+        );
+        if (choice) {
+          // 合併（去重）
+          const set = new Set(this.favoritesList);
+          for (const id of valid) set.add(id);
+          this.favoritesList = Array.from(set);
+        } else {
+          // 取代
+          this.favoritesList = valid;
+        }
+        this.persistFavorites();
+        this.showToast(`匯入完成 → 我的最愛 ${this.favoritesList.length} 部`);
+      } catch (e) {
+        alert('匯入失敗：' + e.message);
+      }
+    },
+
+    // ====== 分享單部動畫 ======
+    async shareAnime(rec) {
+      const url = new URL(location.href);
+      url.searchParams.set('id', rec.id);
+      url.hash = '';
+      const shareUrl = url.toString();
+
+      const title = rec.titles.primary_zh || rec.titles.ja_romaji || '動畫';
+      const score = rec.rating?.score != null ? `${rec.rating.score.toFixed(1)} ★` : '';
+      const summary = (rec.synopsis_zh || '').slice(0, 200);
+      const text = [
+        `《${title}》${rec.year ? '(' + rec.year + ')' : ''}`,
+        score && `評分：${score}`,
+        summary && `\n${summary}${rec.synopsis_zh && rec.synopsis_zh.length > 200 ? '...' : ''}`,
+      ].filter(Boolean).join('\n');
+
+      // 1) Web Share API (mobile-friendly, 桌機 Chrome/Edge 也支援)
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text, url: shareUrl });
+          return;
+        } catch (e) { /* user cancelled or unsupported, fallthrough */ }
+      }
+      // 2) Fallback: 複製到剪貼簿
+      const fullText = `${text}\n\n${shareUrl}`;
+      try {
+        await navigator.clipboard.writeText(fullText);
+        this.showToast('已複製分享內容到剪貼簿');
+      } catch (e) {
+        // 3) 最終 fallback: 跳出 prompt 讓使用者自己 copy
+        prompt('複製以下內容分享：', fullText);
+      }
+    },
+
+    showToast(msg, ms = 1800) {
+      const el = document.getElementById('globalToast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(this._toastTimer);
+      this._toastTimer = setTimeout(() => el.classList.remove('show'), ms);
+    },
+    isRecommended(id) { return this.recommendList.includes(id); },
+    isFavorite(id) { return this.favoritesList.includes(id); },
+    toggleRecommend(id) {
+      const i = this.recommendList.indexOf(id);
+      if (i >= 0) this.recommendList.splice(i, 1);
+      else this.recommendList.unshift(id);
+      this.persistRecommend();
+    },
+    toggleFavorite(id) {
+      const i = this.favoritesList.indexOf(id);
+      if (i >= 0) this.favoritesList.splice(i, 1);
+      else this.favoritesList.push(id);
+      this.persistFavorites();
+    },
+    animeById(id) { return this.byId[id]; },
+    selectById(id) {
+      const rec = this.byId[id];
+      if (rec) this.select(rec);
+    },
+    computeTopCategories() {
+      const counts = {};
+      for (const r of this.all) for (const c of (r.categories || [])) counts[c] = (counts[c] || 0) + 1;
+      this.topCategories = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 14).map(x => x[0]);
+    },
+    rebuildSearch() {
+      this.fuse = new Fuse(this.all, {
+        keys: [
+          { name: "titles.primary_zh", weight: 3 },
+          { name: "titles.ja_romaji", weight: 2 },
+          { name: "titles.ja", weight: 2 },
+          { name: "titles.en", weight: 2 },
+          { name: "synopsis_zh", weight: 1 },
+          { name: "synopsis_en", weight: 0.5 },
+          { name: "tags", weight: 2 },
+          { name: "categories", weight: 2 },
+          { name: "studios", weight: 1.5 },
+          { name: "source_doc_raw", weight: 0.5 },
+        ],
+        threshold: 0.4,
+        ignoreLocation: true,
+      });
+      if (this.query.trim()) {
+        this.matchedIds = new Set(this.fuse.search(this.query).map(r => r.item.id));
+      } else {
+        this.matchedIds = null;
+      }
+    },
+    toggleCat(c) {
+      const i = this.activeCats.indexOf(c);
+      if (i >= 0) this.activeCats.splice(i, 1); else this.activeCats.push(c);
+    },
+    toggleTag(t) {
+      const i = this.activeTags.indexOf(t);
+      if (i >= 0) this.activeTags.splice(i, 1); else this.activeTags.push(t);
+    },
+    resetFilters() {
+      this.query = ""; this.activeCats = []; this.activeTags = [];
+      this.minStars = 0; this.minStarsRaw = 0;
+      this.matchedIds = null;
+      this.showFavoritesOnly = false;
+    },
+    select(rec) { this.selected = rec; },
+    coverFor(rec) {
+      const c = rec.cover || {};
+      return c.local || c.url || "";
+    },
+    renderStars(score) {
+      if (score == null) return "—";
+      const s = Math.round(score * 2) / 2;
+      return s.toFixed(1) + "★";
+    },
+    get filtered() {
+      let pool = this.all;
+      if (this.matchedIds) pool = pool.filter(r => this.matchedIds.has(r.id));
+      if (this.activeCats.length) pool = pool.filter(r => this.activeCats.every(c => (r.categories || []).includes(c)));
+      if (this.activeTags.length) pool = pool.filter(r => this.activeTags.every(t => (r.tags || []).includes(t)));
+      const ms = parseFloat(this.minStars) || 0;
+      if (ms > 0) pool = pool.filter(r => (r.rating?.score ?? 0) >= ms);
+      if (this.showFavoritesOnly) {
+        const favSet = new Set(this.favoritesList);
+        pool = pool.filter(r => favSet.has(r.id));
+      }
+
+      const sortFn = {
+        title:        (a, b) => (a.titles.primary_zh || "").localeCompare(b.titles.primary_zh || "", "zh-Hant"),
+        year_desc:    (a, b) => (b.year || 0) - (a.year || 0),
+        year_asc:     (a, b) => (a.year || 0) - (b.year || 0),
+        score_desc:   (a, b) => (b.rating?.score ?? 0) - (a.rating?.score ?? 0),
+        self_rating_desc: (a, b) => (b.user?.self_rating_raw ?? 0) - (a.user?.self_rating_raw ?? 0),
+      }[this.sortBy];
+      return [...pool].sort(sortFn);
+    },
+  };
+}
+</script>
+</body>
+</html>
