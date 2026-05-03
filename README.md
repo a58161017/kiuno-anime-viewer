@@ -206,6 +206,20 @@ python run.py graph
 5. 把 config 物件貼到 `firebase-config.js`（取代 `REPLACE_ME` 那些值）
 6. Firestore → **Rules** 頁面 → 把整份 `firestore.rules` 內容貼進去 → **Publish**
 
+> **避免本地真值被 commit**：repo 內 `firebase-config.js` 是 placeholder（GitHub Actions 部署時會用 secrets 覆寫），但本地測試需要填真值。為了不讓真值意外進 commit，**第一次 clone 後跑一次**：
+>
+> ```powershell
+> git update-index --skip-worktree firebase-config.js
+> ```
+>
+> 之後本地修改不會出現在 `git status`，也不會被 `git add .` 抓到。要恢復追蹤（例如想改檔案結構）：
+>
+> ```powershell
+> git update-index --no-skip-worktree firebase-config.js
+> ```
+>
+> 注意：`skip-worktree` 是 per-clone 的，換機器或重新 clone 都要再下一次。
+
 ### 端對端驗收
 
 ```bash

@@ -14,24 +14,21 @@ service cloud.firestore {
     match /recommends/{doc} {
       allow read: if true;
 
+      // v1.0.6 起 schema 改：picks 陣列取代 anime_id+anime_title (一筆留言多部動畫)
+      // 舊資料保留可讀；新留言一律走新格式
       allow create: if
         request.resource.data.keys().hasOnly(
-          ['nickname','anime_id','anime_title','description','createdAt','audit']
+          ['nickname','picks','description','createdAt','audit']
         )
         && request.resource.data.nickname is string
         && request.resource.data.nickname.size() >= 1
         && request.resource.data.nickname.size() <= 20
+        && request.resource.data.picks is list
+        && request.resource.data.picks.size() >= 1
+        && request.resource.data.picks.size() <= 10
         && request.resource.data.description is string
         && request.resource.data.description.size() >= 5
         && request.resource.data.description.size() <= 500
-        && request.resource.data.anime_title is string
-        && request.resource.data.anime_title.size() >= 1
-        && request.resource.data.anime_title.size() <= 100
-        && (
-          request.resource.data.anime_id == null ||
-          (request.resource.data.anime_id is string &&
-           request.resource.data.anime_id.size() <= 80)
-        )
         && request.resource.data.createdAt == request.time
         && request.resource.data.audit is map
         && request.resource.data.audit.user_agent is string

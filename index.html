@@ -707,14 +707,21 @@ Alpine.data("viewer", () => ({
       if (!this.firebaseReady || !this._fbDb || !animeId) return;
       this.commentLoading = true;
       const fs = this._fb;
+      // 只用 single-field where (anime_id) + limit；orderBy 改前端做，
+      // 避免 Firestore 需要手動建 composite index。
       const q = fs.query(
         fs.collection(this._fbDb, "anime_comments"),
         fs.where("anime_id", "==", animeId),
-        fs.orderBy("createdAt", "desc"),
-        fs.limit(50)
+        fs.limit(100)
       );
       this._commentUnsub = fs.onSnapshot(q, (snap) => {
-        this.animeComments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        docs.sort((a, b) => {
+          const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+          const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+          return tb - ta;
+        });
+        this.animeComments = docs.slice(0, 50);
         this.commentLoading = false;
       }, (err) => {
         console.error("anime_comments listener error", err);

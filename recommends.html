@@ -112,11 +112,17 @@
       <div class="comment-head">
         <strong class="comment-name" x-text="c.nickname"></strong>
         <span class="comment-arrow">推薦</span>
-        <a class="comment-anime"
-           :href="c.anime_id ? `index.html?id=${encodeURIComponent(c.anime_id)}` : null"
-           :class="{'no-link': !c.anime_id}"
-           x-text="c.anime_title"></a>
-        <span class="comment-tag" x-show="!c.anime_id" title="未收錄資料庫的條目">未收錄</span>
+        <span class="comment-picks">
+          <template x-for="(p, idx) in getPicks(c)" :key="idx + ':' + (p.id || p.title)">
+            <span class="comment-pick">
+              <a class="comment-anime"
+                 :href="p.id ? `index.html?id=${encodeURIComponent(p.id)}` : null"
+                 :class="{'no-link': !p.id}"
+                 x-text="p.title"></a>
+              <span class="comment-tag" x-show="!p.id" title="未收錄資料庫的條目">未收錄</span>
+            </span>
+          </template>
+        </span>
         <time class="comment-time" :datetime="c.createdAt?.toDate?.().toISOString()"
               x-text="formatTime(c.createdAt)"></time>
       </div>
@@ -138,8 +144,8 @@
 import { firebaseConfig, isConfigured } from "./firebase-config.js?v=1";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import {
-  getFirestore, collection, query, orderBy, limit, startAfter,
-  onSnapshot, getDocs, serverTimestamp, writeBatch, doc,
+  getFirestore, collection, addDoc, query, orderBy, limit, startAfter,
+  onSnapshot, getDocs, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
 import { collectAudit, showToast, formatTime } from "./js/utils.js?v=1";
@@ -347,27 +353,21 @@ Alpine.data("recommends", () => ({
         const audit = await collectAudit();
         const nick = this.form.nickname.trim();
         const desc = this.form.description.trim();
-        const batch = writeBatch(db);
-        const colRef = collection(db, "recommends");
-        for (const p of this.form.picks) {
-          const docRef = doc(colRef);
-          batch.set(docRef, {
-            nickname: nick,
-            anime_id: p.id || null,
-            anime_title: p.title,
-            description: desc,
-            createdAt: serverTimestamp(),
-            audit,
-          });
-        }
-        await batch.commit();
+        const picks = this.form.picks.map(p => ({ id: p.id || null, title: p.title }));
+        await addDoc(collection(db, "recommends"), {
+          nickname: nick,
+          picks,
+          description: desc,
+          createdAt: serverTimestamp(),
+          audit,
+        });
         localStorage.setItem("recommendsLastSubmit", String(now));
         try { localStorage.setItem("recommendsNickname", nick); } catch (e) {}
-        const count = this.form.picks.length;
+        const count = picks.length;
         this.form.picks = [];
         this.form.buffer = "";
         this.form.description = "";
-        showToast(`已送出 ${count} 部推薦，謝謝！`);
+        showToast(`已送出（${count} 部推薦），謝謝！`);
       } catch (e) {
         console.error(e);
         this.error = "送出失敗：" + (e.message || e);
@@ -402,6 +402,13 @@ Alpine.data("recommends", () => ({
     },
 
     formatTime,  // 借用 utils.js 的 export 給 template 使用
+
+    // 一筆留言的動畫清單；新格式 picks 陣列，舊資料 fallback 為單筆
+    getPicks(c) {
+      if (Array.isArray(c.picks) && c.picks.length > 0) return c.picks;
+      if (c.anime_title) return [{ id: c.anime_id || null, title: c.anime_title }];
+      return [];
+    },
   }));
 
 // 都註冊好才啟動 Alpine

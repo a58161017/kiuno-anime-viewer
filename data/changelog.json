@@ -1,6 +1,24 @@
 {
   "versions": [
     {
+      "version": "1.0.6",
+      "date": "2026-05-03",
+      "summary": "修復 drawer 留言不更新；recommends 改為一筆留言可推薦多部",
+      "changes": {
+        "added": [],
+        "fixed": [
+          "drawer 留言提交後列表不更新：onSnapshot query 拿掉 orderBy 改前端 sort，避免 Firestore 缺 composite index 導致 listener 不 fire"
+        ],
+        "removed": [],
+        "ui": [
+          "recommends.html schema 改：一筆留言用 picks 陣列收 1-10 部動畫，列表用「、」分隔顯示。送出由 writeBatch N 筆改為 addDoc 1 筆"
+        ],
+        "infra": [
+          "舊 recommends doc (anime_id + anime_title) 前端 fallback 渲染，舊資料保留可讀；rules 改成只接受新格式 (需重新貼到 Firebase Console publish)"
+        ]
+      }
+    },
+    {
       "version": "1.0.5",
       "date": "2026-05-03",
       "summary": "個別動漫留言板 + recommends.html 一次推薦多部 (chip-input)",
