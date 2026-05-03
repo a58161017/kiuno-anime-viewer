@@ -143,7 +143,7 @@
 
 <!-- 卡片 grid -->
 <main class="cards" :class="{'with-detail': !!selected}">
-  <template x-for="rec in filtered" :key="rec.id">
+  <template x-for="rec in displayed" :key="rec.id">
     <div class="card" @click="select(rec)">
       <div class="cover" :style="`background-image:url('${coverFor(rec)}')`">
         <template x-if="isOwnerMode">
@@ -174,6 +174,9 @@
   </template>
   <div class="empty" x-show="filtered.length === 0 && !loadError">沒有符合的動畫</div>
 </main>
+<div class="load-sentinel" x-ref="loadSentinel" x-show="hasMore" x-cloak>
+  <span class="load-sentinel__hint" x-text="`載入更多… (${displayed.length} / ${filtered.length})`"></span>
+</div>
 
 <!-- 詳情 drawer (mobile = bottom; desktop = right side panel) -->
 <div class="drawer-backdrop" :class="{open: !!selected}" @click="close()"></div>
@@ -283,6 +286,9 @@ function viewer() {
     isReadOnlyShared: false,
     viewportWidth: window.innerWidth,
     appVersion: "",
+    pageSize: 40,
+    displayLimit: 40,
+    _scrollObserver: null,
 
     async init() {
       const h = location.hostname;
@@ -329,6 +335,18 @@ function viewer() {
 
         const targetId = params0.get('id');
         if (targetId && this.byId[targetId]) this.select(this.byId[targetId]);
+
+        // 過濾/排序變動 → 回到第一頁
+        const resetPaging = () => { this.displayLimit = this.pageSize; };
+        this.$watch('query', resetPaging);
+        this.$watch('sortBy', resetPaging);
+        this.$watch('minStars', resetPaging);
+        this.$watch('showFavoritesOnly', resetPaging);
+        this.$watch('activeCats', resetPaging);
+        this.$watch('activeTags', resetPaging);
+
+        // 接近底部 → 載下一批
+        this.$nextTick(() => this._setupInfiniteScroll());
 
         // ESC closes drawer
         window.addEventListener('keydown', (e) => {
@@ -595,6 +613,27 @@ function viewer() {
     renderStars(score) {
       if (score == null) return "—";
       return (Math.round(score * 2) / 2).toFixed(1) + "★";
+    },
+    get displayed() {
+      return this.filtered.slice(0, this.displayLimit);
+    },
+    get hasMore() {
+      return this.displayLimit < this.filtered.length;
+    },
+    loadMore() {
+      if (!this.hasMore) return;
+      this.displayLimit = Math.min(this.displayLimit + this.pageSize, this.filtered.length);
+    },
+    _setupInfiniteScroll() {
+      if (this._scrollObserver) return;
+      const sentinel = this.$refs.loadSentinel;
+      if (!sentinel) return;
+      this._scrollObserver = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) this.loadMore();
+        }
+      }, { rootMargin: "800px 0px" });
+      this._scrollObserver.observe(sentinel);
     },
     get filtered() {
       let pool = this.all;

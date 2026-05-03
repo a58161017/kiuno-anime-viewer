@@ -427,6 +427,18 @@ select.pill-btn {
   color: var(--fg-muted);
 }
 
+/* ========== Infinite scroll sentinel ========== */
+.load-sentinel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px 80px;
+  min-height: 60px;
+  color: var(--fg-muted);
+  font-size: 12px;
+}
+.load-sentinel__hint { opacity: 0.6; }
+
 /* ========== Bottom drawer (detail; mobile default) ========== */
 .drawer-backdrop {
   position: fixed;
