@@ -7,10 +7,14 @@
 <title>推薦留言 · kiuno-anime-viewer</title>
 <link rel="stylesheet" href="styles.css?v=3" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💬%3C/text%3E%3C/svg%3E">
+<script>
+  // 延後 Alpine 啟動：等下面的 ES module 把 window.recommends 設好再叫 Alpine 跑
+  window.deferLoadingAlpine = function (cb) { window.__alpineStart = cb; };
+</script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 </head>
-<body x-data="recommends" x-cloak x-init="init()">
+<body x-data="recommends()" x-cloak x-init="init()">
 
 <header class="header">
   <div class="header__row1">
@@ -139,8 +143,8 @@ if (isConfigured) {
   db = getFirestore(app);
 }
 
-document.addEventListener("alpine:init", () => {
-  Alpine.data("recommends", () => ({
+window.recommends = function () {
+  return {
     ready: false,
     isConfigured,
     loading: true,
@@ -361,8 +365,18 @@ document.addEventListener("alpine:init", () => {
       clearTimeout(this._toastTimer);
       this._toastTimer = setTimeout(() => el.classList.remove("show"), ms);
     },
-  }));
-});
+  };
+};
+
+// module 跑完才叫 Alpine 啟動，確保 window.recommends 已存在
+if (window.__alpineStart) {
+  window.__alpineStart();
+} else {
+  // Alpine 還沒載入到的 fallback
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.__alpineStart) window.__alpineStart();
+  });
+}
 </script>
 </body>
 </html>
