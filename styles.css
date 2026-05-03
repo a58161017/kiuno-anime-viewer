@@ -327,28 +327,33 @@ select.pill-btn {
 }
 .stars { color: var(--star); font-weight: 600; }
 
-/* card icons */
+/* card icons — 用 fixed inline-block + 不依賴 flex 排版，避免某些瀏覽器
+   把 emoji/CJK glyph 計算出超大 line-box 導致 icon 變橢圓形 */
 .card .icon {
   position: absolute;
   top: 6px;
-  width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(15, 17, 21, 0.65);
-  border: 1px solid rgba(255,255,255,0.15);
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  text-align: center;
+  background: rgba(15, 17, 21, 0.85);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: 50%;
   font-size: 14px;
-  line-height: 1;
+  line-height: 24px;        /* 比高度小 2px = 上下 border 寬度 */
   cursor: pointer;
   user-select: none;
-  backdrop-filter: blur(4px);
   z-index: 2;
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  /* 沒 backdrop-filter；某些行動瀏覽器在小元素上渲染會破圖 */
 }
-.card .icon.star { left: 6px; color: var(--star); font-size: 16px; }
-.card .icon.heart { right: 6px; color: var(--heart); font-size: 16px; }
-.card .icon.share { right: 44px; color: var(--share); font-size: 13px; }
-.card .icon.empty { color: rgba(255,255,255,0.5); }
-.card .icon.filled { background: rgba(15, 17, 21, 0.85); }
+.card .icon.star { left: 6px; color: var(--star); }
+.card .icon.heart { right: 6px; color: var(--heart); }
+.card .icon.share { right: 38px; color: var(--share); font-size: 12px; }
+.card .icon.empty { color: rgba(255,255,255,0.55); }
+.card .icon.filled { background: rgba(15, 17, 21, 0.92); }
 .card .icon.readonly { cursor: default; pointer-events: none; }
 
 /* ========== Empty state ========== */
@@ -584,7 +589,11 @@ select.pill-btn {
   .drawer__handle { display: none; }
 
   .detail__cover { max-height: 320px; }
-  .card .icon { width: 28px; height: 28px; }
+  .card .icon {
+    width: 28px; height: 28px;
+    min-width: 28px; min-height: 28px;
+    line-height: 26px;
+  }
 }
 
 /* ========== Wide desktop (≥1200px) ========== */
