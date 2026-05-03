@@ -105,13 +105,18 @@
     <template x-for="rec in filtered" :key="rec.id">
       <div class="card" @click="select(rec)">
         <div class="cover" :style="`background-image:url('${coverFor(rec)}')`">
-          <div class="icon star"
-               x-show="isOwnerMode || isRecommended(rec.id)"
+          <!-- Owner: 可點擊切換 -->
+          <div x-show="isOwnerMode"
+               class="icon star"
                :class="isRecommended(rec.id) ? 'filled' : 'empty'"
-               :style="!isOwnerMode ? 'pointer-events:none; cursor:default; opacity:0.85;' : ''"
-               @click.stop="isOwnerMode && toggleRecommend(rec.id)"
-               :title="!isOwnerMode ? '推薦' : (isRecommended(rec.id) ? '從推薦移除' : '加入推薦')"
+               @click.stop="toggleRecommend(rec.id)"
+               :title="isRecommended(rec.id) ? '從推薦移除' : '加入推薦'"
                x-text="isRecommended(rec.id) ? '★' : '☆'"></div>
+          <!-- 訪客: 已推薦才顯示，純展示，不可點 -->
+          <div x-show="!isOwnerMode && isRecommended(rec.id)"
+               class="icon star filled readonly"
+               title="作者推薦"
+               x-text="'★'"></div>
           <div class="icon share"
                @click.stop="shareAnime(rec)"
                title="分享這部動畫"
@@ -452,6 +457,7 @@ function viewer() {
     isRecommended(id) { return this.recommendList.includes(id); },
     isFavorite(id) { return this.favoritesList.includes(id); },
     toggleRecommend(id) {
+      if (!this.isOwnerMode) return;  // 訪客模式禁止編輯
       const i = this.recommendList.indexOf(id);
       if (i >= 0) this.recommendList.splice(i, 1);
       else this.recommendList.unshift(id);

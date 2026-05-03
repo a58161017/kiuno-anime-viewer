@@ -80,6 +80,8 @@ main { display: grid; grid-template-columns: 1fr 380px; min-height: calc(100vh -
 .card .icon.share { right: 40px; color: var(--accent); font-size: 13px; }
 .card .icon.empty { color: rgba(255,255,255,0.55); }
 .card .icon.filled { background: rgba(15, 17, 21, 0.85); }
+.card .icon.readonly { cursor: default; pointer-events: none; }
+.card .icon.readonly:hover { transform: none; }
 
 /* generic toast (top center) */
 .toast {
