@@ -164,6 +164,12 @@ Alpine.data("recommends", () => ({
     autocompleteResults: [],
 
     async init() {
+      // 帶入上次留言的暱稱（純本機 localStorage）
+      try {
+        const savedNick = localStorage.getItem("recommendsNickname");
+        if (savedNick) this.form.nickname = savedNick;
+      } catch (e) {}
+
       // 載入 anime.json 給 autocomplete
       try {
         const r = await fetch("data/anime.json", { cache: "no-cache" });
@@ -279,7 +285,9 @@ Alpine.data("recommends", () => ({
           audit,
         });
         localStorage.setItem("recommendsLastSubmit", String(now));
-        this.form.nickname = "";
+        // 記住暱稱方便下次帶入；不清空 form.nickname
+        const savedNick = this.form.nickname.trim();
+        try { localStorage.setItem("recommendsNickname", savedNick); } catch (e) {}
         this.form.anime_id = null;
         this.form.anime_title = "";
         this.form.description = "";
