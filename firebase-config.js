@@ -9,12 +9,12 @@
 // 5. 把 firestore.rules 貼到 Firestore → Rules → Publish
 
 export const firebaseConfig = {
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME",
+  apiKey: "AIzaSyBeHoWrKArMVgKqnuymczLfRrczZ1VY76E",
+  authDomain: "kiuno-anime-viewer.firebaseapp.com",
+  projectId: "kiuno-anime-viewer",
+  storageBucket: "kiuno-anime-viewer.firebasestorage.app",
+  messagingSenderId: "111626651255",
+  appId: "1:111626651255:web:02e88d68e9b54a88ba2872",
 };
 
 // 簡單 sanity check：未填 config 時 viewer 會顯示提示而不是直接 crash
