@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0f1115" />
 <title>kiuno-anime-viewer</title>
-<link rel="stylesheet" href="styles.css?v=2" />
+<link rel="stylesheet" href="styles.css?v=3" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📺%3C/text%3E%3C/svg%3E">
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
@@ -80,12 +80,12 @@
     <span class="count" x-text="`${recommendList.length}`"></span>
     <div class="actions">
       <button x-show="recommendList.length > 1" @click="reshuffleRecommend()">🔀</button>
-      <button x-show="recommendList.length > 5" @click="recommendExpanded = !recommendExpanded"
-              x-text="recommendExpanded ? '收合' : `+${recommendList.length - 5}`"></button>
+      <button x-show="recommendList.length > recommendDefaultLimit" @click="recommendExpanded = !recommendExpanded"
+              x-text="recommendExpanded ? '收合' : `+${recommendList.length - recommendDefaultLimit}`"></button>
     </div>
   </div>
   <div class="recommend-cards">
-    <template x-for="id in (recommendExpanded ? shuffledRecommend : shuffledRecommend.slice(0, 5))" :key="id">
+    <template x-for="id in (recommendExpanded ? shuffledRecommend : shuffledRecommend.slice(0, recommendDefaultLimit))" :key="id">
       <div class="mini-card" @click="selectById(id)" x-show="animeById(id)">
         <div class="cover" :style="`background-image:url('${animeById(id) ? coverFor(animeById(id)) : ''}')`"></div>
         <div class="title" x-text="animeById(id)?.titles?.primary_zh || animeById(id)?.titles?.ja_romaji || id"></div>
@@ -254,6 +254,7 @@ function viewer() {
     isOwnerMode: false,
     storageMode: "host",
     isReadOnlyShared: false,
+    viewportWidth: window.innerWidth,
 
     async init() {
       const h = location.hostname;
@@ -284,6 +285,8 @@ function viewer() {
         window.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && this.selected) this.close();
         });
+        // viewport reactive (recommend bar mobile/desktop count switch)
+        window.addEventListener('resize', () => { this.viewportWidth = window.innerWidth; });
       } catch (e) {
         this.loadError = "讀取 anime.json 失敗：" + e.message + "（請先跑 python run.py enrich）";
       }
@@ -452,6 +455,9 @@ function viewer() {
       this._toastTimer = setTimeout(() => el.classList.remove('show'), ms);
     },
 
+    get recommendDefaultLimit() {
+      return this.viewportWidth >= 600 ? 10 : 5;
+    },
     isRecommended(id) { return this.recommendList.includes(id); },
     isFavorite(id) { return this.favoritesList.includes(id); },
     toggleRecommend(id) {
