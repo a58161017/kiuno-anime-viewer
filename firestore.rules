@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// kiuno-anime-viewer · 訪客推薦留言 Security Rules
+// 使用者：把整個檔案內容貼到 Firebase Console → Firestore → Rules → Publish
+//
+// 設計：
+// - read: 完全公開（所有訪客可讀）
+// - create: 只允許 schema 完全符合的 doc（hasOnly 阻擋多餘欄位 → 也擋 honeypot bot）
+// - update / delete: 完全禁止 (owner 從 Console 手動刪)
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /recommends/{doc} {
+      allow read: if true;
+
+      allow create: if
+        request.resource.data.keys().hasOnly(
+          ['nickname','anime_id','anime_title','description','createdAt','audit']
+        )
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() >= 1
+        && request.resource.data.nickname.size() <= 20
+        && request.resource.data.description is string
+        && request.resource.data.description.size() >= 5
+        && request.resource.data.description.size() <= 500
+        && request.resource.data.anime_title is string
+        && request.resource.data.anime_title.size() >= 1
+        && request.resource.data.anime_title.size() <= 100
+        && (
+          request.resource.data.anime_id == null ||
+          (request.resource.data.anime_id is string &&
+           request.resource.data.anime_id.size() <= 80)
+        )
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.audit is map
+        && request.resource.data.audit.user_agent is string
+        && request.resource.data.audit.user_agent.size() <= 500;
+
+      allow update, delete: if false;
+    }
+  }
+}

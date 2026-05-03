@@ -165,6 +165,54 @@ python run.py graph
 
 ---
 
+## 訪客推薦留言（Firebase Firestore）
+
+`recommends.html` 提供「**任何人都能留言推薦動漫**」的功能。後端用 Firebase Firestore（免費額度足夠：50K 讀/天、20K 寫/天）。
+
+### 留言內容
+- **公開顯示**：暱稱 / 推薦動畫 / 說明 / 時間
+- **後台隱藏**（給 owner 防濫用追查用）：IP、瀏覽器 user-agent、平台、語言、螢幕/視窗大小、時區、來源頁面
+
+### 反濫用機制
+- **Honeypot 欄位**：表單藏一個正常人看不到的 `website` input，bot 會填它，後端 rules 用 `keys().hasOnly([...])` 直接擋掉多餘欄位
+- **Client rate limit**：localStorage 記錄上次提交時間，60 秒內不能再交
+- **欄位長度**：暱稱 ≤ 20、動畫名 ≤ 100、說明 5–500、UA ≤ 500（rules + UI 雙保險）
+- **不可改不可刪**：rules 禁止 update/delete，owner 從 Firebase Console 手動管理
+
+### Firebase 設定步驟（一次性）
+
+1. 開 https://console.firebase.google.com
+2. 建專案（建議名稱 `kiuno-anime-viewer`）
+3. Build → **Firestore Database** → Create database → 選 Start in **test mode**（之後會用我們的 rules 取代）
+4. 專案設定 → 一般 → 你的應用程式 → **加 Web App** → 取得 `firebaseConfig` 物件
+5. 把 config 物件貼到 `firebase-config.js`（取代 `REPLACE_ME` 那些值）
+6. Firestore → **Rules** 頁面 → 把整份 `firestore.rules` 內容貼進去 → **Publish**
+
+### 端對端驗收
+
+```bash
+# 1. 完成 Firebase 設定 + 貼好 config
+git add firebase-config.js
+git commit -m "Configure Firebase for visitor recommends"
+git push
+# 等 Pages build 1-3 分鐘
+```
+
+打開 https://你.github.io/kiuno-anime-viewer/recommends.html 測試：
+- 自己留言 → 應立刻顯示
+- 換 device / 無痕 → 應看到同一筆
+- 試 dev tools 改 hidden honeypot 後送出 → 應 silent reject
+- 連續送兩次 → 第二次應提示「請稍候 60 秒」
+- 試送 4 字說明 → rule 擋
+- 點留言裡動畫名 → 跳到 `index.html?id=...`
+- Firebase Console → Firestore → recommends → 任一筆 doc 看 `audit` 物件，應有 IP/UA/platform 等欄位
+
+### 想刪除違規留言
+
+到 Firebase Console → Firestore → `recommends` → 點該筆 doc → Delete document。
+
+---
+
 ## 部署到 GitHub Pages
 
 1. `.gitignore` 已配好（排除 cache、entries.matched 等可重生的中間檔）

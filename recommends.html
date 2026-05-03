@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1115" />
+<title>推薦留言 · kiuno-anime-viewer</title>
+<link rel="stylesheet" href="styles.css?v=3" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💬%3C/text%3E%3C/svg%3E">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+</head>
+<body x-data="recommends" x-cloak x-init="init()">
+
+<header class="header">
+  <div class="header__row1">
+    <div class="header__title">💬 推薦留言<small>kiuno</small></div>
+    <div class="header__nav">
+      <a href="index.html">卡片</a>
+      <a href="graph.html">知識圖</a>
+      <a href="recommends.html" class="active">留言</a>
+    </div>
+    <span class="count" style="margin-left:auto;" x-text="`${comments.length} 則`"></span>
+  </div>
+</header>
+
+<!-- 提交表單 -->
+<section class="recommend-form" x-show="ready" x-cloak>
+  <h2>留下你的推薦</h2>
+
+  <div x-show="!isConfigured" class="banner local-mode">
+    <span>⚠ 留言系統尚未設定（Firebase config 未填）。請依 README 完成設定。</span>
+  </div>
+
+  <form @submit.prevent="submit()">
+    <label class="form-row">
+      <span class="form-label">暱稱</span>
+      <input type="text" x-model="form.nickname" maxlength="20" required
+             placeholder="你的名字" autocomplete="off" />
+      <span class="form-hint" x-text="`${form.nickname.length}/20`"></span>
+    </label>
+
+    <label class="form-row">
+      <span class="form-label">推薦動畫</span>
+      <input type="text" x-model="form.anime_title" maxlength="100" required
+             placeholder="從清單裡選或自由輸入"
+             autocomplete="off"
+             @input="onAnimeInput()"
+             @focus="onAnimeInput()" />
+      <span class="form-hint">
+        <span x-show="form.anime_id" style="color: var(--accent)">✓ 已選擇收錄項目</span>
+        <span x-show="!form.anime_id && form.anime_title.length > 0" style="color: var(--fg-faint)">未收錄項目</span>
+      </span>
+      <ul class="autocomplete-list" x-show="autocompleteOpen && autocompleteResults.length > 0">
+        <template x-for="r in autocompleteResults" :key="r.id">
+          <li @mousedown.prevent="pickAnime(r)">
+            <span class="ac-title" x-text="r.title"></span>
+            <span class="ac-meta" x-text="`(${r.year || '?'})`"></span>
+          </li>
+        </template>
+      </ul>
+    </label>
+
+    <label class="form-row">
+      <span class="form-label">說明</span>
+      <textarea x-model="form.description" maxlength="500" rows="4" required
+                placeholder="為什麼推薦？最少 5 字、最多 500 字"></textarea>
+      <span class="form-hint" x-text="`${form.description.length}/500`"></span>
+    </label>
+
+    <!-- honeypot：真人看不到，機器人會填 -->
+    <input type="text" x-model="form.website" name="website" tabindex="-1"
+           autocomplete="off" aria-hidden="true"
+           style="position:absolute;left:-9999px;width:0;height:0;opacity:0" />
+
+    <div class="form-actions">
+      <span class="form-error" x-show="error" x-text="error" x-cloak></span>
+      <button type="submit" class="pill-btn submit-btn"
+              :disabled="submitting || !canSubmit"
+              x-text="submitting ? '送出中…' : '送出推薦'"></button>
+    </div>
+
+    <p class="privacy-note">
+      📋 提交即同意儲存 IP / 瀏覽器資訊作為防濫用紀錄。所有人都看得到你的留言。
+    </p>
+  </form>
+</section>
+
+<!-- 留言列表 -->
+<section class="comments-list" x-show="ready" x-cloak>
+  <div class="comments-header">
+    <h2>所有推薦</h2>
+    <span class="count" x-text="hasMore ? `${comments.length}+ 則` : `${comments.length} 則`"></span>
+  </div>
+
+  <div class="empty" x-show="!loading && comments.length === 0">
+    <p>還沒有人留言，當第一個吧！</p>
+  </div>
+  <div class="empty" x-show="loading"><p>載入中…</p></div>
+
+  <template x-for="c in comments" :key="c.id">
+    <article class="comment-card">
+      <div class="comment-head">
+        <strong class="comment-name" x-text="c.nickname"></strong>
+        <span class="comment-arrow">推薦</span>
+        <a class="comment-anime"
+           :href="c.anime_id ? `index.html?id=${encodeURIComponent(c.anime_id)}` : null"
+           :class="{'no-link': !c.anime_id}"
+           x-text="c.anime_title"></a>
+        <span class="comment-tag" x-show="!c.anime_id" title="未收錄資料庫的條目">未收錄</span>
+        <time class="comment-time" :datetime="c.createdAt?.toDate?.().toISOString()"
+              x-text="formatTime(c.createdAt)"></time>
+      </div>
+      <p class="comment-body" x-text="c.description"></p>
+    </article>
+  </template>
+
+  <div class="comments-footer" x-show="comments.length > 0">
+    <button class="pill-btn" x-show="hasMore" @click="loadMore()" :disabled="loadingMore">
+      <span x-text="loadingMore ? '載入中…' : '載入更多'"></span>
+    </button>
+    <p class="all-loaded" x-show="!hasMore">已顯示全部留言</p>
+  </div>
+</section>
+
+<div class="toast" id="globalToast"></div>
+
+<script type="module">
+import { firebaseConfig, isConfigured } from "./firebase-config.js?v=1";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, query, orderBy, limit, startAfter,
+  onSnapshot, getDocs, serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+let db = null;
+if (isConfigured) {
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+}
+
+document.addEventListener("alpine:init", () => {
+  Alpine.data("recommends", () => ({
+    ready: false,
+    isConfigured,
+    loading: true,
+    submitting: false,
+    error: "",
+    loadingMore: false,
+    hasMore: false,
+    comments: [],
+    lastDoc: null,
+    pageSize: 20,
+    fuse: null,
+    animeIndex: [],
+
+    form: {
+      nickname: "",
+      anime_id: null,
+      anime_title: "",
+      description: "",
+      website: "",  // honeypot
+    },
+    autocompleteOpen: false,
+    autocompleteResults: [],
+
+    async init() {
+      // 載入 anime.json 給 autocomplete
+      try {
+        const r = await fetch("data/anime.json", { cache: "no-cache" });
+        const db_ = await r.json();
+        this.animeIndex = Object.values(db_.anime || {}).map(a => ({
+          id: a.id,
+          title: a.titles?.primary_zh || a.titles?.ja_romaji || a.id,
+          ja: a.titles?.ja || "",
+          en: a.titles?.en || "",
+          year: a.year,
+        }));
+        this.fuse = new Fuse(this.animeIndex, {
+          keys: ["title", "ja", "en"],
+          threshold: 0.4,
+          ignoreLocation: true,
+        });
+      } catch (e) {
+        console.warn("anime.json load failed; autocomplete disabled", e);
+      }
+
+      this.ready = true;
+
+      if (!isConfigured) {
+        this.loading = false;
+        return;
+      }
+
+      // realtime listener for first page
+      const q = query(
+        collection(db, "recommends"),
+        orderBy("createdAt", "desc"),
+        limit(this.pageSize)
+      );
+      onSnapshot(q, (snap) => {
+        const fresh = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // 合併：保留已載入的「更舊」分頁，但首頁部分用最新串流結果替換
+        const beyondFirstPage = this.comments.slice(this.pageSize);
+        this.comments = [...fresh, ...beyondFirstPage];
+        if (snap.docs.length > 0) {
+          this.lastDoc = snap.docs[snap.docs.length - 1];
+          this.hasMore = snap.docs.length === this.pageSize;
+        }
+        this.loading = false;
+      }, (err) => {
+        console.error("onSnapshot error", err);
+        this.loading = false;
+        this.error = "讀取留言失敗：" + err.message;
+      });
+    },
+
+    onAnimeInput() {
+      const q = this.form.anime_title.trim();
+      // 變更輸入字 → 清掉之前選中的 anime_id (除非完全一致)
+      if (this.form.anime_id) {
+        const matched = this.animeIndex.find(a => a.id === this.form.anime_id);
+        if (!matched || matched.title !== q) {
+          this.form.anime_id = null;
+        }
+      }
+      if (!q || !this.fuse) {
+        this.autocompleteResults = [];
+        this.autocompleteOpen = false;
+        return;
+      }
+      const hits = this.fuse.search(q).slice(0, 8).map(h => h.item);
+      this.autocompleteResults = hits;
+      this.autocompleteOpen = true;
+    },
+
+    pickAnime(item) {
+      this.form.anime_id = item.id;
+      this.form.anime_title = item.title;
+      this.autocompleteOpen = false;
+    },
+
+    get canSubmit() {
+      return this.form.nickname.trim().length > 0 &&
+             this.form.anime_title.trim().length > 0 &&
+             this.form.description.trim().length >= 5;
+    },
+
+    async submit() {
+      this.error = "";
+      if (!isConfigured) {
+        this.error = "留言系統尚未設定（Firebase config 未填）";
+        return;
+      }
+      // honeypot
+      if (this.form.website) return;  // bot 填了，靜默丟掉
+      // 驗證
+      if (!this.canSubmit) { this.error = "請完整填寫所有欄位（說明至少 5 字）"; return; }
+      if (this.form.nickname.length > 20) { this.error = "暱稱最多 20 字"; return; }
+      if (this.form.anime_title.length > 100) { this.error = "動畫名最多 100 字"; return; }
+      if (this.form.description.length > 500) { this.error = "說明最多 500 字"; return; }
+      // client rate limit
+      const lastSubmit = parseInt(localStorage.getItem("recommendsLastSubmit") || "0", 10);
+      const now = Date.now();
+      if (now - lastSubmit < 60_000) {
+        const wait = Math.ceil((60_000 - (now - lastSubmit)) / 1000);
+        this.error = `請稍候 ${wait} 秒再留言`;
+        return;
+      }
+
+      this.submitting = true;
+      try {
+        const audit = await this.collectAudit();
+        await addDoc(collection(db, "recommends"), {
+          nickname: this.form.nickname.trim(),
+          anime_id: this.form.anime_id || null,
+          anime_title: this.form.anime_title.trim(),
+          description: this.form.description.trim(),
+          createdAt: serverTimestamp(),
+          audit,
+        });
+        localStorage.setItem("recommendsLastSubmit", String(now));
+        this.form.nickname = "";
+        this.form.anime_id = null;
+        this.form.anime_title = "";
+        this.form.description = "";
+        this.showToast("留言已送出，謝謝！");
+      } catch (e) {
+        console.error(e);
+        this.error = "送出失敗：" + (e.message || e);
+      } finally {
+        this.submitting = false;
+      }
+    },
+
+    async collectAudit() {
+      let ip = null;
+      try {
+        const r = await fetch("https://api.ipify.org/?format=json");
+        if (r.ok) {
+          const d = await r.json();
+          ip = d.ip || null;
+        }
+      } catch (e) { /* ignore */ }
+      return {
+        ip,
+        user_agent: (navigator.userAgent || "").slice(0, 500),
+        platform: navigator.platform || "",
+        languages: (navigator.languages || []).slice(0, 5),
+        screen: `${screen.width}x${screen.height}`,
+        viewport: `${window.innerWidth}x${window.innerHeight}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+        referrer: (document.referrer || "").slice(0, 500),
+      };
+    },
+
+    async loadMore() {
+      if (!db || !this.lastDoc || this.loadingMore) return;
+      this.loadingMore = true;
+      try {
+        const q = query(
+          collection(db, "recommends"),
+          orderBy("createdAt", "desc"),
+          startAfter(this.lastDoc),
+          limit(this.pageSize)
+        );
+        const snap = await getDocs(q);
+        const more = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        this.comments = [...this.comments, ...more];
+        if (snap.docs.length > 0) {
+          this.lastDoc = snap.docs[snap.docs.length - 1];
+        }
+        this.hasMore = snap.docs.length === this.pageSize;
+      } catch (e) {
+        console.error(e);
+        this.error = "載入更多失敗：" + e.message;
+      } finally {
+        this.loadingMore = false;
+      }
+    },
+
+    formatTime(ts) {
+      if (!ts) return "";
+      try {
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        const now = new Date();
+        const diffSec = Math.floor((now - d) / 1000);
+        if (diffSec < 60) return "剛剛";
+        if (diffSec < 3600) return `${Math.floor(diffSec / 60)} 分鐘前`;
+        if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} 小時前`;
+        if (diffSec < 86400 * 7) return `${Math.floor(diffSec / 86400)} 天前`;
+        return d.toLocaleDateString("zh-Hant", { year: "numeric", month: "2-digit", day: "2-digit" });
+      } catch (e) { return ""; }
+    },
+
+    showToast(msg, ms = 1800) {
+      const el = document.getElementById("globalToast");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(this._toastTimer);
+      this._toastTimer = setTimeout(() => el.classList.remove("show"), ms);
+    },
+  }));
+});
+</script>
+</body>
+</html>

@@ -550,6 +550,181 @@ select.pill-btn {
 }
 .toast.show { opacity: 1; }
 
+/* ========== Recommends page (留言) ========== */
+.recommend-form {
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 12px 14px;
+}
+.recommend-form h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--accent);
+}
+.recommend-form .form-row {
+  display: block;
+  margin-bottom: 12px;
+  position: relative;
+}
+.recommend-form .form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+.recommend-form input[type="text"],
+.recommend-form textarea {
+  width: 100%;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--fg);
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+.recommend-form input[type="text"]:focus,
+.recommend-form textarea:focus { border-color: var(--accent); }
+.recommend-form textarea { resize: vertical; min-height: 90px; }
+.recommend-form .form-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--fg-faint);
+  text-align: right;
+}
+
+.recommend-form .autocomplete-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  position: absolute;
+  width: 100%;
+  z-index: 20;
+  box-shadow: var(--shadow-md);
+}
+.recommend-form .autocomplete-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.recommend-form .autocomplete-list li:hover { background: var(--bg-elev); }
+.recommend-form .autocomplete-list .ac-meta { color: var(--fg-faint); font-size: 12px; }
+
+.recommend-form .form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.recommend-form .submit-btn {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 600;
+  padding: 10px 22px;
+}
+.recommend-form .submit-btn:disabled {
+  background: var(--bg-elev-2);
+  color: var(--fg-faint);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+.recommend-form .form-error { color: var(--review); font-size: 12px; flex: 1; }
+.recommend-form .privacy-note {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  background: var(--bg-elev-2);
+  border-left: 2px solid var(--accent);
+  font-size: 11px;
+  color: var(--fg-muted);
+  border-radius: 4px;
+  line-height: 1.5;
+}
+
+.comments-list { padding: 12px; padding-bottom: 80px; }
+.comments-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.comments-header h2 { margin: 0; font-size: 16px; }
+.comments-header .count { color: var(--fg-faint); font-size: 12px; }
+
+.comment-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.comment-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.comment-name { color: var(--accent); font-size: 14px; font-weight: 700; }
+.comment-arrow { color: var(--fg-faint); font-size: 12px; }
+.comment-anime {
+  color: var(--star);
+  font-weight: 600;
+  text-decoration: none;
+}
+.comment-anime:hover { text-decoration: underline; }
+.comment-anime.no-link { pointer-events: none; color: var(--fg-muted); cursor: default; }
+.comment-tag {
+  background: var(--bg-elev-2);
+  color: var(--fg-faint);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.comment-time { color: var(--fg-faint); font-size: 11px; margin-left: auto; }
+.comment-body {
+  margin: 0;
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.comments-footer { text-align: center; margin-top: 16px; }
+.comments-footer .all-loaded { color: var(--fg-faint); font-size: 12px; margin: 12px 0; }
+
+@media (min-width: 600px) {
+  .recommend-form { padding: 20px 16px; }
+  .recommend-form h2 { font-size: 18px; }
+  .comments-list { padding: 16px; }
+}
+
+@media (min-width: 900px) {
+  .recommend-form { padding: 24px; }
+  .comments-list { padding: 24px; max-width: 880px; margin: 0 auto; }
+  .recommend-form > form, .recommend-form > h2, .recommend-form > .banner {
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .recommend-form > h2 { padding-left: 0; }
+}
+
 /* ========== Tablet (≥600px) ========== */
 @media (min-width: 600px) {
   .header__title { font-size: 18px; }
