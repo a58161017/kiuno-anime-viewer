@@ -327,33 +327,42 @@ select.pill-btn {
 }
 .stars { color: var(--star); font-weight: 600; }
 
-/* card icons — 用 fixed inline-block + 不依賴 flex 排版，避免某些瀏覽器
-   把 emoji/CJK glyph 計算出超大 line-box 導致 icon 變橢圓形 */
+/* card icons — 用 inline-block + 固定 line-height 避免 flex 在某些行動
+   瀏覽器把 emoji/CJK glyph 撐爆 box；empty state 不畫底 (只有符號 +
+   text-shadow)，filled 才有圓形實心底，避免空狀態的「大黑橢圓」感 */
 .card .icon {
   position: absolute;
-  top: 6px;
+  top: 8px;
+  display: inline-block;
   width: 26px;
   height: 26px;
   min-width: 26px;
+  max-width: 26px;
   min-height: 26px;
-  text-align: center;
-  background: rgba(15, 17, 21, 0.85);
-  border: 1px solid rgba(255,255,255,0.18);
+  max-height: 26px;
+  padding: 0;
+  border: none;
+  background: transparent;
   border-radius: 50%;
-  font-size: 14px;
-  line-height: 24px;        /* 比高度小 2px = 上下 border 寬度 */
+  text-align: center;
+  font-size: 18px;
+  line-height: 26px;
   cursor: pointer;
   user-select: none;
   z-index: 2;
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
-  /* 沒 backdrop-filter；某些行動瀏覽器在小元素上渲染會破圖 */
+  text-shadow: 0 1px 3px rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.6);
+  /* 不用 backdrop-filter；不用 flex — 都是 mobile 渲染 bug 的源頭 */
 }
-.card .icon.star { left: 6px; color: var(--star); }
-.card .icon.heart { right: 6px; color: var(--heart); }
-.card .icon.share { right: 38px; color: var(--share); font-size: 12px; }
-.card .icon.empty { color: rgba(255,255,255,0.55); }
-.card .icon.filled { background: rgba(15, 17, 21, 0.92); }
+.card .icon.star { left: 8px; color: var(--star); }
+.card .icon.heart { right: 8px; color: var(--heart); }
+.card .icon.share { right: 40px; color: var(--share); font-size: 16px; }
+.card .icon.empty { color: rgba(255,255,255,0.7); }
+.card .icon.filled {
+  background: rgba(15, 17, 21, 0.85);
+  text-shadow: none;
+}
 .card .icon.readonly { cursor: default; pointer-events: none; }
 
 /* ========== Empty state ========== */
