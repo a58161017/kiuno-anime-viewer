@@ -93469,7 +93469,304 @@
         "synthetic": true,
         "synthetic_source": "stub"
       }
+    },
+    "anilist:180745": {
+      "id": "anilist:180745",
+      "format": "tv",
+      "section_origin": "季番",
+      "titles": {
+        "primary_zh": "歡迎來到實力至上主義的教室 第四季 2年級篇 第一學期",
+        "zh_aliases": [
+          "歡迎來到實力至上主義教室 第四季"
+        ],
+        "ja": "ようこそ実力至上主義の教室へ 4th Season",
+        "ja_romaji": "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e 4th Season 2-nensei-hen Ichi Gakki",
+        "en": "Classroom of the Elite 4th Season: Second Year, First Semester"
+      },
+      "year": 2026,
+      "season": "Spring",
+      "episodes": 16,
+      "studios": [
+        "Lerche"
+      ],
+      "categories": [
+        "戲劇",
+        "心理"
+      ],
+      "tags": [
+        "Boarding School",
+        "Fugitive",
+        "Survival",
+        "Battle Royale",
+        "Anti-Hero",
+        "Male Protagonist",
+        "School",
+        "Coming of Age",
+        "Philosophy",
+        "Heterosexual",
+        "Bullying",
+        "Primarily Teen Cast",
+        "Delinquents",
+        "Athletics",
+        "Disability",
+        "年份-2026",
+        "studio-Lerche",
+        "季番",
+        "format-tv",
+        "星級-4.0"
+      ],
+      "rating": {
+        "score": 3.81,
+        "sources": {
+          "anilist": {
+            "id": 180745,
+            "score": 79,
+            "scale": 100,
+            "fetched_at": "2026-05-03T18:02:18"
+          },
+          "mal": {
+            "id": 59708,
+            "score": 8.14,
+            "scale": 10,
+            "fetched_at": "2026-05-03T18:02:18"
+          },
+          "bangumi": {
+            "id": 510710,
+            "score": 6.1,
+            "scale": 10,
+            "fetched_at": "2026-05-03T18:02:18"
+          }
+        }
+      },
+      "synopsis_zh": "東京都高度育成高等中學，標榜升學率、就職率達百分之百，而且每個月會提供相當於十萬圓金錢的點數，是一間夢幻學校。但其實是一間只有少部分成績優秀的人，才擁有優良待遇的實力至上主義學校。\r\n綾小路等人在一年級第三學期升上C班，但最後一場特別考試卻惜敗A班，再度降格D班。二年級將從D班重新起跑。春假過後，綾小路和輕井澤成為男女朋友，堀北則是與憧憬學這個優秀兄長的自己訣別。在人際關係漸漸產生變化的情況下，他們升上二年級。綾小路他們新二年級生的第一場特別考試，是與新生一組進行筆試。然而，新生中有月城找來的White room刺客混入其中——\r\n跨越學年的新關係，將招來狂風暴雨還是風平浪靜？第二年的學校生活現在拉開序幕。\r\n\r\n\r\n[簡介原文]\r\n東京都高度育成高等學校、それは進學率・就職率100％を誇り、毎月10萬円の金銭に相當するポイントが支給される夢のような學校。しかし、その內実は一部の成績優秀者のみが好待遇を受けられる実力至上主義の學校であった。1年生3學期にCクラスへと昇格した綾小路たちだったが、1學年最終特別試験の結果、Aクラスに惜敗し、再びDクラスへと降格。2年生はDクラスからの再スタートとなった。春休みを経て、綾小路は軽井沢と戀人関係となり、堀北は優秀な兄・學にあこがれていた自分と決別。少しずつ人間関係が変化する中で、2年生へと進級する。綾小路たち新2年生の最初の特別試験は、新入生とパートナーを組んで行う筆記試験。しかし、新入生の中には、月城が手配したホワイトルームからの刺客が紛れており──。學年を超えた新たな関係が呼ぶのは、嵐か凪か。2年目の學校生活の幕が今、切って落とされる。",
+      "synopsis_en": "The fourth season of  Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e.\nAs Ayanokouji and his classmates begin their second year at the Advanced Nurturing High School, they’re greeted by a fresh gauntlet of exams and a fresh batch of rather unique first-year students. They’ll have to get to know each other quickly, because the first special exam pairs the first-years with the second-years on a written test—with only the second-years facing expulsion if their team performs poorly! Worse yet? It seems one of the new first-years is also from the White Room. Can Ayanokouji avoid expulsion while sussing out the identity of this hidden foe?\n\n(Source: Seven Seas)",
+      "cover": {
+        "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx180745-OEZaBeEdWozn.png",
+        "local": "data/covers/anilist-180745.jpg"
+      },
+      "external_links": {
+        "anilist": "https://anilist.co/anime/180745",
+        "mal": "https://myanimelist.net/anime/59708",
+        "bangumi": "https://bgm.tv/subject/510710"
+      },
+      "relations": {
+        "prequel": [
+          "anilist:146066"
+        ],
+        "sequel": [],
+        "side_story": [],
+        "other": []
+      },
+      "user": {
+        "self_rating_raw": 4.3,
+        "doc_episode_count": null,
+        "added_at": "2026-05-03T18:02:18"
+      },
+      "source_doc_raw": "(4.3星)歡迎來到實力至上主義的教室 第四季 2年級篇 第一學期",
+      "enrichment": {
+        "anilist_at": "2026-05-03T18:02:18",
+        "mal_at": "2026-05-03T18:02:18",
+        "bangumi_at": "2026-05-03T18:02:18",
+        "cover_at": "2026-05-03T18:02:18",
+        "needs_review": false
+      }
+    },
+    "anilist:182205": {
+      "id": "anilist:182205",
+      "format": "tv",
+      "section_origin": "季番",
+      "titles": {
+        "primary_zh": "關於我轉生變成史萊姆這檔事 第四季",
+        "zh_aliases": [],
+        "ja": "転生したらスライムだった件 第4期",
+        "ja_romaji": "Tensei Shitara Slime Datta Ken 4th Season",
+        "en": "That Time I Got Reincarnated as a Slime Season 4"
+      },
+      "year": 2026,
+      "season": "Spring",
+      "episodes": null,
+      "studios": [
+        "8-bit"
+      ],
+      "categories": [
+        "動作",
+        "冒險",
+        "喜劇",
+        "奇幻"
+      ],
+      "tags": [
+        "Kingdom Management",
+        "Isekai",
+        "Spearplay",
+        "Swordplay",
+        "Archery",
+        "Magic",
+        "Ensemble Cast",
+        "Demons",
+        "Medieval",
+        "Skeleton",
+        "Dungeon",
+        "年份-2026",
+        "studio-8-bit",
+        "季番",
+        "format-tv",
+        "星級-4.0"
+      ],
+      "rating": {
+        "score": 3.86,
+        "sources": {
+          "anilist": {
+            "id": 182205,
+            "score": 80,
+            "scale": 100,
+            "fetched_at": "2026-05-03T18:02:21"
+          },
+          "mal": {
+            "id": 59970,
+            "score": 8.13,
+            "scale": 10,
+            "fetched_at": "2026-05-03T18:02:21"
+          },
+          "bangumi": {
+            "id": 515594,
+            "score": 6.4,
+            "scale": 10,
+            "fetched_at": "2026-05-03T18:02:21"
+          }
+        }
+      },
+      "synopsis_zh": "舉行開國祭，並與各國建立起邦交的魔國聯邦「坦派斯特」，朝著實現讓人類與魔物一起生活的世界「人魔共榮圈」邁出了步伐。\r\n跨越種族的隔閡攜手合作，魔國聯邦「坦派斯特」日益繁榮。然而，在這背後，卻有些人將魔王利姆路的崛起視為危險訊號。他們就是西爾特羅斯王國五大老之首的前「勇者」格蘭貝爾．羅素與其孫女瑪莉安貝爾．羅素。主張以支配守護人類的格蘭貝爾和瑪莉安貝爾佈下重重計謀，並與利姆路發生衝突。\r\n另一方面，在黃金鄉埃爾德拉，魔王雷昂也基於某種目的展開了行動。身為人類守護者的勇者與支配世界的魔王。在各方謀略的彼此交錯之下，某位「勇者」即將甦醒――。\r\n懷抱著無法退讓的信念，利姆路的下一場戰鬥即將開始。\r\n\r\n\r\n[簡介原文]\r\n開國祭を開き、各國と國交を結んだ魔國連邦（テンペスト）は、人と魔物が共に暮らせる世界「人魔共栄圏」の実現に向けて歩みだす。\r\n種族の壁を越え、手を取り合い、繁栄していく魔國連邦（テンペスト）。しかし、その裡で魔王リムルの臺頭を危険視する者たちがいた。シルトロッゾ王國五大老の長である元〝勇者〟グランベル・ロッゾとその孫娘、マリアベル・ロッゾ。支配による人類守護を掲げるグランベルとマリアベルは策謀を巡らせ、リムルと激突する。\r\n一方、黃金郷エルドラドでは魔王レオンがある目的のために動き出す。人類の守護者である勇者と、世界を支配する魔王。様々な思惑が交錯する中、ひとりの〝勇者〟が目覚めようとしていた――。\r\n譲れない思いを胸に、リムルの次なる戦いが始まる。",
+      "synopsis_en": "The fourth season of Tensei Shitara Slime Datta Ken.\nDemon Lord Rimuru's dream of creating an alliance between humans and monsters takes a step closer to being realized. As Tempest continues to prosper, Granville Rozzo and his granddaughter, Maribel Rozzo, clash with Demon Lord Rimuru over their plan to protect mankind by ruling over them. Meanwhile, in El Dorado, Demon Lord Leon works toward goals of his own. The awakening of a new Hero draws near!\n\n(Source: Crunchyroll News)",
+      "cover": {
+        "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx182205-q2AeO1owuQbO.jpg",
+        "local": "data/covers/anilist-182205.jpg"
+      },
+      "external_links": {
+        "anilist": "https://anilist.co/anime/182205",
+        "mal": "https://myanimelist.net/anime/59970",
+        "bangumi": "https://bgm.tv/subject/515594"
+      },
+      "relations": {
+        "prequel": [
+          "anilist:156822"
+        ],
+        "sequel": [],
+        "side_story": [],
+        "other": []
+      },
+      "user": {
+        "self_rating_raw": 4.2,
+        "doc_episode_count": null,
+        "added_at": "2026-05-03T18:02:21"
+      },
+      "source_doc_raw": "(4.2星)關於我轉生變成史萊姆這檔事 第四季",
+      "enrichment": {
+        "anilist_at": "2026-05-03T18:02:21",
+        "mal_at": "2026-05-03T18:02:21",
+        "bangumi_at": "2026-05-03T18:02:21",
+        "cover_at": "2026-05-03T18:02:21",
+        "needs_review": false
+      }
+    },
+    "anilist:199547": {
+      "id": "anilist:199547",
+      "format": "tv",
+      "section_origin": "季番",
+      "titles": {
+        "primary_zh": "婚姻劇毒",
+        "zh_aliases": [],
+        "ja": "マリッジトキシン",
+        "ja_romaji": "MARRIAGETOXIN",
+        "en": "MARRIAGETOXIN"
+      },
+      "year": 2026,
+      "season": "Spring",
+      "episodes": null,
+      "studios": [
+        "bones film"
+      ],
+      "categories": [
+        "動作",
+        "喜劇",
+        "戲劇",
+        "戀愛"
+      ],
+      "tags": [
+        "Assassins",
+        "Marriage",
+        "Urban",
+        "Crime",
+        "Surreal Comedy",
+        "Bisexual",
+        "Primarily Adult Cast",
+        "Male Protagonist",
+        "Shounen",
+        "Super Power",
+        "LGBTQ+ Themes",
+        "Guns",
+        "Urban Fantasy",
+        "Heterosexual",
+        "Anti-Hero",
+        "年份-2026",
+        "studio-bones film",
+        "季番",
+        "format-tv",
+        "星級-3.5"
+      ],
+      "rating": {
+        "score": 3.71,
+        "sources": {
+          "anilist": {
+            "id": 199547,
+            "score": 75,
+            "scale": 100,
+            "fetched_at": "2026-05-03T18:02:24"
+          },
+          "mal": {
+            "id": 62601,
+            "score": 7.61,
+            "scale": 10,
+            "fetched_at": "2026-05-03T18:02:24"
+          },
+          "bangumi": {
+            "id": 590353,
+            "score": 6.9,
+            "scale": 10,
+            "fetched_at": "2026-05-03T18:02:24"
+          }
+        }
+      },
+      "synopsis_zh": "數百年來有一群人持續磨練著殺人技巧，人稱「高手」。\r\n青年下呂光繼承了在這群人當中，擁有最強力量與權力的五大名門之一，「用毒人」的血脈。\r\n他投身於黑社會工作，過著與女性完全絕緣的生活。對他而言，「結婚」原本是件極其遙遠的事情。\r\n然而，為了不讓「用毒人」的血脈斷絕，下呂家的現任當家告知他的妹妹，將強迫她生下繼承人。\r\n就在這時，下呂遇見了他的任務目標，手法高超的婚姻騙子──城崎芽衣。\r\n為了解決繼承人問題並保護妹妹，下呂想到由自己來結婚，便當場向城崎提出請求，委託對方協助自己順利結婚。\r\n「──我第一次看到這種提案（求婚）方式。」\r\n於是，在手法高超的婚姻騙子──城崎擔任顧問之下，一流殺手下呂開始挑戰人生首次的超困難任務──「相親」……！？\r\n目標是最棒的婚姻……\r\n由殺手與婚姻騙子這對最強拍檔挺身挑戰，世界上最艱辛的相親戰鬥動作片，正式揭開序幕！！\r\n\r\n\r\n[簡介原文]\r\n數百年にわたり殺しの技術を研ぎ続ける者たち『使い手』。\r\nその中でも最強の力と権力を持つとされる五大名家の『毒使い』。その血筋を受け継ぐ青年・下呂ヒカル。\r\n裡稼業に身を置き、女性と関わることなく生きてきた彼にとって“結婚”とは縁遠いものであった。\r\nしかし、『毒使い』の血を絶えさせないため下呂家の當主は彼の妹に対し、強制的に跡継ぎを産ませることを通告。\r\nそんな時、下呂は仕事のターゲットとなる悽腕の結婚詐欺師・城崎メイと出會う。\r\n後継ぎ問題を解決し妹を守るため、自らが結婚することを思いついた下呂は、その場で城崎に結婚の手伝いを依頼する。\r\n「――そんな提案（プロポーズ）、初めて」\r\nかくして、悽腕結婚詐欺師・城崎をアドバイザーに、一流の殺し屋・下呂は人生初の超難関ミッション『婚活』を始めることとなり…!?\r\n目指すは最高の結婚…\r\n殺し屋×結婚詐欺師の最強バディが挑む、世界一ハードな婚活バトルアクションが幕を開ける!!",
+      "synopsis_en": "For centuries, the deadly arts have been perfected by those known as the Masters.\nAmong them, the Poison Masters of the Five Great Families hold the most fearsome power and influence. \nHikaru Gero, heir to the Poison Masters’ Gero Family, has lived his entire life in the underworld, far removed from love or marriage.\nBut when the Gero Family head decrees that Hikaru’s sister must bear an heir to preserve the bloodline—by force if necessary—Hikaru resolves to protect her at all costs.\nIt is then that Hikaru encounters Mei Kinosaki, a brilliant marriage swindler who becomes the target of his latest job.\nRealizing that the only way of solving the family succession problem and protecting his sister is through marriage, Hikaru impulsively asks Mei for help in finding a bride.\n\n(Source: EMOTION Label Channel)",
+      "cover": {
+        "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx199547-LAaG3cmKCGhr.jpg",
+        "local": "data/covers/anilist-199547.jpg"
+      },
+      "external_links": {
+        "anilist": "https://anilist.co/anime/199547",
+        "mal": "https://myanimelist.net/anime/62601",
+        "bangumi": "https://bgm.tv/subject/590353"
+      },
+      "relations": {
+        "prequel": [],
+        "sequel": [],
+        "side_story": [],
+        "other": []
+      },
+      "user": {
+        "self_rating_raw": 4.7,
+        "doc_episode_count": null,
+        "added_at": "2026-05-03T18:02:24"
+      },
+      "source_doc_raw": "(4.7星)婚姻劇毒",
+      "enrichment": {
+        "anilist_at": "2026-05-03T18:02:24",
+        "mal_at": "2026-05-03T18:02:24",
+        "bangumi_at": "2026-05-03T18:02:24",
+        "cover_at": "2026-05-03T18:02:24",
+        "needs_review": false
+      }
     }
   },
-  "updated_at": "2026-05-03T14:33:35"
+  "updated_at": "2026-05-03T18:02:25"
 }

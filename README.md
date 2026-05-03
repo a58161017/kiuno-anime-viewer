@@ -124,6 +124,24 @@ python run.py graph
 
 ---
 
+## 季別新番推薦
+
+卡片頁最頂端的 `🌸 ...` 橫幅由 `data/season_picks.json` 驅動，由 owner 手動策劃當季新番。換季時直接覆寫此檔：
+
+```jsonc
+{
+  "season_label": "🌸 2026 七月新番推薦",   // 自由文字，含 emoji 都行
+  "ids": ["anilist:127230", "anilist:151807", "..."],   // 順序由你決定，不會被洗牌
+  "updated_at": "2026-07-01"
+}
+```
+
+- `ids` 為空 → 整個橫幅隱藏
+- 對不上 `data/anime.json` 的 id 會被 skip 不顯示
+- 改完 `git commit + push` 即可
+
+---
+
 ## 推薦清單、我的最愛、單部分享
 
 每張卡片右上區三個 icon：**★ 推薦** / **⇪ 分享** / **♥ 最愛**。

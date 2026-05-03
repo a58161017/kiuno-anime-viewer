@@ -73,11 +73,34 @@
   </form>
 </dialog>
 
+<!-- 季別新番推薦（owner 手動策劃，由 data/season_picks.json 驅動） -->
+<section class="season-bar" x-show="seasonPicks.ids.length > 0" x-cloak>
+  <div class="season-bar__header">
+    <span class="season-bar__title" x-text="seasonPicks.season_label"></span>
+    <span class="count" x-text="`${seasonPicks.ids.length}`"></span>
+    <span class="updated" x-show="seasonPicks.updated_at"
+          x-text="`更新 ${seasonPicks.updated_at}`"></span>
+    <div class="actions">
+      <button x-show="seasonPicks.ids.length > seasonDefaultLimit"
+              @click="seasonExpanded = !seasonExpanded"
+              x-text="seasonExpanded ? '收合' : `+${seasonPicks.ids.length - seasonDefaultLimit}`"></button>
+    </div>
+  </div>
+  <div class="recommend-cards">
+    <template x-for="id in (seasonExpanded ? seasonPicks.ids : seasonPicks.ids.slice(0, seasonDefaultLimit))" :key="id">
+      <div class="mini-card" @click="selectById(id)" x-show="animeById(id)">
+        <div class="cover" :style="`background-image:url('${animeById(id) ? coverFor(animeById(id)) : ''}')`"></div>
+        <div class="title" x-text="animeById(id)?.titles?.primary_zh || animeById(id)?.titles?.ja_romaji || id"></div>
+      </div>
+    </template>
+  </div>
+</section>
+
 <!-- 推薦清單橫幅 -->
 <section class="recommend-bar" x-show="recommendList.length > 0" x-cloak>
   <div class="recommend-bar__header">
     <span class="star-glyph">★</span>
-    <span>推薦清單</span>
+    <span>久野的推薦清單</span>
     <span class="count" x-text="`${recommendList.length}`"></span>
     <div class="actions">
       <button x-show="recommendList.length > 1" @click="reshuffleRecommend()">🔀</button>
@@ -249,6 +272,8 @@ function viewer() {
     topCategories: [],
     recommendList: [],
     shuffledRecommend: [],
+    seasonPicks: { season_label: "", ids: [], updated_at: "" },
+    seasonExpanded: false,
     favoritesList: [],
     showFavoritesOnly: false,
     recommendExpanded: false,
@@ -265,7 +290,7 @@ function viewer() {
 
       await this.loadUserState();
       try {
-        const resp = await fetch("data/anime.json");
+        const resp = await fetch("data/anime.json", { cache: "no-cache" });
         if (!resp.ok) throw new Error(resp.status + " " + resp.statusText);
         const db = await resp.json();
         this.all = Object.values(db.anime || {});
@@ -278,6 +303,21 @@ function viewer() {
         const after = this.recommendList.length + this.favoritesList.length;
         if (before !== after) { this.persistRecommend(); this.persistFavorites(); }
         this.reshuffleRecommend();
+
+        // 季別新番推薦（owner 編輯 data/season_picks.json 換季更新）
+        try {
+          const r = await fetch("data/season_picks.json", { cache: "no-cache" });
+          if (r.ok) {
+            const d = await r.json();
+            if (d && Array.isArray(d.ids)) {
+              this.seasonPicks = {
+                season_label: d.season_label || "當季推薦",
+                ids: d.ids.filter(id => this.byId[id]),
+                updated_at: d.updated_at || "",
+              };
+            }
+          }
+        } catch (e) { /* 沒檔案就不顯示 */ }
 
         const targetId = params0.get('id');
         if (targetId && this.byId[targetId]) this.select(this.byId[targetId]);
@@ -457,6 +497,9 @@ function viewer() {
     },
 
     get recommendDefaultLimit() {
+      return this.viewportWidth >= 600 ? 10 : 5;
+    },
+    get seasonDefaultLimit() {
       return this.viewportWidth >= 600 ? 10 : 5;
     },
     isRecommended(id) { return this.recommendList.includes(id); },

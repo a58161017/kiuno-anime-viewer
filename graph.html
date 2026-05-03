@@ -146,8 +146,8 @@ let initialZoomForLevel = 1;
 
 async function load() {
   const [aR, gR] = await Promise.all([
-    fetch('data/anime.json'),
-    fetch('data/graph.json'),
+    fetch('data/anime.json', { cache: 'no-cache' }),
+    fetch('data/graph.json', { cache: 'no-cache' }),
   ]);
   anime = (await aR.json()).anime || {};
   graphAll = await gR.json();

@@ -16856,6 +16856,58 @@
       "section": "已完結",
       "studios": [],
       "categories": []
+    },
+    {
+      "id": "anilist:180745",
+      "label": "歡迎來到實力至上主義的教室 第四季 2年級篇 第一學期",
+      "year": 2026,
+      "score": 3.81,
+      "cover": "data/covers/anilist-180745.jpg",
+      "format": "tv",
+      "section": "季番",
+      "studios": [
+        "Lerche"
+      ],
+      "categories": [
+        "戲劇",
+        "心理"
+      ]
+    },
+    {
+      "id": "anilist:182205",
+      "label": "關於我轉生變成史萊姆這檔事 第四季",
+      "year": 2026,
+      "score": 3.86,
+      "cover": "data/covers/anilist-182205.jpg",
+      "format": "tv",
+      "section": "季番",
+      "studios": [
+        "8-bit"
+      ],
+      "categories": [
+        "動作",
+        "冒險",
+        "喜劇",
+        "奇幻"
+      ]
+    },
+    {
+      "id": "anilist:199547",
+      "label": "婚姻劇毒",
+      "year": 2026,
+      "score": 3.71,
+      "cover": "data/covers/anilist-199547.jpg",
+      "format": "tv",
+      "section": "季番",
+      "studios": [
+        "bones film"
+      ],
+      "categories": [
+        "動作",
+        "喜劇",
+        "戲劇",
+        "戀愛"
+      ]
     }
   ],
   "edges": [
@@ -17199,6 +17251,16 @@
       "detail": [
         "prequel",
         "sequel"
+      ]
+    },
+    {
+      "source": "anilist:146066",
+      "target": "anilist:180745",
+      "type": "franchise",
+      "weight": 1.0,
+      "detail": [
+        "sequel",
+        "prequel"
       ]
     },
     {
@@ -18679,6 +18741,16 @@
       "detail": [
         "prequel",
         "sequel"
+      ]
+    },
+    {
+      "source": "anilist:156822",
+      "target": "anilist:182205",
+      "type": "franchise",
+      "weight": 1.0,
+      "detail": [
+        "sequel",
+        "prequel"
       ]
     },
     {
@@ -29192,6 +29264,60 @@
       ]
     },
     {
+      "source": "anilist:9000004",
+      "target": "anilist:180745",
+      "type": "same_year",
+      "weight": 0.1,
+      "detail": [
+        "2026"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:182205",
+      "type": "same_year",
+      "weight": 0.1,
+      "detail": [
+        "2026"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:199547",
+      "type": "same_year",
+      "weight": 0.1,
+      "detail": [
+        "2026"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:180745",
+      "type": "same_year",
+      "weight": 0.1,
+      "detail": [
+        "2026"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:182205",
+      "type": "same_year",
+      "weight": 0.1,
+      "detail": [
+        "2026"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:199547",
+      "type": "same_year",
+      "weight": 0.1,
+      "detail": [
+        "2026"
+      ]
+    },
+    {
       "source": "anilist:21711",
       "target": "anilist:9000007",
       "type": "same_year",
@@ -36113,6 +36239,15 @@
       ]
     },
     {
+      "source": "anilist:100723",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
+      ]
+    },
+    {
       "source": "anilist:158928",
       "target": "anilist:20546",
       "type": "shared_genre",
@@ -41441,6 +41576,15 @@
       ]
     },
     {
+      "source": "anilist:139498",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:131680",
       "target": "anilist:141902",
       "type": "shared_genre",
@@ -43430,6 +43574,15 @@
       ]
     },
     {
+      "source": "anilist:131680",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:142770",
       "target": "anilist:162669",
       "type": "shared_genre",
@@ -44552,15 +44705,6 @@
       "weight": 0.8,
       "detail": [
         "動作,喜劇,奇幻,戲劇"
-      ]
-    },
-    {
-      "source": "anilist:141902",
-      "target": "anilist:160442",
-      "type": "shared_genre",
-      "weight": 0.6,
-      "detail": [
-        "動作,喜劇,戲劇"
       ]
     },
     {
@@ -46982,6 +47126,24 @@
       "weight": 0.8,
       "detail": [
         "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:141902",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:141902",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
       ]
     },
     {
@@ -49453,6 +49615,15 @@
     {
       "source": "anilist:162669",
       "target": "anilist:185407",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:162669",
+      "target": "anilist:180745",
       "type": "shared_genre",
       "weight": 0.4,
       "detail": [
@@ -53867,6 +54038,15 @@
       "weight": 0.4,
       "detail": [
         "動作,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:100784",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
       ]
     },
     {
@@ -59270,6 +59450,15 @@
       ]
     },
     {
+      "source": "anilist:179992",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戀愛"
+      ]
+    },
+    {
       "source": "anilist:154768",
       "target": "anilist:180367",
       "type": "shared_genre",
@@ -61979,6 +62168,15 @@
       ]
     },
     {
+      "source": "anilist:171046",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:175019",
       "target": "anilist:178433",
       "type": "shared_genre",
@@ -64523,6 +64721,15 @@
       "weight": 0.4,
       "detail": [
         "動作,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:21711",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -68576,6 +68783,15 @@
       ]
     },
     {
+      "source": "anilist:180367",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:178433",
       "target": "anilist:173780",
       "type": "shared_genre",
@@ -72254,6 +72470,24 @@
       "weight": 0.4,
       "detail": [
         "喜劇,戀愛"
+      ]
+    },
+    {
+      "source": "anilist:178433",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:178433",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
       ]
     },
     {
@@ -78548,6 +78782,15 @@
       ]
     },
     {
+      "source": "anilist:185660",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:100922",
       "target": "anilist:156632",
       "type": "shared_genre",
@@ -79594,6 +79837,15 @@
     {
       "source": "anilist:169295",
       "target": "anilist:185407",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:169295",
+      "target": "anilist:180745",
       "type": "shared_genre",
       "weight": 0.4,
       "detail": [
@@ -82267,6 +82519,15 @@
     {
       "source": "anilist:180812",
       "target": "anilist:3588",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:180812",
+      "target": "anilist:182205",
       "type": "shared_genre",
       "weight": 0.8,
       "detail": [
@@ -85183,6 +85444,15 @@
     {
       "source": "anilist:183274",
       "target": "anilist:3588",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:183274",
+      "target": "anilist:182205",
       "type": "shared_genre",
       "weight": 0.8,
       "detail": [
@@ -89906,6 +90176,15 @@
       ]
     },
     {
+      "source": "anilist:176508",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:169315",
       "target": "anilist:124153",
       "type": "shared_genre",
@@ -90407,6 +90686,24 @@
       "weight": 0.4,
       "detail": [
         "動作,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:169315",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:169315",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
       ]
     },
     {
@@ -93479,6 +93776,15 @@
       ]
     },
     {
+      "source": "anilist:179955",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:167141",
       "target": "anilist:171018",
       "type": "shared_genre",
@@ -96206,6 +96512,15 @@
       ]
     },
     {
+      "source": "anilist:171018",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:163135",
       "target": "anilist:137822",
       "type": "shared_genre",
@@ -97445,6 +97760,15 @@
       "weight": 0.4,
       "detail": [
         "動作,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:163135",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
       ]
     },
     {
@@ -100391,6 +100715,15 @@
       ]
     },
     {
+      "source": "anilist:158898",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戀愛"
+      ]
+    },
+    {
       "source": "anilist:173694",
       "target": "anilist:170695",
       "type": "shared_genre",
@@ -102794,6 +103127,15 @@
       ]
     },
     {
+      "source": "anilist:174576",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
+      ]
+    },
+    {
       "source": "anilist:163292",
       "target": "anilist:166710",
       "type": "shared_genre",
@@ -103948,6 +104290,15 @@
     {
       "source": "anilist:163292",
       "target": "anilist:3588",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:163292",
+      "target": "anilist:182205",
       "type": "shared_genre",
       "weight": 0.8,
       "detail": [
@@ -106376,6 +106727,15 @@
       ]
     },
     {
+      "source": "anilist:136804",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:139518",
       "target": "anilist:174653",
       "type": "shared_genre",
@@ -107350,6 +107710,15 @@
     {
       "source": "anilist:139518",
       "target": "anilist:3588",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:139518",
+      "target": "anilist:182205",
       "type": "shared_genre",
       "weight": 0.8,
       "detail": [
@@ -112820,6 +113189,15 @@
       ]
     },
     {
+      "source": "anilist:151970",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:161645",
       "target": "anilist:142666",
       "type": "shared_genre",
@@ -114585,15 +114963,6 @@
     },
     {
       "source": "anilist:146066",
-      "target": "anilist:21291",
-      "type": "shared_genre",
-      "weight": 0.4,
-      "detail": [
-        "心理,戲劇"
-      ]
-    },
-    {
-      "source": "anilist:146066",
       "target": "anilist:16201",
       "type": "shared_genre",
       "weight": 0.4,
@@ -114613,6 +114982,15 @@
     {
       "source": "anilist:146066",
       "target": "anilist:185407",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:146066",
+      "target": "anilist:180745",
       "type": "shared_genre",
       "weight": 0.4,
       "detail": [
@@ -115778,6 +116156,15 @@
       "weight": 0.4,
       "detail": [
         "動作,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:156039",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,戀愛,戲劇"
       ]
     },
     {
@@ -116975,6 +117362,24 @@
       "weight": 0.8,
       "detail": [
         "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:145140",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:145140",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
       ]
     },
     {
@@ -122333,6 +122738,15 @@
       ]
     },
     {
+      "source": "anilist:146836",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:162893",
       "target": "anilist:125869",
       "type": "shared_genre",
@@ -125033,6 +125447,15 @@
       ]
     },
     {
+      "source": "anilist:148048",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
+      ]
+    },
+    {
       "source": "anilist:160442",
       "target": "anilist:98436",
       "type": "shared_genre",
@@ -126356,6 +126779,15 @@
       ]
     },
     {
+      "source": "anilist:160442",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:148109",
       "target": "anilist:150075",
       "type": "shared_genre",
@@ -127447,6 +127879,15 @@
     {
       "source": "anilist:148109",
       "target": "anilist:3588",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:148109",
+      "target": "anilist:182205",
       "type": "shared_genre",
       "weight": 0.8,
       "detail": [
@@ -128696,6 +129137,15 @@
       ]
     },
     {
+      "source": "anilist:151189",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:151384",
       "target": "anilist:130003",
       "type": "shared_genre",
@@ -129877,6 +130327,15 @@
     {
       "source": "anilist:138565",
       "target": "anilist:185407",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:138565",
+      "target": "anilist:180745",
       "type": "shared_genre",
       "weight": 0.4,
       "detail": [
@@ -131708,6 +132167,24 @@
       "weight": 0.4,
       "detail": [
         "喜劇,戀愛"
+      ]
+    },
+    {
+      "source": "anilist:129196",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:129196",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戀愛"
       ]
     },
     {
@@ -137174,6 +137651,24 @@
       ]
     },
     {
+      "source": "anilist:140439",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:140439",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戲劇"
+      ]
+    },
+    {
       "source": "anilist:139369",
       "target": "anilist:116741",
       "type": "shared_genre",
@@ -140027,6 +140522,15 @@
       ]
     },
     {
+      "source": "anilist:146625",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戀愛"
+      ]
+    },
+    {
       "source": "anilist:136934",
       "target": "anilist:142984",
       "type": "shared_genre",
@@ -140891,6 +141395,15 @@
       ]
     },
     {
+      "source": "anilist:129192",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:145545",
       "target": "anilist:98707",
       "type": "shared_genre",
@@ -141127,6 +141640,15 @@
     {
       "source": "anilist:145545",
       "target": "anilist:185407",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:145545",
+      "target": "anilist:180745",
       "type": "shared_genre",
       "weight": 0.4,
       "detail": [
@@ -145769,6 +146291,15 @@
       ]
     },
     {
+      "source": "anilist:132474",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:140457",
       "target": "anilist:129191",
       "type": "shared_genre",
@@ -146072,6 +146603,15 @@
       "weight": 0.6,
       "detail": [
         "冒險,動作,喜劇"
+      ]
+    },
+    {
+      "source": "anilist:140457",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
       ]
     },
     {
@@ -150890,6 +151430,24 @@
       ]
     },
     {
+      "source": "anilist:129191",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:129191",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戀愛"
+      ]
+    },
+    {
       "source": "anilist:142329",
       "target": "anilist:116005",
       "type": "shared_genre",
@@ -153104,6 +153662,15 @@
       ]
     },
     {
+      "source": "anilist:129898",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:107663",
       "target": "anilist:103632",
       "type": "shared_genre",
@@ -153563,6 +154130,15 @@
       ]
     },
     {
+      "source": "anilist:125369",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:125206",
       "target": "anilist:108511",
       "type": "shared_genre",
@@ -153839,6 +154415,15 @@
       "weight": 0.6,
       "detail": [
         "冒險,動作,喜劇"
+      ]
+    },
+    {
+      "source": "anilist:125206",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
       ]
     },
     {
@@ -154886,6 +155471,15 @@
       ]
     },
     {
+      "source": "anilist:128712",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:126546",
       "target": "anilist:116242",
       "type": "shared_genre",
@@ -155126,6 +155720,15 @@
       "weight": 0.6,
       "detail": [
         "奇幻,戀愛,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:126546",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,戀愛,戲劇"
       ]
     },
     {
@@ -155741,6 +156344,15 @@
       ]
     },
     {
+      "source": "anilist:108511",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:98707",
       "target": "anilist:108632",
       "type": "shared_genre",
@@ -156146,6 +156758,15 @@
       ]
     },
     {
+      "source": "anilist:98707",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:114535",
       "target": "anilist:108632",
       "type": "shared_genre",
@@ -156310,6 +156931,15 @@
     {
       "source": "anilist:114535",
       "target": "anilist:185407",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:114535",
+      "target": "anilist:180745",
       "type": "shared_genre",
       "weight": 0.4,
       "detail": [
@@ -157061,6 +157691,15 @@
       "weight": 0.6,
       "detail": [
         "冒險,動作,喜劇"
+      ]
+    },
+    {
+      "source": "anilist:103632",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
       ]
     },
     {
@@ -158675,6 +159314,15 @@
       ]
     },
     {
+      "source": "anilist:116588",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:126791",
       "target": "anilist:118375",
       "type": "shared_genre",
@@ -159665,6 +160313,15 @@
       ]
     },
     {
+      "source": "anilist:126791",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戀愛"
+      ]
+    },
+    {
       "source": "anilist:103871",
       "target": "anilist:104391",
       "type": "shared_genre",
@@ -160322,6 +160979,15 @@
       ]
     },
     {
+      "source": "anilist:114446",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:108632",
       "target": "anilist:108725",
       "type": "shared_genre",
@@ -160643,6 +161309,15 @@
       "weight": 0.8,
       "detail": [
         "冒險,動作,奇幻,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:108632",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -161150,6 +161825,15 @@
       ]
     },
     {
+      "source": "anilist:97940",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:113425",
       "target": "anilist:118375",
       "type": "shared_genre",
@@ -161440,6 +162124,15 @@
     {
       "source": "anilist:114862",
       "target": "anilist:156822",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:114862",
+      "target": "anilist:182205",
       "type": "shared_genre",
       "weight": 0.8,
       "detail": [
@@ -162689,6 +163382,24 @@
       ]
     },
     {
+      "source": "anilist:118375",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
+      "source": "anilist:118375",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.6,
+      "detail": [
+        "動作,喜劇,戀愛"
+      ]
+    },
+    {
       "source": "anilist:114085",
       "target": "anilist:105310",
       "type": "shared_genre",
@@ -163469,6 +164180,15 @@
       "weight": 0.8,
       "detail": [
         "冒險,動作,奇幻,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:108725",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -164423,6 +165143,15 @@
       "weight": 0.6,
       "detail": [
         "恐怖,懸疑,超自然"
+      ]
+    },
+    {
+      "source": "anilist:117343",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -168044,6 +168773,15 @@
       ]
     },
     {
+      "source": "anilist:112124",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
+      ]
+    },
+    {
       "source": "anilist:112609",
       "target": "anilist:113693",
       "type": "shared_genre",
@@ -171479,6 +172217,15 @@
       "weight": 0.4,
       "detail": [
         "動作,科幻"
+      ]
+    },
+    {
+      "source": "anilist:99423",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -175722,15 +176469,6 @@
     },
     {
       "source": "anilist:20789",
-      "target": "anilist:156822",
-      "type": "shared_genre",
-      "weight": 0.8,
-      "detail": [
-        "冒險,動作,喜劇,奇幻"
-      ]
-    },
-    {
-      "source": "anilist:20789",
       "target": "anilist:99539",
       "type": "shared_genre",
       "weight": 1.2,
@@ -175880,6 +176618,15 @@
       "weight": 1.0,
       "detail": [
         "冒險,動作,喜劇,奇幻,超自然"
+      ]
+    },
+    {
+      "source": "anilist:20789",
+      "target": "anilist:182205",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "冒險,動作,喜劇,奇幻"
       ]
     },
     {
@@ -183398,6 +184145,15 @@
       ]
     },
     {
+      "source": "anilist:101759",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:101338",
       "target": "anilist:101313",
       "type": "shared_genre",
@@ -183998,6 +184754,15 @@
       "weight": 0.4,
       "detail": [
         "喜劇,超自然"
+      ]
+    },
+    {
+      "source": "anilist:101338",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -185729,6 +186494,15 @@
       ]
     },
     {
+      "source": "anilist:101291",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:98034",
       "target": "anilist:100077",
       "type": "shared_genre",
@@ -187142,6 +187916,15 @@
       ]
     },
     {
+      "source": "anilist:100251",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:100298",
       "target": "anilist:97922",
       "type": "shared_genre",
@@ -188231,6 +189014,15 @@
       ]
     },
     {
+      "source": "anilist:99940",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:98478",
       "target": "anilist:20872",
       "type": "shared_genre",
@@ -189281,6 +190073,15 @@
       "weight": 0.6,
       "detail": [
         "動作,懸疑,超自然"
+      ]
+    },
+    {
+      "source": "anilist:100332",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -190409,6 +191210,15 @@
       ]
     },
     {
+      "source": "anilist:97922",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:99698",
       "target": "anilist:21382",
       "type": "shared_genre",
@@ -191207,6 +192017,15 @@
       "weight": 0.8,
       "detail": [
         "動作,奇幻,戲劇,魔法少女"
+      ]
+    },
+    {
+      "source": "anilist:20800",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -195665,6 +196484,15 @@
       ]
     },
     {
+      "source": "anilist:21499",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:21382",
       "target": "anilist:97592",
       "type": "shared_genre",
@@ -198680,6 +199508,15 @@
       ]
     },
     {
+      "source": "anilist:21507",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
+      ]
+    },
+    {
       "source": "anilist:20661",
       "target": "anilist:21355",
       "type": "shared_genre",
@@ -198839,6 +199676,15 @@
       "weight": 0.4,
       "detail": [
         "心理,驚悚"
+      ]
+    },
+    {
+      "source": "anilist:20661",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -199415,6 +200261,15 @@
       "weight": 0.6,
       "detail": [
         "奇幻,戀愛,戲劇"
+      ]
+    },
+    {
+      "source": "anilist:21355",
+      "target": "anilist:180745",
+      "type": "shared_genre",
+      "weight": 0.4,
+      "detail": [
+        "心理,戲劇"
       ]
     },
     {
@@ -216194,6 +217049,15 @@
       ]
     },
     {
+      "source": "anilist:355",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:10611",
       "target": "anilist:14967",
       "type": "shared_genre",
@@ -218180,6 +219044,15 @@
       "weight": 0.6,
       "detail": [
         "喜劇,戀愛,福利"
+      ]
+    },
+    {
+      "source": "anilist:854",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
       ]
     },
     {
@@ -220988,6 +221861,15 @@
       "weight": 0.6,
       "detail": [
         "喜劇,戀愛,福利"
+      ]
+    },
+    {
+      "source": "anilist:10213",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
       ]
     },
     {
@@ -226868,6 +227750,15 @@
       ]
     },
     {
+      "source": "anilist:2787",
+      "target": "anilist:199547",
+      "type": "shared_genre",
+      "weight": 0.8,
+      "detail": [
+        "動作,喜劇,戀愛,戲劇"
+      ]
+    },
+    {
       "source": "anilist:18671",
       "target": "anilist:9656",
       "type": "shared_genre",
@@ -227048,84 +227939,261 @@
       ]
     },
     {
-      "source": "anilist:100166",
-      "target": "anilist:100401",
+      "source": "anilist:9000003",
+      "target": "anilist:9000018",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "釘宮理惠",
+        "魔法",
+        "熱血系",
+        "JUMP",
+        "漫畫改",
+        "妖精的尾巴",
+        "平野綾",
+        "2009",
+        "熱血"
+      ]
+    },
+    {
+      "source": "anilist:9000003",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "釘宮理惠"
+      ]
+    },
+    {
+      "source": "anilist:9000003",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "釘宮理惠"
+      ]
+    },
+    {
+      "source": "anilist:9000018",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "釘宮理惠"
+      ]
+    },
+    {
+      "source": "anilist:9000018",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "釘宮理惠"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:107956",
+      "target": "anilist:10379",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:110270",
+      "target": "anilist:131182",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:1145",
+      "target": "anilist:172019",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:141774",
+      "target": "anilist:17821",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:14467",
+      "target": "anilist:19151",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:21711",
+      "target": "anilist:21394",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:4896",
+      "target": "anilist:21567",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
       ]
     },
     {
       "source": "anilist:100401",
-      "target": "anilist:99539",
+      "target": "anilist:7647",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Bar"
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:100401",
+      "target": "anilist:8407",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:10379",
+      "target": "anilist:17821",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:131182",
+      "target": "anilist:17821",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:172019",
+      "target": "anilist:17821",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:17821",
+      "target": "anilist:19151",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:17821",
+      "target": "anilist:21394",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:17821",
+      "target": "anilist:21567",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:17821",
+      "target": "anilist:7647",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:17821",
+      "target": "anilist:8407",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Outdoor Activities"
+      ]
+    },
+    {
+      "source": "anilist:161964",
+      "target": "anilist:20031",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Satire"
+      ]
+    },
+    {
+      "source": "anilist:20031",
+      "target": "anilist:20910",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Satire"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000005",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "小說改",
+        "source-bangumi",
+        "日本",
+        "TV",
+        "奇幻",
+        "異世界",
+        "2026年1月",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:20665",
+      "target": "anilist:20722",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rehabilitation"
+      ]
+    },
+    {
+      "source": "anilist:20722",
+      "target": "anilist:21006",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rehabilitation"
       ]
     },
     {
@@ -227154,43 +228222,580 @@
       "weight": 0.15,
       "detail": [
         "AIC",
-        "OVA",
+        "source-bangumi",
+        "OVA"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000006",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "戰鬥",
+        "source-bangumi",
+        "日本",
+        "TV",
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000034",
+      "target": "anilist:9000048",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "泡麵番",
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000088",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "國產",
+        "source-bangumi",
+        "WEB",
+        "中國"
+      ]
+    },
+    {
+      "source": "anilist:9000001",
+      "target": "anilist:9000003",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
         "source-bangumi"
       ]
     },
     {
       "source": "anilist:9000003",
+      "target": "anilist:9000004",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000007",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV",
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000007",
+      "target": "anilist:9000014",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV",
+        "奇幻",
+        "異世界",
+        "輕小說改",
+        "穿越"
+      ]
+    },
+    {
+      "source": "anilist:9000014",
       "target": "anilist:9000018",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "平野綾",
-        "熱血",
-        "魔法",
-        "JUMP",
-        "妖精的尾巴",
+        "source-bangumi",
+        "TV"
+      ]
+    },
+    {
+      "source": "anilist:9000018",
+      "target": "anilist:9000022",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV",
         "漫畫改",
-        "2009",
-        "釘宮理惠",
-        "熱血系"
+        "熱血"
       ]
     },
     {
-      "source": "anilist:139093",
-      "target": "anilist:14653",
+      "source": "anilist:9000022",
+      "target": "anilist:9000030",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Butler"
+        "source-bangumi",
+        "TV"
       ]
     },
     {
-      "source": "anilist:14653",
-      "target": "anilist:16982",
+      "source": "anilist:9000030",
+      "target": "anilist:9000034",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Butler"
+        "source-bangumi"
+      ]
+    },
+    {
+      "source": "anilist:9000034",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000042",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "2014",
+        "TV",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000043",
+      "target": "anilist:9000048",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV"
+      ]
+    },
+    {
+      "source": "anilist:9000048",
+      "target": "anilist:9000052",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV",
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000052",
+      "target": "anilist:9000059",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV"
+      ]
+    },
+    {
+      "source": "anilist:9000079",
+      "target": "anilist:9000084",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi"
+      ]
+    },
+    {
+      "source": "anilist:9000084",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi",
+        "TV"
+      ]
+    },
+    {
+      "source": "anilist:9000087",
+      "target": "anilist:9000088",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "source-bangumi"
+      ]
+    },
+    {
+      "source": "anilist:98436",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Monster Boy"
+      ]
+    },
+    {
+      "source": "anilist:9000022",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "2014"
+      ]
+    },
+    {
+      "source": "anilist:9000022",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "2014",
+        "2014年4月"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000006",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "日本",
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:107871",
+      "target": "anilist:15651",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Amnesia"
+      ]
+    },
+    {
+      "source": "anilist:15651",
+      "target": "anilist:16592",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Amnesia",
+        "Death Game"
+      ]
+    },
+    {
+      "source": "anilist:10495",
+      "target": "anilist:10884",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:10884",
+      "target": "anilist:112608",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:158704",
+      "target": "anilist:16123",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:16123",
+      "target": "anilist:163078",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:169295",
+      "target": "anilist:177120",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:177120",
+      "target": "anilist:17821",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:17821",
+      "target": "anilist:179694",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:179694",
+      "target": "anilist:180516",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Yuri"
+      ]
+    },
+    {
+      "source": "anilist:168374",
+      "target": "anilist:17821",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Tomboy"
+      ]
+    },
+    {
+      "source": "anilist:5081",
+      "target": "anilist:5909",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Tomboy"
+      ]
+    },
+    {
+      "source": "anilist:5909",
+      "target": "anilist:5941",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Tomboy"
+      ]
+    },
+    {
+      "source": "anilist:103871",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Necromancy"
+      ]
+    },
+    {
+      "source": "anilist:104463",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Necromancy"
+      ]
+    },
+    {
+      "source": "anilist:142701",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Necromancy"
+      ]
+    },
+    {
+      "source": "anilist:20832",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Necromancy"
+      ]
+    },
+    {
+      "source": "anilist:2130",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Necromancy"
+      ]
+    },
+    {
+      "source": "anilist:5114",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Necromancy"
+      ]
+    },
+    {
+      "source": "anilist:121",
+      "target": "anilist:136707",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Alchemy"
+      ]
+    },
+    {
+      "source": "anilist:125206",
+      "target": "anilist:136707",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Alchemy"
+      ]
+    },
+    {
+      "source": "anilist:136707",
+      "target": "anilist:139369",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Alchemy"
+      ]
+    },
+    {
+      "source": "anilist:136707",
+      "target": "anilist:161645",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Alchemy",
+        "Medicine"
+      ]
+    },
+    {
+      "source": "anilist:136707",
+      "target": "anilist:162893",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Alchemy"
+      ]
+    },
+    {
+      "source": "anilist:136707",
+      "target": "anilist:18277",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Alchemy"
+      ]
+    },
+    {
+      "source": "anilist:136707",
+      "target": "anilist:5114",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Alchemy"
+      ]
+    },
+    {
+      "source": "anilist:9000030",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "MADHouse",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:101239",
+      "target": "anilist:128207",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Basketball"
+      ]
+    },
+    {
+      "source": "anilist:10572",
+      "target": "anilist:128207",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Basketball"
+      ]
+    },
+    {
+      "source": "anilist:11771",
+      "target": "anilist:128207",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Basketball"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:16051",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Basketball"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:16894",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Basketball"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:20593",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Basketball"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:20725",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Basketball"
+      ]
+    },
+    {
+      "source": "anilist:9041",
+      "target": "anilist:98443",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Crossdressing"
+      ]
+    },
+    {
+      "source": "anilist:98443",
+      "target": "anilist:99483",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Crossdressing"
       ]
     },
     {
@@ -227212,62 +228817,66 @@
       ]
     },
     {
-      "source": "anilist:4063",
-      "target": "anilist:98443",
+      "source": "anilist:100077",
+      "target": "anilist:10162",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Battle Royale"
+        "Parenthood"
       ]
     },
     {
-      "source": "anilist:98443",
-      "target": "anilist:99698",
+      "source": "anilist:101347",
+      "target": "anilist:10162",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Battle Royale",
-        "Death Game"
+        "Parenthood"
       ]
     },
     {
-      "source": "anilist:98436",
-      "target": "anilist:98443",
+      "source": "anilist:10162",
+      "target": "anilist:107956",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Monster Boy"
+        "Parenthood"
       ]
     },
     {
-      "source": "anilist:1735",
-      "target": "anilist:177120",
+      "source": "anilist:104647",
+      "target": "anilist:113108",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Fugitive",
-        "Ninja"
+        "Royal Affairs"
       ]
     },
     {
-      "source": "anilist:177120",
-      "target": "anilist:185736",
+      "source": "anilist:113108",
+      "target": "anilist:117612",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Fugitive"
+        "Royal Affairs"
       ]
     },
     {
-      "source": "anilist:9000088",
-      "target": "anilist:9000091",
+      "source": "anilist:139820",
+      "target": "anilist:140350",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "中國",
-        "WEB",
-        "source-bangumi",
-        "國產"
+        "Royal Affairs"
+      ]
+    },
+    {
+      "source": "anilist:140350",
+      "target": "anilist:14513",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Royal Affairs"
       ]
     },
     {
@@ -227280,48 +228889,256 @@
       ]
     },
     {
-      "source": "anilist:10793",
-      "target": "anilist:21516",
+      "source": "anilist:156841",
+      "target": "anilist:177120",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Real Robot"
+        "Artificial Intelligence"
       ]
     },
     {
-      "source": "anilist:125869",
-      "target": "anilist:127690",
+      "source": "anilist:177120",
+      "target": "anilist:18277",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Animals"
+        "Artificial Intelligence"
       ]
     },
     {
       "source": "anilist:127690",
-      "target": "anilist:13125",
+      "target": "anilist:2285",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Animals"
+        "Kids"
       ]
     },
     {
-      "source": "anilist:8311",
+      "source": "anilist:127690",
+      "target": "anilist:3075",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Kids"
+      ]
+    },
+    {
+      "source": "anilist:97940",
       "target": "anilist:98443",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Animals"
+        "Orphan"
       ]
     },
     {
       "source": "anilist:98443",
-      "target": "anilist:99390",
+      "target": "anilist:99423",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Animals"
+        "Orphan"
+      ]
+    },
+    {
+      "source": "anilist:10884",
+      "target": "anilist:16123",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Mahjong"
+      ]
+    },
+    {
+      "source": "anilist:10884",
+      "target": "anilist:5671",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Mahjong"
+      ]
+    },
+    {
+      "source": "anilist:16123",
+      "target": "anilist:5671",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Mahjong"
+      ]
+    },
+    {
+      "source": "anilist:199221",
+      "target": "anilist:20722",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Coastal"
+      ]
+    },
+    {
+      "source": "anilist:20722",
+      "target": "anilist:20800",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Coastal"
+      ]
+    },
+    {
+      "source": "anilist:9000014",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "日常",
+        "奇幻",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000014",
+      "target": "anilist:9000079",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "治癒"
+      ]
+    },
+    {
+      "source": "anilist:100401",
+      "target": "anilist:108465",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Teacher"
+      ]
+    },
+    {
+      "source": "anilist:130003",
+      "target": "anilist:179694",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rock Music",
+        "Band"
+      ]
+    },
+    {
+      "source": "anilist:163571",
+      "target": "anilist:179694",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rock Music",
+        "Band"
+      ]
+    },
+    {
+      "source": "anilist:169295",
+      "target": "anilist:179694",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rock Music",
+        "Band"
+      ]
+    },
+    {
+      "source": "anilist:179694",
+      "target": "anilist:21887",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rock Music",
+        "Band"
+      ]
+    },
+    {
+      "source": "anilist:179694",
+      "target": "anilist:5680",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rock Music",
+        "Band"
+      ]
+    },
+    {
+      "source": "anilist:179694",
+      "target": "anilist:7791",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Rock Music",
+        "Band"
+      ]
+    },
+    {
+      "source": "anilist:20722",
+      "target": "anilist:21626",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Calligraphy"
+      ]
+    },
+    {
+      "source": "anilist:9000030",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "TV",
+        "奇幻",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000059",
+      "target": "anilist:9000084",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "TV"
+      ]
+    },
+    {
+      "source": "anilist:16355",
+      "target": "anilist:177120",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Assassins"
+      ]
+    },
+    {
+      "source": "anilist:177120",
+      "target": "anilist:186794",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Assassins"
+      ]
+    },
+    {
+      "source": "anilist:163076",
+      "target": "anilist:20031",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Chibi"
+      ]
+    },
+    {
+      "source": "anilist:20031",
+      "target": "anilist:20987",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Chibi"
       ]
     },
     {
@@ -227330,34 +229147,262 @@
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "熱血",
+        "漫畫改",
+        "熱血"
+      ]
+    },
+    {
+      "source": "anilist:9000003",
+      "target": "anilist:9000048",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "漫畫改"
+      ]
+    },
+    {
+      "source": "anilist:9000003",
+      "target": "anilist:9000079",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
         "漫畫改"
       ]
     },
     {
       "source": "anilist:9000018",
-      "target": "anilist:9000022",
+      "target": "anilist:9000048",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "熱血",
-        "source-bangumi",
-        "漫畫改",
-        "TV"
+        "漫畫改"
       ]
     },
     {
-      "source": "anilist:9000007",
+      "source": "anilist:9000018",
+      "target": "anilist:9000079",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "漫畫改"
+      ]
+    },
+    {
+      "source": "anilist:9000022",
+      "target": "anilist:9000048",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "漫畫改"
+      ]
+    },
+    {
+      "source": "anilist:9000022",
+      "target": "anilist:9000079",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "漫畫改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000034",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "搞笑",
+        "奇幻",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000048",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000052",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000034",
+      "target": "anilist:9000052",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000042",
+      "target": "anilist:9000048",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000042",
+      "target": "anilist:9000052",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "搞笑"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000007",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
       "target": "anilist:9000014",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "穿越",
-        "source-bangumi",
         "奇幻",
-        "TV",
         "異世界",
         "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000030",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000007",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000014",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000030",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000014",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000030",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "異世界",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻"
       ]
     },
     {
@@ -227366,10 +229411,29 @@
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "穿越",
         "奇幻",
         "異世界",
+        "輕小說改",
+        "穿越"
+      ]
+    },
+    {
+      "source": "anilist:9000007",
+      "target": "anilist:9000042",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻",
         "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000007",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻"
       ]
     },
     {
@@ -227378,10 +229442,136 @@
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "穿越",
         "奇幻",
         "異世界",
-        "輕小說改"
+        "輕小說改",
+        "穿越"
+      ]
+    },
+    {
+      "source": "anilist:9000014",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻"
+      ]
+    },
+    {
+      "source": "anilist:9000030",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻"
+      ]
+    },
+    {
+      "source": "anilist:9000042",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "奇幻"
+      ]
+    },
+    {
+      "source": "anilist:113108",
+      "target": "anilist:140350",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:113108",
+      "target": "anilist:141774",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:113108",
+      "target": "anilist:155227",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:113108",
+      "target": "anilist:161645",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:113108",
+      "target": "anilist:176301",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:140350",
+      "target": "anilist:141774",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:140350",
+      "target": "anilist:155227",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:140350",
+      "target": "anilist:161645",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:141774",
+      "target": "anilist:155227",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:155227",
+      "target": "anilist:161645",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
+      ]
+    },
+    {
+      "source": "anilist:155227",
+      "target": "anilist:176301",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Ancient China"
       ]
     },
     {
@@ -227484,49 +229674,565 @@
       ]
     },
     {
-      "source": "anilist:11499",
+      "source": "anilist:9000059",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "後宮"
+      ]
+    },
+    {
+      "source": "anilist:9000059",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "後宮"
+      ]
+    },
+    {
+      "source": "anilist:17247",
+      "target": "anilist:177120",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Robots"
+      ]
+    },
+    {
+      "source": "anilist:177120",
+      "target": "anilist:179992",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Robots"
+      ]
+    },
+    {
+      "source": "anilist:21451",
+      "target": "anilist:21516",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Robots",
+        "Real Robot"
+      ]
+    },
+    {
+      "source": "anilist:139093",
+      "target": "anilist:14653",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Butler"
+      ]
+    },
+    {
+      "source": "anilist:14653",
+      "target": "anilist:16982",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Butler"
+      ]
+    },
+    {
+      "source": "anilist:9000001",
+      "target": "anilist:9000091",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "遊戲改"
+      ]
+    },
+    {
+      "source": "anilist:1735",
+      "target": "anilist:177120",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Fugitive",
+        "Ninja"
+      ]
+    },
+    {
+      "source": "anilist:177120",
+      "target": "anilist:180745",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Fugitive"
+      ]
+    },
+    {
+      "source": "anilist:100401",
+      "target": "anilist:100773",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Educational"
+      ]
+    },
+    {
+      "source": "anilist:131182",
       "target": "anilist:136707",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Medicine"
-      ]
-    },
-    {
-      "source": "anilist:11499",
-      "target": "anilist:21187",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Medicine"
-      ]
-    },
-    {
-      "source": "anilist:126213",
-      "target": "anilist:136707",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Medicine"
-      ]
-    },
-    {
-      "source": "anilist:126213",
-      "target": "anilist:21187",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Medicine"
+        "Educational",
+        "Iyashikei"
       ]
     },
     {
       "source": "anilist:136707",
-      "target": "anilist:161645",
+      "target": "anilist:154768",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Medicine",
-        "Alchemy"
+        "Educational",
+        "Iyashikei"
+      ]
+    },
+    {
+      "source": "anilist:245",
+      "target": "anilist:5945",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Educational"
+      ]
+    },
+    {
+      "source": "anilist:5945",
+      "target": "anilist:97592",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Educational"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000004",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000005",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000006",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000007",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000007",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000007",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000014",
+      "target": "anilist:9000043",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000014",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000014",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000030",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000030",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000042",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000042",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000043",
+      "target": "anilist:9000086",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:9000043",
+      "target": "anilist:9000087",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "輕小說改"
+      ]
+    },
+    {
+      "source": "anilist:127366",
+      "target": "anilist:12753",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Death Game"
+      ]
+    },
+    {
+      "source": "anilist:14345",
+      "target": "anilist:15651",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Death Game"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:163571",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Full CGI"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:169295",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Full CGI"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:21341",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Full CGI"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:21560",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Full CGI"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:21799",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Full CGI"
+      ]
+    },
+    {
+      "source": "anilist:128207",
+      "target": "anilist:98707",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Full CGI"
+      ]
+    },
+    {
+      "source": "anilist:100922",
+      "target": "anilist:21187",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "College"
+      ]
+    },
+    {
+      "source": "anilist:101903",
+      "target": "anilist:21187",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "College"
+      ]
+    },
+    {
+      "source": "anilist:11179",
+      "target": "anilist:21187",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "College"
+      ]
+    },
+    {
+      "source": "anilist:171046",
+      "target": "anilist:21187",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "College"
+      ]
+    },
+    {
+      "source": "anilist:182309",
+      "target": "anilist:21187",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "College"
+      ]
+    },
+    {
+      "source": "anilist:163078",
+      "target": "anilist:177120",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "LGBTQ+ Themes"
+      ]
+    },
+    {
+      "source": "anilist:177120",
+      "target": "anilist:17777",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "LGBTQ+ Themes"
+      ]
+    },
+    {
+      "source": "anilist:17777",
+      "target": "anilist:179694",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "LGBTQ+ Themes"
+      ]
+    },
+    {
+      "source": "anilist:179694",
+      "target": "anilist:185116",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "LGBTQ+ Themes"
+      ]
+    },
+    {
+      "source": "anilist:9000003",
+      "target": "anilist:9000034",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "2009"
+      ]
+    },
+    {
+      "source": "anilist:9000003",
+      "target": "anilist:9000059",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "2009"
+      ]
+    },
+    {
+      "source": "anilist:9000018",
+      "target": "anilist:9000034",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "2009"
+      ]
+    },
+    {
+      "source": "anilist:9000018",
+      "target": "anilist:9000059",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "2009"
+      ]
+    },
+    {
+      "source": "anilist:9000034",
+      "target": "anilist:9000059",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "2009"
+      ]
+    },
+    {
+      "source": "anilist:11499",
+      "target": "anilist:136707",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Medicine"
+      ]
+    },
+    {
+      "source": "anilist:11499",
+      "target": "anilist:21187",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Medicine"
+      ]
+    },
+    {
+      "source": "anilist:126213",
+      "target": "anilist:136707",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Medicine"
+      ]
+    },
+    {
+      "source": "anilist:126213",
+      "target": "anilist:21187",
+      "type": "shared_tag",
+      "weight": 0.15,
+      "detail": [
+        "Medicine"
       ]
     },
     {
@@ -227599,1360 +230305,6 @@
       "weight": 0.15,
       "detail": [
         "Medicine"
-      ]
-    },
-    {
-      "source": "anilist:9000004",
-      "target": "anilist:9000005",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "2026年1月",
-        "source-bangumi",
-        "奇幻",
-        "TV",
-        "異世界",
-        "小說改",
-        "輕小說改",
-        "日本"
-      ]
-    },
-    {
-      "source": "anilist:107339",
-      "target": "anilist:551",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Wrestling"
-      ]
-    },
-    {
-      "source": "anilist:11763",
-      "target": "anilist:551",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Wrestling"
-      ]
-    },
-    {
-      "source": "anilist:551",
-      "target": "anilist:9379",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Wrestling"
-      ]
-    },
-    {
-      "source": "anilist:161964",
-      "target": "anilist:20031",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Satire"
-      ]
-    },
-    {
-      "source": "anilist:20031",
-      "target": "anilist:20910",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Satire"
-      ]
-    },
-    {
-      "source": "anilist:16355",
-      "target": "anilist:177120",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Assassins"
-      ]
-    },
-    {
-      "source": "anilist:177120",
-      "target": "anilist:186794",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Assassins"
-      ]
-    },
-    {
-      "source": "anilist:101215",
-      "target": "anilist:10162",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Josei"
-      ]
-    },
-    {
-      "source": "anilist:10162",
-      "target": "anilist:10800",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Josei"
-      ]
-    },
-    {
-      "source": "anilist:10162",
-      "target": "anilist:108268",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Josei"
-      ]
-    },
-    {
-      "source": "anilist:127366",
-      "target": "anilist:12753",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Death Game"
-      ]
-    },
-    {
-      "source": "anilist:14345",
-      "target": "anilist:15651",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Death Game"
-      ]
-    },
-    {
-      "source": "anilist:15651",
-      "target": "anilist:16592",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Death Game",
-        "Amnesia"
-      ]
-    },
-    {
-      "source": "anilist:6880",
-      "target": "anilist:98443",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Death Game"
-      ]
-    },
-    {
-      "source": "anilist:130003",
-      "target": "anilist:179694",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Rock Music",
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:163571",
-      "target": "anilist:179694",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Rock Music",
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:169295",
-      "target": "anilist:179694",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Rock Music",
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:179694",
-      "target": "anilist:21887",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Rock Music",
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:179694",
-      "target": "anilist:5680",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Rock Music",
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:179694",
-      "target": "anilist:7791",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Rock Music",
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:187464",
-      "target": "anilist:20031",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Chuunibyou"
-      ]
-    },
-    {
-      "source": "anilist:20031",
-      "target": "anilist:20646",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Chuunibyou"
-      ]
-    },
-    {
-      "source": "anilist:10271",
-      "target": "anilist:15651",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:12753",
-      "target": "anilist:15651",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:15651",
-      "target": "anilist:20638",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:15651",
-      "target": "anilist:296",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:15651",
-      "target": "anilist:3002",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:15651",
-      "target": "anilist:5112",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:15651",
-      "target": "anilist:97636",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:15651",
-      "target": "anilist:9981",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Card Battle"
-      ]
-    },
-    {
-      "source": "anilist:9000034",
-      "target": "anilist:9000048",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "泡麵番",
-        "搞笑"
-      ]
-    },
-    {
-      "source": "anilist:9041",
-      "target": "anilist:98443",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Crossdressing"
-      ]
-    },
-    {
-      "source": "anilist:98443",
-      "target": "anilist:99483",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Crossdressing"
-      ]
-    },
-    {
-      "source": "anilist:12291",
-      "target": "anilist:127690",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Iyashikei"
-      ]
-    },
-    {
-      "source": "anilist:127690",
-      "target": "anilist:131182",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Iyashikei"
-      ]
-    },
-    {
-      "source": "anilist:131182",
-      "target": "anilist:136707",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Iyashikei",
-        "Educational"
-      ]
-    },
-    {
-      "source": "anilist:136707",
-      "target": "anilist:154768",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Iyashikei",
-        "Educational"
-      ]
-    },
-    {
-      "source": "anilist:182255",
-      "target": "anilist:20722",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Iyashikei"
-      ]
-    },
-    {
-      "source": "anilist:20722",
-      "target": "anilist:21284",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Iyashikei"
-      ]
-    },
-    {
-      "source": "anilist:163078",
-      "target": "anilist:177120",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "LGBTQ+ Themes"
-      ]
-    },
-    {
-      "source": "anilist:177120",
-      "target": "anilist:17777",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "LGBTQ+ Themes"
-      ]
-    },
-    {
-      "source": "anilist:17777",
-      "target": "anilist:179694",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "LGBTQ+ Themes"
-      ]
-    },
-    {
-      "source": "anilist:179694",
-      "target": "anilist:185116",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "LGBTQ+ Themes"
-      ]
-    },
-    {
-      "source": "anilist:9000001",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "遊戲改"
-      ]
-    },
-    {
-      "source": "anilist:9000001",
-      "target": "anilist:9000003",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi"
-      ]
-    },
-    {
-      "source": "anilist:9000003",
-      "target": "anilist:9000004",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV"
-      ]
-    },
-    {
-      "source": "anilist:9000005",
-      "target": "anilist:9000006",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "戰鬥",
-        "奇幻",
-        "TV",
-        "異世界",
-        "輕小說改",
-        "日本"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000007",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "奇幻",
-        "TV",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000014",
-      "target": "anilist:9000018",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV"
-      ]
-    },
-    {
-      "source": "anilist:9000022",
-      "target": "anilist:9000030",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV"
-      ]
-    },
-    {
-      "source": "anilist:9000030",
-      "target": "anilist:9000034",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi"
-      ]
-    },
-    {
-      "source": "anilist:9000034",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "搞笑"
-      ]
-    },
-    {
-      "source": "anilist:9000042",
-      "target": "anilist:9000043",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV",
-        "輕小說改",
-        "2014"
-      ]
-    },
-    {
-      "source": "anilist:9000043",
-      "target": "anilist:9000048",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV"
-      ]
-    },
-    {
-      "source": "anilist:9000048",
-      "target": "anilist:9000052",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV",
-        "搞笑"
-      ]
-    },
-    {
-      "source": "anilist:9000052",
-      "target": "anilist:9000059",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV"
-      ]
-    },
-    {
-      "source": "anilist:9000079",
-      "target": "anilist:9000084",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi"
-      ]
-    },
-    {
-      "source": "anilist:9000084",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi",
-        "TV"
-      ]
-    },
-    {
-      "source": "anilist:9000087",
-      "target": "anilist:9000088",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "source-bangumi"
-      ]
-    },
-    {
-      "source": "anilist:141774",
-      "target": "anilist:179694",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:163078",
-      "target": "anilist:179694",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Band"
-      ]
-    },
-    {
-      "source": "anilist:97940",
-      "target": "anilist:98443",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Orphan"
-      ]
-    },
-    {
-      "source": "anilist:98443",
-      "target": "anilist:99423",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Orphan"
-      ]
-    },
-    {
-      "source": "anilist:100922",
-      "target": "anilist:21187",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "College"
-      ]
-    },
-    {
-      "source": "anilist:101903",
-      "target": "anilist:21187",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "College"
-      ]
-    },
-    {
-      "source": "anilist:11179",
-      "target": "anilist:21187",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "College"
-      ]
-    },
-    {
-      "source": "anilist:171046",
-      "target": "anilist:21187",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "College"
-      ]
-    },
-    {
-      "source": "anilist:182309",
-      "target": "anilist:21187",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "College"
-      ]
-    },
-    {
-      "source": "anilist:100401",
-      "target": "anilist:108465",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Teacher"
-      ]
-    },
-    {
-      "source": "anilist:168374",
-      "target": "anilist:17821",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Tomboy"
-      ]
-    },
-    {
-      "source": "anilist:17821",
-      "target": "anilist:178869",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Tomboy"
-      ]
-    },
-    {
-      "source": "anilist:5081",
-      "target": "anilist:5909",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Tomboy"
-      ]
-    },
-    {
-      "source": "anilist:5909",
-      "target": "anilist:5941",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Tomboy"
-      ]
-    },
-    {
-      "source": "anilist:9000003",
-      "target": "anilist:9000048",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "漫畫改"
-      ]
-    },
-    {
-      "source": "anilist:9000003",
-      "target": "anilist:9000079",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "漫畫改"
-      ]
-    },
-    {
-      "source": "anilist:9000018",
-      "target": "anilist:9000048",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "漫畫改"
-      ]
-    },
-    {
-      "source": "anilist:9000018",
-      "target": "anilist:9000079",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "漫畫改"
-      ]
-    },
-    {
-      "source": "anilist:9000022",
-      "target": "anilist:9000048",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "漫畫改"
-      ]
-    },
-    {
-      "source": "anilist:9000022",
-      "target": "anilist:9000079",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "漫畫改"
-      ]
-    },
-    {
-      "source": "anilist:9000003",
-      "target": "anilist:9000034",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "2009"
-      ]
-    },
-    {
-      "source": "anilist:9000003",
-      "target": "anilist:9000059",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "2009"
-      ]
-    },
-    {
-      "source": "anilist:9000018",
-      "target": "anilist:9000034",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "2009"
-      ]
-    },
-    {
-      "source": "anilist:9000018",
-      "target": "anilist:9000059",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "2009"
-      ]
-    },
-    {
-      "source": "anilist:9000034",
-      "target": "anilist:9000059",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "2009"
-      ]
-    },
-    {
-      "source": "anilist:100401",
-      "target": "anilist:20665",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Classical Music"
-      ]
-    },
-    {
-      "source": "anilist:100401",
-      "target": "anilist:20912",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Classical Music"
-      ]
-    },
-    {
-      "source": "anilist:100401",
-      "target": "anilist:21460",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Classical Music"
-      ]
-    },
-    {
-      "source": "anilist:100401",
-      "target": "anilist:4789",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Classical Music"
-      ]
-    },
-    {
-      "source": "anilist:9000014",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "日常",
-        "奇幻",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:127690",
-      "target": "anilist:2285",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Kids"
-      ]
-    },
-    {
-      "source": "anilist:127690",
-      "target": "anilist:3075",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Kids"
-      ]
-    },
-    {
-      "source": "anilist:100401",
-      "target": "anilist:10379",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:100401",
-      "target": "anilist:17821",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:10379",
-      "target": "anilist:17821",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:131182",
-      "target": "anilist:17821",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:172019",
-      "target": "anilist:17821",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:17821",
-      "target": "anilist:19151",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:17821",
-      "target": "anilist:21394",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:17821",
-      "target": "anilist:21567",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:17821",
-      "target": "anilist:7647",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:17821",
-      "target": "anilist:8407",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Outdoor Activities"
-      ]
-    },
-    {
-      "source": "anilist:103871",
-      "target": "anilist:98443",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Necromancy"
-      ]
-    },
-    {
-      "source": "anilist:107871",
-      "target": "anilist:15651",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Amnesia"
-      ]
-    },
-    {
-      "source": "anilist:61",
-      "target": "anilist:6629",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Shoujo"
-      ]
-    },
-    {
-      "source": "anilist:6629",
-      "target": "anilist:7662",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Shoujo"
-      ]
-    },
-    {
-      "source": "anilist:9000004",
-      "target": "anilist:9000006",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改",
-        "日本"
-      ]
-    },
-    {
-      "source": "anilist:9000004",
-      "target": "anilist:9000007",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000004",
-      "target": "anilist:9000014",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000004",
-      "target": "anilist:9000030",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000004",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000004",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻"
-      ]
-    },
-    {
-      "source": "anilist:9000005",
-      "target": "anilist:9000007",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000005",
-      "target": "anilist:9000014",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000005",
-      "target": "anilist:9000030",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000005",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "搞笑",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000005",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000014",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000030",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "異世界",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻"
-      ]
-    },
-    {
-      "source": "anilist:9000007",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000007",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻"
-      ]
-    },
-    {
-      "source": "anilist:9000014",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻"
-      ]
-    },
-    {
-      "source": "anilist:9000030",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻",
-        "TV",
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000030",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻"
-      ]
-    },
-    {
-      "source": "anilist:9000042",
-      "target": "anilist:9000091",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "奇幻"
-      ]
-    },
-    {
-      "source": "anilist:10495",
-      "target": "anilist:10884",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Yuri"
-      ]
-    },
-    {
-      "source": "anilist:10884",
-      "target": "anilist:112608",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Yuri"
-      ]
-    },
-    {
-      "source": "anilist:158704",
-      "target": "anilist:16123",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Yuri"
-      ]
-    },
-    {
-      "source": "anilist:16123",
-      "target": "anilist:163078",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Yuri"
-      ]
-    },
-    {
-      "source": "anilist:169295",
-      "target": "anilist:177120",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Yuri"
-      ]
-    },
-    {
-      "source": "anilist:177120",
-      "target": "anilist:17821",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Yuri"
-      ]
-    },
-    {
-      "source": "anilist:9000059",
-      "target": "anilist:9000084",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "TV"
-      ]
-    },
-    {
-      "source": "anilist:245",
-      "target": "anilist:5945",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Educational"
-      ]
-    },
-    {
-      "source": "anilist:5945",
-      "target": "anilist:97592",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Educational"
-      ]
-    },
-    {
-      "source": "anilist:101239",
-      "target": "anilist:128207",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Basketball"
-      ]
-    },
-    {
-      "source": "anilist:10572",
-      "target": "anilist:128207",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Basketball"
-      ]
-    },
-    {
-      "source": "anilist:11771",
-      "target": "anilist:128207",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Basketball"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:16051",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Basketball"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:16894",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Basketball"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:20593",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Basketball"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:20725",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Basketball"
       ]
     },
     {
@@ -229037,148 +230389,129 @@
       ]
     },
     {
-      "source": "anilist:163076",
-      "target": "anilist:20031",
+      "source": "anilist:21087",
+      "target": "anilist:287",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Chibi"
+        "Cultivation"
       ]
     },
     {
-      "source": "anilist:20031",
-      "target": "anilist:20987",
+      "source": "anilist:287",
+      "target": "anilist:392",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Chibi"
+        "Cultivation"
       ]
     },
     {
-      "source": "anilist:17247",
-      "target": "anilist:177120",
+      "source": "anilist:100401",
+      "target": "anilist:20665",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Robots"
+        "Classical Music"
       ]
     },
     {
-      "source": "anilist:177120",
-      "target": "anilist:179992",
+      "source": "anilist:100401",
+      "target": "anilist:20912",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Robots"
+        "Classical Music"
       ]
     },
     {
-      "source": "anilist:9000014",
-      "target": "anilist:9000079",
+      "source": "anilist:100401",
+      "target": "anilist:21460",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "治癒"
+        "Classical Music"
       ]
     },
     {
-      "source": "anilist:9000022",
-      "target": "anilist:9000043",
+      "source": "anilist:100401",
+      "target": "anilist:4789",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "2014年4月",
-        "2014"
+        "Classical Music"
       ]
     },
     {
-      "source": "anilist:10884",
-      "target": "anilist:16123",
+      "source": "anilist:10271",
+      "target": "anilist:15651",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Mahjong"
+        "Card Battle"
       ]
     },
     {
-      "source": "anilist:10884",
-      "target": "anilist:5671",
+      "source": "anilist:12753",
+      "target": "anilist:15651",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Mahjong"
+        "Card Battle"
       ]
     },
     {
-      "source": "anilist:16123",
-      "target": "anilist:5671",
+      "source": "anilist:15651",
+      "target": "anilist:20638",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Mahjong"
+        "Card Battle"
       ]
     },
     {
-      "source": "anilist:9000005",
-      "target": "anilist:9000034",
+      "source": "anilist:15651",
+      "target": "anilist:296",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "搞笑"
+        "Card Battle"
       ]
     },
     {
-      "source": "anilist:9000005",
-      "target": "anilist:9000048",
+      "source": "anilist:15651",
+      "target": "anilist:3002",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "搞笑"
+        "Card Battle"
       ]
     },
     {
-      "source": "anilist:9000005",
-      "target": "anilist:9000052",
+      "source": "anilist:15651",
+      "target": "anilist:5112",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "搞笑"
+        "Card Battle"
       ]
     },
     {
-      "source": "anilist:9000034",
-      "target": "anilist:9000052",
+      "source": "anilist:15651",
+      "target": "anilist:97636",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "搞笑"
+        "Card Battle"
       ]
     },
     {
-      "source": "anilist:9000042",
-      "target": "anilist:9000048",
+      "source": "anilist:15651",
+      "target": "anilist:9981",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "搞笑"
-      ]
-    },
-    {
-      "source": "anilist:9000042",
-      "target": "anilist:9000052",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "搞笑"
-      ]
-    },
-    {
-      "source": "anilist:9000052",
-      "target": "anilist:9000084",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "水島努"
+        "Card Battle"
       ]
     },
     {
@@ -229236,373 +230569,75 @@
       ]
     },
     {
-      "source": "anilist:20665",
-      "target": "anilist:20722",
+      "source": "anilist:61",
+      "target": "anilist:6629",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Rehabilitation"
+        "Shoujo"
       ]
     },
     {
-      "source": "anilist:20722",
-      "target": "anilist:21006",
+      "source": "anilist:6629",
+      "target": "anilist:7662",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Rehabilitation"
+        "Shoujo"
       ]
     },
     {
-      "source": "anilist:20722",
-      "target": "anilist:21626",
+      "source": "anilist:125869",
+      "target": "anilist:127690",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Calligraphy"
+        "Animals"
       ]
     },
     {
-      "source": "anilist:9000004",
-      "target": "anilist:9000043",
+      "source": "anilist:127690",
+      "target": "anilist:13125",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "輕小說改"
+        "Animals"
       ]
     },
     {
-      "source": "anilist:9000004",
-      "target": "anilist:9000086",
+      "source": "anilist:9000052",
+      "target": "anilist:9000084",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "輕小說改"
+        "水島努"
       ]
     },
     {
-      "source": "anilist:9000004",
-      "target": "anilist:9000087",
+      "source": "anilist:107339",
+      "target": "anilist:551",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "輕小說改"
+        "Wrestling"
       ]
     },
     {
-      "source": "anilist:9000005",
-      "target": "anilist:9000043",
+      "source": "anilist:11763",
+      "target": "anilist:551",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "輕小說改"
+        "Wrestling"
       ]
     },
     {
-      "source": "anilist:9000005",
-      "target": "anilist:9000086",
+      "source": "anilist:551",
+      "target": "anilist:9379",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000005",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000043",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000006",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000007",
-      "target": "anilist:9000043",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000007",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000007",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000014",
-      "target": "anilist:9000043",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000014",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000014",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000030",
-      "target": "anilist:9000043",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改",
-        "MADHouse"
-      ]
-    },
-    {
-      "source": "anilist:9000030",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000030",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000042",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000042",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000043",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:9000043",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "輕小說改"
-      ]
-    },
-    {
-      "source": "anilist:10790",
-      "target": "anilist:177120",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ninja"
-      ]
-    },
-    {
-      "source": "anilist:132474",
-      "target": "anilist:177120",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ninja"
-      ]
-    },
-    {
-      "source": "anilist:142329",
-      "target": "anilist:177120",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ninja"
-      ]
-    },
-    {
-      "source": "anilist:9000022",
-      "target": "anilist:9000042",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "2014"
-      ]
-    },
-    {
-      "source": "anilist:199221",
-      "target": "anilist:20722",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Coastal"
-      ]
-    },
-    {
-      "source": "anilist:20722",
-      "target": "anilist:20800",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Coastal"
-      ]
-    },
-    {
-      "source": "anilist:21087",
-      "target": "anilist:287",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Cultivation"
-      ]
-    },
-    {
-      "source": "anilist:287",
-      "target": "anilist:392",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Cultivation"
-      ]
-    },
-    {
-      "source": "anilist:9000059",
-      "target": "anilist:9000086",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "後宮"
-      ]
-    },
-    {
-      "source": "anilist:9000059",
-      "target": "anilist:9000087",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "後宮"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:163571",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Full CGI"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:169295",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Full CGI"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:21341",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Full CGI"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:21560",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Full CGI"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:21799",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Full CGI"
-      ]
-    },
-    {
-      "source": "anilist:128207",
-      "target": "anilist:98707",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Full CGI"
+        "Wrestling"
       ]
     },
     {
@@ -229624,228 +230659,66 @@
       ]
     },
     {
-      "source": "anilist:9000003",
-      "target": "anilist:9000086",
+      "source": "anilist:10790",
+      "target": "anilist:177120",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "釘宮理惠"
+        "Ninja"
       ]
     },
     {
-      "source": "anilist:9000003",
-      "target": "anilist:9000087",
+      "source": "anilist:12291",
+      "target": "anilist:127690",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "釘宮理惠"
+        "Iyashikei"
       ]
     },
     {
-      "source": "anilist:9000018",
-      "target": "anilist:9000086",
+      "source": "anilist:127690",
+      "target": "anilist:131182",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "釘宮理惠"
+        "Iyashikei"
       ]
     },
     {
-      "source": "anilist:9000018",
-      "target": "anilist:9000087",
+      "source": "anilist:182255",
+      "target": "anilist:20722",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "釘宮理惠"
+        "Iyashikei"
       ]
     },
     {
-      "source": "anilist:121",
-      "target": "anilist:136707",
+      "source": "anilist:20722",
+      "target": "anilist:21284",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Alchemy"
+        "Iyashikei"
       ]
     },
     {
-      "source": "anilist:125206",
-      "target": "anilist:136707",
+      "source": "anilist:187464",
+      "target": "anilist:20031",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Alchemy"
+        "Chuunibyou"
       ]
     },
     {
-      "source": "anilist:136707",
-      "target": "anilist:139369",
+      "source": "anilist:20031",
+      "target": "anilist:20646",
       "type": "shared_tag",
       "weight": 0.15,
       "detail": [
-        "Alchemy"
-      ]
-    },
-    {
-      "source": "anilist:136707",
-      "target": "anilist:162893",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Alchemy"
-      ]
-    },
-    {
-      "source": "anilist:136707",
-      "target": "anilist:18277",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Alchemy"
-      ]
-    },
-    {
-      "source": "anilist:136707",
-      "target": "anilist:5114",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Alchemy"
-      ]
-    },
-    {
-      "source": "anilist:113108",
-      "target": "anilist:140350",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:113108",
-      "target": "anilist:141774",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:113108",
-      "target": "anilist:155227",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:113108",
-      "target": "anilist:161645",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:113108",
-      "target": "anilist:176301",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:140350",
-      "target": "anilist:141774",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:140350",
-      "target": "anilist:155227",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:140350",
-      "target": "anilist:161645",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:140350",
-      "target": "anilist:176301",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:141774",
-      "target": "anilist:155227",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:155227",
-      "target": "anilist:161645",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:155227",
-      "target": "anilist:176301",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Ancient China"
-      ]
-    },
-    {
-      "source": "anilist:104647",
-      "target": "anilist:113108",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Royal Affairs"
-      ]
-    },
-    {
-      "source": "anilist:113108",
-      "target": "anilist:117612",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Royal Affairs"
-      ]
-    },
-    {
-      "source": "anilist:139820",
-      "target": "anilist:140350",
-      "type": "shared_tag",
-      "weight": 0.15,
-      "detail": [
-        "Royal Affairs"
+        "Chuunibyou"
       ]
     }
   ],

@@ -219,6 +219,38 @@ select.pill-btn {
   flex: 0 0 auto;
 }
 
+/* ========== Season picks bar (當季新番推薦) ========== */
+.season-bar {
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255,143,177,0.06), var(--bg-elev) 60%);
+  padding: 10px 12px 12px;
+}
+.season-bar__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+.season-bar__title {
+  color: #ff8fb1;
+  font-size: 14px;
+}
+.season-bar__header .count { color: var(--fg-faint); font-weight: normal; font-size: 12px; }
+.season-bar__header .updated { color: var(--fg-faint); font-weight: normal; font-size: 11px; }
+.season-bar__header .actions { margin-left: auto; display: flex; gap: 6px; }
+.season-bar__header .actions button {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 /* ========== Recommend bar ========== */
 .recommend-bar {
   border-bottom: 1px solid var(--border);
@@ -273,7 +305,7 @@ select.pill-btn {
   line-height: 1.4;
   padding: 6px 6px 8px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
