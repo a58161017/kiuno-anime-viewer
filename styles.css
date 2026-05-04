@@ -998,7 +998,13 @@ select.pill-btn {
   transition: background 0.12s, color 0.12s;
 }
 .reply-toggle:hover { background: var(--bg-elev-2); color: var(--accent); }
+.reply-toggle.has-replies {
+  color: var(--accent);
+  background: rgba(93,210,255,0.08);
+}
+.reply-toggle.has-replies:hover { background: rgba(93,210,255,0.15); }
 .reply-toggle__count { color: var(--fg-faint); font-size: 11px; }
+.reply-toggle.has-replies .reply-toggle__count { color: var(--accent); font-weight: 600; }
 
 .comment-thread {
   margin-top: 8px;

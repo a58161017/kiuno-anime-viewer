@@ -129,11 +129,15 @@
       <p class="comment-body" x-text="c.description"></p>
 
       <div class="comment-actions">
-        <button type="button" class="reply-toggle" @click="toggleThread(c.id)">
-          <span x-text="getThread(c.id).expanded ? '▼ 收合回覆' : '💬 回覆 / 查看回覆'"></span>
+        <button type="button" class="reply-toggle"
+                :class="{'has-replies': threadCount(c.id) > 0}"
+                @click="toggleThread(c.id)">
+          <span x-text="getThread(c.id).expanded
+                          ? '▼ 收合回覆'
+                          : (threadCount(c.id) > 0 ? '💬 查看回覆' : '💬 回覆')"></span>
           <span class="reply-toggle__count"
-                x-show="getThread(c.id).replies.length > 0"
-                x-text="`(${getThread(c.id).replies.length})`"></span>
+                x-show="threadCount(c.id) > 0"
+                x-text="`(${threadCount(c.id)})`"></span>
         </button>
       </div>
 
@@ -191,7 +195,7 @@ import { firebaseConfig, isConfigured } from "./firebase-config.js?v=1";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import {
   getFirestore, collection, addDoc, query, orderBy, limit, startAfter,
-  onSnapshot, getDocs, serverTimestamp,
+  onSnapshot, getDocs, getCountFromServer, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
 import { collectAudit, showToast, formatTime } from "./js/utils.js?v=1";
@@ -282,6 +286,11 @@ Alpine.data("recommends", () => ({
         // 合併：保留已載入的「更舊」分頁，但首頁部分用最新串流結果替換
         const beyondFirstPage = this.comments.slice(this.pageSize);
         this.comments = [...fresh, ...beyondFirstPage];
+        // 抓沒抓過 reply count 的留言（不阻塞主畫面）
+        fresh.forEach(c => {
+          const t = this.getThread(c.id);
+          if (!t.countFetched) this._refreshReplyCount(c.id);
+        });
         if (snap.docs.length > 0) {
           this.lastDoc = snap.docs[snap.docs.length - 1];
           this.hasMore = snap.docs.length === this.pageSize;
@@ -438,6 +447,10 @@ Alpine.data("recommends", () => ({
         const snap = await getDocs(q);
         const more = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         this.comments = [...this.comments, ...more];
+        more.forEach(c => {
+          const t = this.getThread(c.id);
+          if (!t.countFetched) this._refreshReplyCount(c.id);
+        });
         if (snap.docs.length > 0) {
           this.lastDoc = snap.docs[snap.docs.length - 1];
         }
@@ -468,12 +481,32 @@ Alpine.data("recommends", () => ({
           expanded: false,
           loading: false,
           replies: [],
+          replyCount: 0,         // 初始載入時抓的數量；展開後改用 replies.length
+          countFetched: false,
           replyForm: { nickname: presetNick, text: "" },
           submitting: false,
           _unsub: null,
         };
       }
       return this.threads[id];
+    },
+
+    // 顯示用的回覆數：展開後用即時 replies.length，否則用初始 fetch count
+    threadCount(id) {
+      const t = this.getThread(id);
+      return t.replies.length > 0 ? t.replies.length : t.replyCount;
+    },
+
+    async _refreshReplyCount(commentId) {
+      if (!db) return;
+      try {
+        const snap = await getCountFromServer(
+          collection(db, "recommends", commentId, "replies")
+        );
+        const t = this.getThread(commentId);
+        t.replyCount = snap.data().count;
+        t.countFetched = true;
+      } catch (e) { /* fail-soft，不影響主畫面 */ }
     },
 
     toggleThread(id) {

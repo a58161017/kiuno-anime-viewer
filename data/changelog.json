@@ -1,6 +1,29 @@
 {
   "versions": [
     {
+      "version": "1.0.8",
+      "date": "2026-05-04",
+      "summary": "Tag 全面中文化 (326 條補譯)、graph 分類過濾 banner、recommends 留言顯示回覆數",
+      "changes": {
+        "added": [
+          "graph.html L1 加 banner：顯示「{分類} 分類底下 N 部動漫匯總出來的標籤」，過濾關係視覺化更明確",
+          "graph.html L2 banner：顯示「{分類} · {標籤} · N 部動漫」"
+        ],
+        "fixed": [
+          "recommends 留言不展開時看不到回覆數：用 getCountFromServer 一次性 fetch 每筆推薦的回覆數，顯示在 toggle 按鈕上 (有回覆時整個按鈕變藍突出)"
+        ],
+        "removed": [],
+        "ui": [
+          "標籤從英文改中文：傲嬌、異世界、偽娘、後宮、女僕、巫女、警察、群像劇、女性日常 …等 326 個 tag 全面中譯"
+        ],
+        "infra": [
+          "data/genre_zh_map.json 從 19 條擴充到 345 條 (補入 unmapped_tags.json 全部 326 條)",
+          "跑 enrich --force 從 cache 重建 anime.json，所有 tag 自動使用中譯",
+          "unmapped_tags.json 應跑完後變空 (下次未來新進 tag 仍會落入)"
+        ]
+      }
+    },
+    {
       "version": "1.0.7",
       "date": "2026-05-04",
       "summary": "recommends 留言加 1 層回覆 (subcollection + lazy load)",

@@ -88,6 +88,18 @@
       }
     }
 
+    .level-banner {
+      background: rgba(124, 142, 255, 0.12);
+      border-bottom: 1px solid var(--border);
+      color: var(--fg-muted);
+      font-size: 12px;
+      padding: 6px 14px;
+      text-align: center;
+      display: none;
+    }
+    .level-banner.show { display: block; }
+    .level-banner b { color: var(--accent); font-weight: 700; }
+
     .level-toast {
       position: fixed; left: 50%; top: max(80px, env(safe-area-inset-top));
       transform: translateX(-50%);
@@ -121,6 +133,8 @@
   <div class="breadcrumb" id="breadcrumb"></div>
   <button class="fit" onclick="cy && cy.fit(null, 60)">置中</button>
 </div>
+
+<div class="level-banner" id="levelBanner"></div>
 
 <div id="cy"></div>
 <div id="node-info"></div>
@@ -320,6 +334,13 @@ function showToast(text) {
   setTimeout(() => t.classList.remove('show'), 1300);
 }
 
+function setBanner(html) {
+  const b = document.getElementById('levelBanner');
+  if (!b) return;
+  if (html) { b.innerHTML = html; b.classList.add('show'); }
+  else { b.innerHTML = ''; b.classList.remove('show'); }
+}
+
 function checkZoomDrill() {
   const now = Date.now();
   if (now - lastDrillTime < ZOOM_DRILL_COOLDOWN) return;
@@ -391,6 +412,7 @@ function escapeHtml(s) {
 
 // ============== LEVEL 0: CATEGORIES ==============
 function renderLevel0() {
+  setBanner('');
   const counts = {};
   Object.values(anime).forEach(rec => (rec.categories || []).forEach(c => counts[c] = (counts[c] || 0) + 1));
   const cats = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
@@ -436,6 +458,7 @@ function renderLevel0() {
 // ============== LEVEL 1: TAGS WITHIN CATEGORY ==============
 function renderLevel1(cat) {
   const recsInCat = Object.values(anime).filter(rec => (rec.categories || []).includes(cat));
+  setBanner(`顯示 <b>${escapeHtml(cat)}</b> 分類底下 ${recsInCat.length} 部動漫匯總出來的標籤`);
   const tagCounts = {};
   recsInCat.forEach(rec => {
     (rec.tags || []).forEach(t => {
@@ -493,6 +516,7 @@ function renderLevel2(cat, tag) {
     if (!(rec.tags || []).includes(tag)) continue;
     matched.push([id, rec]);
   }
+  setBanner(`<b>${escapeHtml(cat)}</b> · <b>${escapeHtml(tag)}</b> · ${matched.length} 部動漫`);
   const idSet = new Set(matched.map(([id]) => id));
 
   const nodes = matched.map(([id, rec]) => {
