@@ -978,6 +978,112 @@ select.pill-btn {
 .comments-footer { text-align: center; margin-top: 16px; }
 .comments-footer .all-loaded { color: var(--fg-faint); font-size: 12px; margin: 12px 0; }
 
+/* ========== Comment 1-層回覆 thread ========== */
+.comment-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+.reply-toggle {
+  background: transparent;
+  border: none;
+  color: var(--fg-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.reply-toggle:hover { background: var(--bg-elev-2); color: var(--accent); }
+.reply-toggle__count { color: var(--fg-faint); font-size: 11px; }
+
+.comment-thread {
+  margin-top: 8px;
+  padding: 8px 0 8px 12px;
+  border-left: 2px solid var(--border);
+}
+.reply-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.reply-item {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.reply-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+  font-size: 11px;
+}
+.reply-name { color: var(--accent); font-weight: 700; font-size: 12px; }
+.reply-time { color: var(--fg-faint); font-size: 11px; margin-left: auto; }
+.reply-body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--fg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.reply-empty {
+  color: var(--fg-faint);
+  font-size: 11px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.reply-form input[type="text"],
+.reply-form textarea {
+  width: 100%;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--fg);
+  padding: 6px 10px;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.reply-form input[type="text"]:focus,
+.reply-form textarea:focus { border-color: var(--accent); }
+.reply-form textarea { resize: vertical; min-height: 50px; }
+.reply-form__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.reply-form__count { font-size: 11px; color: var(--fg-faint); flex: 1; }
+.reply-form .submit-btn {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 600;
+  padding: 6px 14px;
+  font-size: 12px;
+}
+.reply-form .submit-btn:disabled {
+  background: var(--bg-elev-2);
+  color: var(--fg-faint);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+
 @media (min-width: 600px) {
   .recommend-form { padding: 20px 16px; }
   .recommend-form h2 { font-size: 18px; }

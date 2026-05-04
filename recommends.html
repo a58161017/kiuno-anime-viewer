@@ -127,6 +127,52 @@
               x-text="formatTime(c.createdAt)"></time>
       </div>
       <p class="comment-body" x-text="c.description"></p>
+
+      <div class="comment-actions">
+        <button type="button" class="reply-toggle" @click="toggleThread(c.id)">
+          <span x-text="getThread(c.id).expanded ? '▼ 收合回覆' : '💬 回覆 / 查看回覆'"></span>
+          <span class="reply-toggle__count"
+                x-show="getThread(c.id).replies.length > 0"
+                x-text="`(${getThread(c.id).replies.length})`"></span>
+        </button>
+      </div>
+
+      <div class="comment-thread" x-show="getThread(c.id).expanded" x-cloak>
+        <div class="reply-list">
+          <template x-for="r in getThread(c.id).replies" :key="r.id">
+            <article class="reply-item">
+              <div class="reply-head">
+                <strong class="reply-name" x-text="r.nickname"></strong>
+                <time class="reply-time"
+                      :datetime="r.createdAt?.toDate?.().toISOString()"
+                      x-text="formatTime(r.createdAt)"></time>
+              </div>
+              <p class="reply-body" x-text="r.text"></p>
+            </article>
+          </template>
+          <div class="reply-empty"
+               x-show="!getThread(c.id).loading && getThread(c.id).replies.length === 0">
+            還沒有人回覆，當第一個吧
+          </div>
+          <div class="reply-empty" x-show="getThread(c.id).loading">載入中…</div>
+        </div>
+        <form class="reply-form" @submit.prevent="submitReply(c.id)">
+          <input type="text" x-model="getThread(c.id).replyForm.nickname"
+                 maxlength="20" required placeholder="暱稱" autocomplete="off"
+                 :disabled="getThread(c.id).submitting" />
+          <textarea x-model="getThread(c.id).replyForm.text"
+                    rows="2" maxlength="500" required
+                    placeholder="回覆…(最多 500 字)"
+                    :disabled="getThread(c.id).submitting"></textarea>
+          <div class="reply-form__row">
+            <span class="reply-form__count"
+                  x-text="`${getThread(c.id).replyForm.text.length}/500`"></span>
+            <button type="submit" class="pill-btn submit-btn"
+                    :disabled="getThread(c.id).submitting"
+                    x-text="getThread(c.id).submitting ? '送出中…' : '送出回覆'"></button>
+          </div>
+        </form>
+      </div>
     </article>
   </template>
 
@@ -181,6 +227,9 @@ Alpine.data("recommends", () => ({
     autocompleteOpen: false,
     autocompleteResults: [],
     appVersion: "",
+
+    // 每則推薦的回覆 thread 狀態 (lazy)
+    threads: {},
 
     async init() {
       // 版本號
@@ -408,6 +457,91 @@ Alpine.data("recommends", () => ({
       if (Array.isArray(c.picks) && c.picks.length > 0) return c.picks;
       if (c.anime_title) return [{ id: c.anime_id || null, title: c.anime_title }];
       return [];
+    },
+
+    // 1 層回覆 thread：lazy 建立 entry，每次回傳同一 ref（讓 Alpine 反應正確）
+    getThread(id) {
+      if (!this.threads[id]) {
+        const presetNick = this.form.nickname ||
+          localStorage.getItem("recommendsNickname") || "";
+        this.threads[id] = {
+          expanded: false,
+          loading: false,
+          replies: [],
+          replyForm: { nickname: presetNick, text: "" },
+          submitting: false,
+          _unsub: null,
+        };
+      }
+      return this.threads[id];
+    },
+
+    toggleThread(id) {
+      const t = this.getThread(id);
+      if (t.expanded) {
+        // 收合 → 取消 listener，但保留 replies 陣列方便下次展開直接顯示
+        if (t._unsub) { try { t._unsub(); } catch (e) {} t._unsub = null; }
+        t.expanded = false;
+      } else {
+        t.expanded = true;
+        this._subscribeReplies(id);
+      }
+    },
+
+    _subscribeReplies(commentId) {
+      if (!db) return;
+      const t = this.getThread(commentId);
+      if (t._unsub) return;  // 已訂閱
+      t.loading = true;
+      const q = query(
+        collection(db, "recommends", commentId, "replies"),
+        orderBy("createdAt", "asc"),
+        limit(100)
+      );
+      t._unsub = onSnapshot(q, (snap) => {
+        t.replies = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        t.loading = false;
+      }, (err) => {
+        console.error("replies listener error", err);
+        t.loading = false;
+      });
+    },
+
+    async submitReply(commentId) {
+      if (!isConfigured || !db) return;
+      const t = this.getThread(commentId);
+      const nick = t.replyForm.nickname.trim();
+      const text = t.replyForm.text.trim();
+      if (!nick) { showToast("請填暱稱"); return; }
+      if (nick.length > 20) { showToast("暱稱最多 20 字"); return; }
+      if (!text) { showToast("回覆不能為空"); return; }
+      if (text.length > 500) { showToast("回覆最多 500 字"); return; }
+      const lastSubmit = parseInt(localStorage.getItem("recommendsLastSubmit") || "0", 10);
+      const now = Date.now();
+      if (now - lastSubmit < 60_000) {
+        const wait = Math.ceil((60_000 - (now - lastSubmit)) / 1000);
+        showToast(`請稍候 ${wait} 秒再留言`);
+        return;
+      }
+      t.submitting = true;
+      try {
+        const audit = await collectAudit();
+        await addDoc(collection(db, "recommends", commentId, "replies"), {
+          nickname: nick,
+          text,
+          createdAt: serverTimestamp(),
+          audit,
+        });
+        try { localStorage.setItem("recommendsNickname", nick); } catch (e) {}
+        localStorage.setItem("recommendsLastSubmit", String(now));
+        t.replyForm.text = "";
+        showToast("回覆已送出");
+      } catch (e) {
+        console.error(e);
+        showToast("送出失敗：" + (e.message || e));
+      } finally {
+        t.submitting = false;
+      }
     },
   }));
 

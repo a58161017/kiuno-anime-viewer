@@ -1,6 +1,27 @@
 {
   "versions": [
     {
+      "version": "1.0.7",
+      "date": "2026-05-04",
+      "summary": "recommends 留言加 1 層回覆 (subcollection + lazy load)",
+      "changes": {
+        "added": [
+          "每筆推薦留言可展開 thread，多人接力回覆 / 反駁；資料寫到 recommends/{id}/replies subcollection",
+          "回覆 lazy load：點「💬 回覆 / 查看回覆」才開始 onSnapshot 該 thread，省讀取量"
+        ],
+        "fixed": [],
+        "removed": [],
+        "ui": [
+          "留言卡片底部新增 toggle 按鈕，展開後顯示回覆列表（按 createdAt asc）+ 回覆表單",
+          "thread 區塊用左邊 border + 縮排呈現巢狀感"
+        ],
+        "infra": [
+          "firestore.rules 新增 recommends/{x}/replies/{y} 規則 (需手動貼到 Firebase Console publish)",
+          "回覆共用 60 秒 rate limit (recommendsLastSubmit) + collectAudit / showToast utils"
+        ]
+      }
+    },
+    {
       "version": "1.0.6",
       "date": "2026-05-03",
       "summary": "修復 drawer 留言不更新；recommends 改為一筆留言可推薦多部",
