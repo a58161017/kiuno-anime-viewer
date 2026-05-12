@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="theme-color" content="#070510" />
+<title>召喚陣 · kiuno-anime-viewer</title>
+<link rel="stylesheet" href="css/ritual.css?v=3" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔮%3C/text%3E%3C/svg%3E">
+<style>[x-cloak]{display:none!important}</style>
+</head>
+<body class="ritual" x-data="ritualData()" x-cloak x-init="init()">
+
+  <!-- Loading -->
+  <div class="ritual__loading" x-show="loading || loadError" x-transition.opacity>
+    <div class="ritual__spinner" x-show="!loadError"></div>
+    <h1 x-show="!loadError">召喚陣啟動中…</h1>
+    <h1 x-show="loadError" style="color:#ff8a8a;">召喚失敗</h1>
+    <p x-show="!loadError">正在載入動畫資料…</p>
+    <p x-show="loadError" x-text="loadError" style="color:#ffb0b0"></p>
+    <button class="ritual__btn" @click="exit()">← 返回首頁</button>
+  </div>
+
+  <!-- Stage -->
+  <div class="ritual__stage" x-show="!loading && !loadError">
+
+    <!-- 外圈魔法陣 -->
+    <div class="ritual__floor">
+      <svg viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#ffae5d" stroke-linecap="round" stroke-linejoin="round" opacity="0.92">
+          <circle r="190" stroke-width="1.8"/>
+          <circle r="178" stroke-width="0.6"/>
+          <circle r="120" stroke-width="1"/>
+          <!-- 六芒星 -->
+          <polygon points="0,-150 130,75 -130,75" stroke-width="1.5"/>
+          <polygon points="0,150 -130,-75 130,-75" stroke-width="1.5"/>
+          <circle r="50" stroke-width="1"/>
+          <!-- 12 個刻度 (外環) -->
+          <g stroke-width="1.2">
+            <line x1="0" y1="-190" x2="0" y2="-175"/>
+            <line x1="95" y1="-164.5" x2="87.5" y2="-151.5"/>
+            <line x1="164.5" y1="-95" x2="151.5" y2="-87.5"/>
+            <line x1="190" y1="0" x2="175" y2="0"/>
+            <line x1="164.5" y1="95" x2="151.5" y2="87.5"/>
+            <line x1="95" y1="164.5" x2="87.5" y2="151.5"/>
+            <line x1="0" y1="190" x2="0" y2="175"/>
+            <line x1="-95" y1="164.5" x2="-87.5" y2="151.5"/>
+            <line x1="-164.5" y1="95" x2="-151.5" y2="87.5"/>
+            <line x1="-190" y1="0" x2="-175" y2="0"/>
+            <line x1="-164.5" y1="-95" x2="-151.5" y2="-87.5"/>
+            <line x1="-95" y1="-164.5" x2="-87.5" y2="-151.5"/>
+          </g>
+          <!-- 六芒星端點圓點 -->
+          <g fill="#ffd6a8" stroke="none">
+            <circle cx="0" cy="-150" r="4"/>
+            <circle cx="130" cy="75" r="4"/>
+            <circle cx="-130" cy="75" r="4"/>
+            <circle cx="0" cy="150" r="4"/>
+            <circle cx="-130" cy="-75" r="4"/>
+            <circle cx="130" cy="-75" r="4"/>
+          </g>
+          <!-- 隨機符文小弧 -->
+          <g stroke-width="0.7" opacity="0.6">
+            <path d="M -60 -160 Q 0 -175 60 -160"/>
+            <path d="M 160 -60 Q 175 0 160 60"/>
+            <path d="M 60 160 Q 0 175 -60 160"/>
+            <path d="M -160 60 Q -175 0 -160 -60"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 內圈魔法陣 (反向旋轉) -->
+    <div class="ritual__floor ritual__floor--inner">
+      <svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#ffd6a8" stroke-linecap="round" stroke-linejoin="round">
+          <circle r="90" stroke-width="1"/>
+          <circle r="65" stroke-width="0.6"/>
+          <!-- 五芒星 -->
+          <polygon points="0,-70 66.6,21.7 41.2,-56.6 -41.2,-56.6 -66.6,21.7" stroke-width="0.9"/>
+          <circle r="30" stroke-width="0.8"/>
+          <circle r="4" fill="#ffd6a8" stroke="none"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 卡片環 -->
+    <div class="ritual__ring" :style="`transform: ${ringTransform};`">
+      <template x-for="(c, i) in cards" :key="c.id">
+        <div class="ritual__card"
+             :class="{ focused: isCardFocused(i), hidden: isCardHidden(i) }"
+             :style="`transform: ${cardTransform(i)}; background-image:url('${coverFor(c)}');`"
+             :data-title="cardTitle(c)"
+             @click="clickCard(i)"
+             :title="cardTitle(c)"></div>
+      </template>
+    </div>
+  </div>
+
+  <!-- Focus 模式：中央卡片下方的標題、星等、年份 -->
+  <div class="ritual__focus-info" :class="{ show: state === 'focus' && focusCard }" x-show="!loading && !loadError">
+    <h2 x-text="focusCard ? cardTitle(focusCard) : ''"></h2>
+    <div class="stars">
+      <span x-text="focusCard ? renderStars(focusCard.rating?.score) : ''"></span>
+    </div>
+    <div class="year">
+      <span x-show="focusCard?.year" x-text="`${focusCard?.year} · ${focusCard?.season || ''} · ${focusCard?.episodes || '?'} 集`"></span>
+    </div>
+  </div>
+
+  <!-- Synopsis：focus 約 2 秒後淡入 -->
+  <div class="ritual__synopsis"
+       :class="{ show: synopsisShown && state === 'focus' && focusCard }"
+       x-show="!loading && !loadError">
+    <span x-text="focusCard?.synopsis_zh || '(Bangumi 暫無中文簡介)'"></span>
+  </div>
+
+  <!-- HUD -->
+  <div class="ritual__hud" x-show="!loading && !loadError">
+    <div class="ritual__hud-left">
+      <button class="ritual__btn" @click="exit()">← 回卡片</button>
+      <span class="ritual__mode-label" :class="{ kbd: mode === 'keyboard' }" x-text="modeLabel"></span>
+      <span x-show="sourceLabel" class="ritual__mode-label" x-text="`🎴 ${sourceLabel} (${cards.length})`"></span>
+    </div>
+    <div class="ritual__hud-right">
+      <button class="ritual__btn" @click="skipGesture()" x-show="gestureStatus === 'loading'">⏭ 跳過載入，直接用鍵盤</button>
+      <button class="ritual__btn" @click="toggleCam()" x-show="mode === 'camera'" x-text="showCam ? '隱藏鏡頭' : '顯示鏡頭'"></button>
+    </div>
+  </div>
+
+  <!-- 模型載入進度小提示 (不阻擋畫面) -->
+  <div class="ritual__loading-toast"
+       x-show="!loading && !loadError && gestureStatus === 'loading'"
+       x-transition.opacity>
+    <div class="ritual__spinner" style="width:18px;height:18px;border-width:2px;"></div>
+    <span>手勢辨識模型載入中… (~8MB，首次較久) 可先用鍵盤 ← → 空白鍵</span>
+  </div>
+
+  <!-- 操作提示 -->
+  <div class="ritual__hint" x-show="!loading && !loadError">
+    <span x-show="mode === 'camera'">✋ 布 + 揮動 = 旋轉 (帶慣性)　·　✊ 石頭 = 展開　·　展開後「非布」快速撥動 = 切卡　·　✋ 收回</span>
+    <span x-show="mode === 'keyboard'">← → ring 旋轉 / focus 切卡　·　空白鍵 切換　·　Esc 返回</span>
+  </div>
+
+  <!-- 攝影機預覽 -->
+  <video class="ritual__cam"
+         :class="{ hidden: !showCam || mode !== 'camera' }"
+         x-ref="cam" autoplay playsinline muted></video>
+  <div class="ritual__cam-status"
+       x-show="mode === 'camera' && showCam"
+       x-text="lastGesture ? `偵測：${({Open_Palm:'✋ 布', Closed_Fist:'✊ 石頭', Victory:'✌️ 剪刀', Pointing_Up:'☝ 1 指', Thumb_Up:'👍', Thumb_Down:'👎', ILoveYou:'🤟', None:'—'})[lastGesture] || lastGesture}` : '舉手到鏡頭前'"></div>
+
+<script type="module">
+import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
+import { ritualData } from "./js/ritual.js?v=3";
+
+Alpine.data("ritualData", ritualData);
+window.Alpine = Alpine;
+Alpine.start();
+
+// 離開頁面時清乾淨 (停掉 webcam stream + animation loop)
+window.addEventListener('beforeunload', () => {
+  const el = document.querySelector('[x-data]');
+  if (el && el._x_dataStack && el._x_dataStack[0]?.destroy) {
+    try { el._x_dataStack[0].destroy(); } catch (e) {}
+  }
+});
+</script>
+
+</body>
+</html>

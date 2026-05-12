@@ -181,6 +181,25 @@ a { color: var(--accent); text-decoration: none; }
   white-space: nowrap;
 }
 
+/* 召喚陣按鈕：橘黃 glow 主視覺色 (recommends/season-bar 內 .actions button + header pill-btn 通用) */
+.season-bar__header .actions .ritual-btn,
+.recommend-bar__header .actions .ritual-btn,
+.ritual-btn-all {
+  background: linear-gradient(135deg, rgba(255,174,93,0.18), rgba(255,140,60,0.08)) !important;
+  border-color: rgba(255,174,93,0.55) !important;
+  color: #ffae5d !important;
+  box-shadow: 0 0 8px rgba(255,174,93,0.25), inset 0 0 6px rgba(255,174,93,0.12);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+}
+.season-bar__header .actions .ritual-btn:hover,
+.recommend-bar__header .actions .ritual-btn:hover,
+.ritual-btn-all:hover {
+  background: linear-gradient(135deg, rgba(255,174,93,0.32), rgba(255,140,60,0.16)) !important;
+  box-shadow: 0 0 14px rgba(255,174,93,0.5), inset 0 0 8px rgba(255,174,93,0.2);
+  transform: translateY(-1px);
+}
+
 select.pill-btn {
   appearance: none;
   -webkit-appearance: none;

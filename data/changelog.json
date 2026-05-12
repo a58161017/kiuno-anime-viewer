@@ -1,6 +1,31 @@
 {
   "versions": [
     {
+      "version": "1.0.9",
+      "date": "2026-05-12",
+      "summary": "召喚陣：手勢操控的隨機 10 部 3D 環狀展示頁 (MediaPipe + Alpine)",
+      "changes": {
+        "added": [
+          "ritual.html 新頁面：從季番 / 推薦 / 全部三個清單各加一個 🔮 按鈕，點下去隨機抽 10 部 (不滿 10 帶多少算多少) 進入 3D 環狀魔法陣展示",
+          "卡片立體環 (CSS perspective + rotateY + translateZ)，黑底 + 橘黃六芒星魔法陣 (內外兩層反向慢速旋轉)",
+          "MediaPipe Tasks Vision GestureRecognizer：純 CDN 載入，比『布 ✋』+ 揮動 (dx-based) 旋轉，揮越快轉越快，停手有慣性滑行 (RAF + friction 0.9)；比『石頭 ✊』展開最靠近相機的卡片 (300ms 後簡介淡入)；再次比布快速 (130ms) 回到環狀；focus 內任何「非布」手勢 (✊✌️☝👍👎🤟) + 快速撥動 → 切換到鄰卡，舊卡滑出新卡從對側滑入",
+          "Focus 狀態 2 秒延遲淡入 synopsis_zh 在底部 panel"
+        ],
+        "fixed": [],
+        "removed": [],
+        "ui": [
+          "首頁 (index.html) 季番列、推薦列、全部過濾列各加一個 🔮 召喚按鈕，橘黃發光 pill 樣式",
+          "ritual.html HUD：顯示模式 (📷 攝影機 / ⌨️ 鍵盤)、來源清單名稱與卡片數、隱藏鏡頭按鈕、底部操作提示",
+          "右下角小視窗顯示鏡頭預覽 + 即時手勢偵測 (✋ / ✊)"
+        ],
+        "infra": [
+          "新檔：ritual.html、js/ritual.js、js/ritual-gesture.js、css/ritual.css",
+          "Webcam 拒絕授權 / 無攝影機 / 模型載入失敗 → 自動 fallback 為鍵盤模式 (← → 旋轉、空白鍵切換、Esc 返回)",
+          "MediaPipe GPU delegate 失敗自動降為 CPU；離開頁面 stop webcam stream + cancelAnimationFrame"
+        ]
+      }
+    },
+    {
       "version": "1.0.8",
       "date": "2026-05-04",
       "summary": "Tag 全面中文化 (326 條補譯)、graph 分類過濾 banner、recommends 留言顯示回覆數",

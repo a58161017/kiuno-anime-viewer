@@ -54,6 +54,7 @@
     <button class="pill-btn" @click="$refs.favImport.click()" title="匯入我的最愛">⇩</button>
     <input type="file" accept="application/json,.json" x-ref="favImport" @change="importFavorites($event)" style="display:none" />
     <button class="pill-btn" @click="resetFilters()" title="重設過濾">↻</button>
+    <button class="pill-btn ritual-btn-all" @click="openRitual('all')" title="召喚陣：從全部動畫隨機抽 10 部 3D 展示">🔮</button>
 
     <span class="count" x-text="`${filtered.length} / ${all.length}`"></span>
   </div>
@@ -81,6 +82,7 @@
     <span class="updated" x-show="seasonPicks.updated_at"
           x-text="`更新 ${seasonPicks.updated_at}`"></span>
     <div class="actions">
+      <button class="ritual-btn" @click="openRitual('season')" title="召喚陣：從這個清單隨機抽 10 部 3D 展示">🔮</button>
       <button x-show="seasonPicks.ids.length > seasonDefaultLimit"
               @click="seasonExpanded = !seasonExpanded"
               x-text="seasonExpanded ? '收合' : `+${seasonPicks.ids.length - seasonDefaultLimit}`"></button>
@@ -103,6 +105,7 @@
     <span>久野的推薦清單</span>
     <span class="count" x-text="`${recommendList.length}`"></span>
     <div class="actions">
+      <button class="ritual-btn" @click="openRitual('recommend')" title="召喚陣：從這個清單隨機抽 10 部 3D 展示">🔮</button>
       <button x-show="recommendList.length > 1" @click="reshuffleRecommend()">🔀</button>
       <button x-show="recommendList.length > recommendDefaultLimit" @click="recommendExpanded = !recommendExpanded"
               x-text="recommendExpanded ? '收合' : `+${recommendList.length - recommendDefaultLimit}`"></button>
@@ -599,6 +602,24 @@ Alpine.data("viewer", () => ({
       else this.recommendList.unshift(id);
       this.persistRecommend();
       this.reshuffleRecommend();
+    },
+    openRitual(source) {
+      let pool = [];
+      if (source === 'season') pool = (this.seasonPicks?.ids || []).slice();
+      else if (source === 'recommend') pool = this.recommendList.slice();
+      else pool = Object.keys(this.byId);
+      pool = pool.filter(id => this.byId[id]);
+      if (pool.length === 0) {
+        showToast("這個清單目前是空的，沒辦法召喚");
+        return;
+      }
+      // Fisher-Yates
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      const picks = pool.slice(0, 10);
+      location.href = `ritual.html?ids=${encodeURIComponent(picks.join(','))}&src=${encodeURIComponent(source)}`;
     },
     reshuffleRecommend() {
       const a = this.recommendList.slice();
