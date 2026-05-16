@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#070510" />
 <title>召喚陣 · kiuno-anime-viewer</title>
 <link rel="stylesheet" href="styles.css?v=4" />
-<link rel="stylesheet" href="css/ritual.css?v=9" />
+<link rel="stylesheet" href="css/ritual.css?v=10" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔮%3C/text%3E%3C/svg%3E">
 <style>[x-cloak]{display:none!important}</style>
 </head>
@@ -89,7 +89,13 @@
     <div class="ritual__ring" :style="`transform: ${ringTransform};`">
       <template x-for="(c, i) in cards" :key="c.id">
         <div class="ritual__card"
-             :class="{ focused: isCardFocused(i), hidden: isCardHidden(i), 'flying-out': shuffling && shufflePhase === 'fly-out', 'dealing-in': shuffling && shufflePhase === 'deal' }"
+             :class="{
+               focused: isCardFocused(i),
+               hidden: isCardHidden(i),
+               collecting: shuffling && shufflePhase === 'collect',
+               tossing: shuffling && shufflePhase === 'toss',
+               'dealing-in': shuffling && shufflePhase === 'deal'
+             }"
              :style="`transform: ${cardTransform(i)}; background-image:url('${coverFor(c)}'); --i:${i};`"
              :data-title="cardTitle(c)"
              @click="clickCard(i)"
@@ -98,19 +104,29 @@
     </div>
   </div>
 
-  <!-- 洗牌中央 stack (5 張卡背重疊 + shake 動畫) -->
-  <div class="ritual__shuffle-stack" x-show="shuffling && shufflePhase === 'shuffling'" x-cloak>
+  <!-- 洗牌中央 stack (5 張卡背重疊) — enter/riffle/exit 階段顯示 -->
+  <div class="ritual__shuffle-stack"
+       :class="{
+         entering: shuffling && shufflePhase === 'enter',
+         riffling: shuffling && shufflePhase === 'riffle',
+         exiting: shuffling && shufflePhase === 'exit'
+       }"
+       x-show="shuffling && (shufflePhase === 'enter' || shufflePhase === 'riffle' || shufflePhase === 'exit')"
+       x-cloak>
     <div class="ritual__card-back" style="--i:0"></div>
     <div class="ritual__card-back" style="--i:1"></div>
     <div class="ritual__card-back" style="--i:2"></div>
     <div class="ritual__card-back" style="--i:3"></div>
     <div class="ritual__card-back" style="--i:4"></div>
   </div>
-  <!-- 洗牌中央提示文字 -->
+  <!-- 洗牌中央提示文字 (6 phase 對應) -->
   <div class="ritual__shuffle-text" x-show="shuffling" x-cloak>
-    <span x-show="shufflePhase === 'fly-out'">送走當前命運…</span>
-    <span x-show="shufflePhase === 'shuffling'">重新洗牌…</span>
+    <span x-show="shufflePhase === 'collect'">收回命運…</span>
+    <span x-show="shufflePhase === 'toss'">送走當前緣分…</span>
+    <span x-show="shufflePhase === 'enter'">新牌堆登場…</span>
+    <span x-show="shufflePhase === 'riffle'">重新洗牌…</span>
     <span x-show="shufflePhase === 'deal'">召喚新緣分…</span>
+    <span x-show="shufflePhase === 'exit'">儀式完成</span>
   </div>
   <!-- 洗牌失敗提示 (pool 抽完) -->
   <div class="ritual__shuffle-error" x-show="shuffleError" x-cloak x-text="shuffleError"></div>
@@ -193,7 +209,7 @@
 
 <script type="module">
 import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
-import { ritualData } from "./js/ritual.js?v=9";
+import { ritualData } from "./js/ritual.js?v=11";
 
 Alpine.data("ritualData", ritualData);
 window.Alpine = Alpine;

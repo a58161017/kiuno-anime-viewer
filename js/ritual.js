@@ -42,10 +42,13 @@ const RESHUFFLE_DEBOUNCE_MS = 800;        // 計時累積此時間才觸發
 // v1.2.1: 改用內建手勢取代自寫拇指朝右 (穩定度遠高於 landmark 自寫)
 const THUMB_UP_DEBOUNCE_MS = 1000;        // 持續此時間才觸發離開
 
-// ===== 洗牌動畫時長 =====
-const SHUFFLE_FLYOUT_MS = 600;
-const SHUFFLE_SHAKE_MS = 800;
-const SHUFFLE_DEAL_MS = 500;
+// ===== 洗牌動畫時長 (v1.3.0 — 6 phase 儀式感重設計) =====
+const SHUFFLE_COLLECT_MS = 600;   // 400ms 動畫 + 200ms stagger buffer (10 張 × 20ms)
+const SHUFFLE_TOSS_MS = 500;      // 中央那疊往右上 35° 飛走
+const SHUFFLE_ENTER_MS = 500;     // 新牌堆 stack 從右邊滑進中央 (ease-spring)
+const SHUFFLE_RIFFLE_MS = 1000;   // 撲克牌交叉插 2 次
+const SHUFFLE_DEAL_MS = 800;      // 10 張新卡 stagger 60ms × 10 + 動畫 500ms 末尾餘量
+const SHUFFLE_EXIT_MS = 400;      // 剩餘 stack 從左邊滑出
 
 export function ritualData() {
   return {
@@ -513,19 +516,35 @@ export function ritualData() {
         await new Promise(r => setTimeout(r, 600));
       }
 
+      const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
       this.shuffling = true;
       this._resetStableCounters();
 
-      // Phase 1: 既有卡往左飛
-      this.shufflePhase = 'fly-out';
-      await new Promise(r => setTimeout(r, SHUFFLE_FLYOUT_MS));
+      // Phase 1a: collect — 環上 10 張卡 stagger 20ms 收到中央 + 略放大
+      this.shufflePhase = 'collect';
+      await sleep(SHUFFLE_COLLECT_MS);
 
-      // Phase 2: 中央洗牌動畫
-      this.shufflePhase = 'shuffling';
-      await new Promise(r => setTimeout(r, SHUFFLE_SHAKE_MS));
+      // Phase 1b: toss — 中央那疊整體往右上 35° 飛出 + opacity 0
+      this.shufflePhase = 'toss';
+      await sleep(SHUFFLE_TOSS_MS);
 
-      // Phase 3: 從 remaining pool 抽 10 張新卡 (Fisher-Yates)
-      this.shufflePhase = 'deal';
+      // toss 動畫結束 → 必須立即清空舊 cards。
+      // 否則 .tossing class 在下一 phase 被 Alpine 移除後，CSS animation 的
+      // forwards fill-mode 失效，舊 10 張卡會「彈回」ring 位置 (opacity 1)，
+      // 視覺上會跟 enter 階段的新卡背 stack 同時出現
+      this.cards = [];
+
+      // Phase 2: enter — 新卡背 stack 從右邊滑進中央 (ease-spring)
+      this.shufflePhase = 'enter';
+      await sleep(SHUFFLE_ENTER_MS);
+
+      // Phase 3: riffle — 5 張卡背上下兩半交叉插 (撲克牌 riffle shuffle) 2 次
+      this.shufflePhase = 'riffle';
+      await sleep(SHUFFLE_RIFFLE_MS);
+
+      // Phase 4: deal — 從 remaining pool 抽 N 張新卡 (最多 10) 替換 cards array
+      //          新卡 stagger 60ms 從中央 scale 0.4 滑進環位置
       const pool = remaining.slice();
       for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -537,8 +556,14 @@ export function ritualData() {
       this.globalRotation = 0;
       this.rotationVelocity = 0;
       this.focusIdx = null;
+      this.shufflePhase = 'deal';
+      // 發牌時長依實際發出張數調整 (stagger 60ms × N + 動畫 500ms)
+      const dealMs = this.cards.length * 60 + 500;
+      await sleep(Math.min(dealMs, SHUFFLE_DEAL_MS));
 
-      await new Promise(r => setTimeout(r, SHUFFLE_DEAL_MS));
+      // Phase 5: exit — 剩餘卡背 stack 從左邊滑出 + opacity 0
+      this.shufflePhase = 'exit';
+      await sleep(SHUFFLE_EXIT_MS);
 
       this.shuffling = false;
       this.shufflePhase = null;

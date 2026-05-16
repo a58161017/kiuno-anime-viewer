@@ -1,6 +1,39 @@
 {
   "versions": [
     {
+      "version": "1.3.0",
+      "date": "2026-05-16",
+      "summary": "ritual 洗牌動畫儀式感大重設計：3 phase → 6 phase (collect / toss / enter / riffle / deal / exit)",
+      "changes": {
+        "added": [
+          "Phase 1a collect (400+200ms)：環上 10 張卡片 stagger 20ms 收回中央 + 略放大 1.1 (新增 .ritual__card.collecting 套 @keyframes ritual-collect)",
+          "Phase 1b toss (500ms)：中央那疊整體往右上 35° + 1500px 飛走 + opacity 0 (新增 .ritual__card.tossing 套 @keyframes ritual-toss)",
+          "Phase 2 enter (500ms)：新卡背 stack 從右邊滑入中央，ease-spring 落定回彈 (新增 .ritual__shuffle-stack.entering 套 @keyframes ritual-stack-enter)",
+          "Phase 3 riffle (1000ms)：撲克牌交叉插洗牌 — 上 3 張卡背往左 + rotateY 25° / 下 2 張往右 + rotateY -25°，重複 2 次 (新增 @keyframes ritual-riffle-top / ritual-riffle-bottom)",
+          "Phase 4 deal (600ms / 動態 stagger 60ms × N + 500ms)：N 張新卡從中央 scale 0.4 + blur 4px 滑進 ring 位置 (改造 @keyframes ritual-deal-in: from 中央 → fall back inline ring transform via animation-fill-mode: backwards)",
+          "Phase 5 exit (400ms)：剩餘卡背 stack 從左邊滑出 + opacity 0 (新增 .ritual__shuffle-stack.exiting 套 @keyframes ritual-stack-exit)",
+          "中央提示文字 6 phase 對應：收回命運… → 送走當前緣分… → 新牌堆登場… → 重新洗牌… → 召喚新緣分… → 儀式完成"
+        ],
+        "fixed": [
+          "Phase 1b toss 結束後舊 10 張卡片「彈回」ring 位置與 Phase 2 enter 新卡背 stack 同時出現：CSS animation forwards fill-mode 只在 class 套用期間有效，class 移除後元素回到 base style (inline ring transform + opacity 1)。修法：toss sleep 結束後立即 this.cards = []，Alpine template x-for 不渲染舊卡 DOM，視覺零殘留"
+        ],
+        "removed": [
+          "舊 3 phase 洗牌動畫 (fly-out → shake → deal)：fly-out 統一往左飛缺收卡儀式感、shake 來回震動不像實際洗牌",
+          "@keyframes ritual-card-fly-out / ritual-shuffle-shake (功能由 collect+toss+riffle 取代)"
+        ],
+        "ui": [
+          "儀式感大幅提升：6 phase 約 3.4 秒完整序列，比舊 3 phase (1.9 秒) 長但每階段視覺意圖明確",
+          "Phase 1+5 視覺呼應：舊卡往右上飛 + 新卡堆從右滑入 + 發牌完剩餘從左滑出 → 形成「右進左出」儀式流向"
+        ],
+        "infra": [
+          "ritual.js _reshuffle async state machine 從 3 phase 改 6 phase；新增時長常數 SHUFFLE_COLLECT_MS / TOSS_MS / ENTER_MS / RIFFLE_MS / DEAL_MS / EXIT_MS；deal phase 時長動態依實際發出張數計算 (cards.length × 60ms + 500ms)",
+          "ritual.html .ritual__card class binding 加 collecting/tossing；.ritual__shuffle-stack 加 entering/riffling/exiting class binding；x-show 條件擴展為 enter/riffle/exit 三 phase 都顯示",
+          "Edge case: remaining pool 不足 10 張時 cards.length = N，deal phase 動態縮短；其他 phase 不變視覺一致",
+          "cache-bust ritual.css?v=9 → ?v=10、ritual.js?v=9 → ?v=11"
+        ]
+      }
+    },
+    {
       "version": "1.2.2",
       "date": "2026-05-16",
       "summary": "ritual 洗牌手勢從「雙手矩形」改成「雙手 ✋✋」(MediaPipe 內建 Open_Palm × 2)",

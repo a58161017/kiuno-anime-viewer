@@ -521,43 +521,62 @@ body.ritual::before {
 }
 
 /* ============================================================
-   洗牌動畫 (v1.2.0)
+   洗牌動畫 (v1.3.0 — 6 phase 儀式感重設計)
+   collect → toss → enter → riffle → deal → exit
    ============================================================ */
 
-/* Phase 1: 既有卡片往左飛出 (stagger by --i) */
-.ritual__card.flying-out {
-  animation: ritual-card-fly-out 0.6s var(--ease-out) forwards;
-  animation-delay: calc(var(--i, 0) * 30ms);
+/* Phase 1a: collect — 從 ring 位置收到中央，stagger 20ms by --i */
+.ritual__card.collecting {
+  animation: ritual-collect 0.4s var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 20ms);
   pointer-events: none;
+  z-index: 60;
 }
-@keyframes ritual-card-fly-out {
-  to {
-    transform: translate(-1500px, 0) rotate(-12deg) !important;
-    opacity: 0;
-  }
+@keyframes ritual-collect {
+  to { transform: translate(0, 0) scale(1.1); }
 }
 
-/* Phase 3: 從中央發牌進環狀 (只動 opacity + filter blur，避免覆蓋 ring transform) */
+/* Phase 1b: toss — 中央那疊整體往右上 35° 飛走 */
+.ritual__card.tossing {
+  animation: ritual-toss 0.5s var(--ease-in-out) forwards;
+  pointer-events: none;
+  z-index: 60;
+}
+@keyframes ritual-toss {
+  from { transform: translate(0, 0) scale(1.1); opacity: 1; }
+  to   { transform: translate(1500px, -500px) rotate(35deg) scale(1.1); opacity: 0; }
+}
+
+/* Phase 4: deal — 從中央 scale 0.4 + 滑進 ring 位置，stagger 60ms by --i
+   (fill-mode backwards: animation-delay 期間用 from 狀態；動畫播放期間
+    從 from 插值到 inline transform — ring 位置；結束後 fall back inline) */
 .ritual__card.dealing-in {
-  animation: ritual-card-deal-in 0.5s var(--ease-out) backwards;
-  animation-delay: calc(var(--i, 0) * 50ms);
+  animation: ritual-deal-in 0.5s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
 }
-@keyframes ritual-card-deal-in {
-  from { opacity: 0; filter: blur(8px); }
-  to   { opacity: 1; filter: blur(0); }
+@keyframes ritual-deal-in {
+  from {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0;
+    filter: blur(4px);
+  }
+  /* 沒 to → 動畫期間插值到元素的 base transform (= inline cardTransform 即 ring 位置) */
 }
 
-/* Phase 2: 中央洗牌 stack (5 張卡背重疊 shake) */
+/* ============================================================
+   中央卡背 stack (Phase 2 enter / Phase 3 riffle / Phase 5 exit 共用容器)
+   ============================================================ */
 .ritual__shuffle-stack {
   position: fixed;
   left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
   width: 100px;
   height: 140px;
   pointer-events: none;
   z-index: 90;
-  perspective: 800px;
+  perspective: 1000px;
+  transform: translate(-50%, -50%);  /* default 中央 (Phase 3 riffle 用) */
 }
+
 .ritual__card-back {
   position: absolute;
   inset: 0;
@@ -570,8 +589,7 @@ body.ritual::before {
     0 0 18px rgba(255,174,93,0.5),
     inset 0 0 12px rgba(255,174,93,0.2);
   transform-origin: center;
-  animation: ritual-shuffle-shake 0.8s var(--ease-in-out) infinite;
-  animation-delay: calc(var(--i, 0) * 80ms);
+  /* 預設疊在中央，靜止；個別 phase class 加 animation 接管 */
 }
 .ritual__card-back::before {
   content: "";
@@ -592,14 +610,59 @@ body.ritual::before {
   color: var(--accent);
   text-shadow: 0 0 8px rgba(255,174,93,0.7);
 }
-@keyframes ritual-shuffle-shake {
-  0%, 100% { transform: translate(0, 0) rotate(0); }
-  25%      { transform: translate(-14px, -4px) rotate(-6deg); }
-  50%      { transform: translate(0, -6px) rotate(0); }
-  75%      { transform: translate(14px, -4px) rotate(6deg); }
+
+/* Phase 2: enter — stack 從右邊滑進中央 (ease-spring 落定回彈) */
+.ritual__shuffle-stack.entering {
+  animation: ritual-stack-enter 0.5s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) backwards;
+}
+@keyframes ritual-stack-enter {
+  from {
+    transform: translate(calc(-50% + 700px), -50%) rotate(18deg);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(0);
+    opacity: 1;
+  }
 }
 
-/* 洗牌中央提示文字 */
+/* Phase 3: riffle — 上 3 張往左、下 2 張往右，交叉插 + rotateY 微幅翻面感
+   每張 0.5s × 2 iterations = 1s 完整動畫 */
+.ritual__shuffle-stack.riffling .ritual__card-back:nth-child(-n+3) {
+  animation: ritual-riffle-top 0.5s var(--ease-in-out) 2;
+}
+.ritual__shuffle-stack.riffling .ritual__card-back:nth-child(n+4) {
+  animation: ritual-riffle-bottom 0.5s var(--ease-in-out) 2;
+}
+@keyframes ritual-riffle-top {
+  0%   { transform: translateX(0) rotateY(0); }
+  50%  { transform: translateX(-40px) rotateY(25deg); }
+  100% { transform: translateX(0) rotateY(0); }
+}
+@keyframes ritual-riffle-bottom {
+  0%   { transform: translateX(0) rotateY(0); }
+  50%  { transform: translateX(40px) rotateY(-25deg); }
+  100% { transform: translateX(0) rotateY(0); }
+}
+
+/* Phase 5: exit — stack 從左邊滑出 + opacity 0 */
+.ritual__shuffle-stack.exiting {
+  animation: ritual-stack-exit 0.4s var(--ease-in-out) forwards;
+}
+@keyframes ritual-stack-exit {
+  from {
+    transform: translate(-50%, -50%) rotate(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(calc(-50% - 1200px), -50%) rotate(-20deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   洗牌中央提示文字 + 失敗提示
+   ============================================================ */
 .ritual__shuffle-text {
   position: fixed;
   left: 50%;
@@ -614,7 +677,6 @@ body.ritual::before {
   white-space: nowrap;
 }
 
-/* 洗牌失敗 (pool 抽完) 提示 */
 .ritual__shuffle-error {
   position: fixed;
   left: 50%; top: max(80px, env(safe-area-inset-top));
@@ -633,9 +695,12 @@ body.ritual::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ritual__card.flying-out { animation-duration: 0.2s; }
+  .ritual__card.collecting,
+  .ritual__card.tossing,
   .ritual__card.dealing-in { animation-duration: 0.2s; }
-  .ritual__card-back { animation: none; }
+  .ritual__shuffle-stack.entering,
+  .ritual__shuffle-stack.exiting { animation-duration: 0.2s; }
+  .ritual__shuffle-stack.riffling .ritual__card-back { animation: none; }
 }
 
 /* ============================================================
