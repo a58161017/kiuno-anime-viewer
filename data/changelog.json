@@ -1,6 +1,50 @@
 {
   "versions": [
     {
+      "version": "1.0.11",
+      "date": "2026-05-16",
+      "summary": "召喚陣 ritual.html：focus 中石頭手勢上下移動 = 滾動簡介",
+      "changes": {
+        "added": [
+          "ritual.html focus 狀態下用石頭 ✊ 手勢上下移動可捲動簡介的 scrollbar：MediaPipe landmark[9].y 加入 onFrame payload，ritual.js 加 dy 追蹤，state==='focus' && synopsisShown && rawG==='Closed_Fist' 時把 dy × FIST_SCROLL_SCALE(800) 累加到 .ritual__panel-synopsis.scrollTop (clamp 0..maxScroll)",
+          "石頭 scroll 啟動門檻：握石頭瞬間記 anchor y，累積位移要超過 4% 畫面高 (FIST_SCROLL_START_THRESHOLD=0.04) 才啟動 scroll，避免手抖原地誤觸。手勢一變就重設 anchor。",
+          "切卡時自動把簡介 scrollTop 歸零，新卡內容從頭顯示"
+        ],
+        "fixed": [],
+        "removed": [
+          "Closed_Fist 從 SWIPE_GESTURES 移除：石頭手勢在 focus 中專心做 scroll，不再觸發 dx 切卡 (避免上下滑動時夾雜橫向手抖誤觸切卡)。切卡保留給 ✌️ ☝ 👍 👎 🤟"
+        ],
+        "ui": [
+          "操作提示更新：「✊ 石頭 = 展開／在展開後上下移動 = 滾簡介　·　展開後 ✌️☝👍 撥動 = 切卡」"
+        ],
+        "infra": [
+          "ritual.html / ritual.js / ritual-gesture.js cache-bust ?v=4 → ?v=5",
+          "ritual-gesture.js JSDoc + 註解標示 payload y 為 0..1 normalized 未反轉"
+        ]
+      }
+    },
+    {
+      "version": "1.0.10",
+      "date": "2026-05-16",
+      "summary": "召喚陣 ritual.html：focus 資訊面板統合、手機魔法陣與卡片環不再溢出",
+      "changes": {
+        "added": [],
+        "fixed": [
+          "ritual.html focus 狀態下「標題 + 評分」會疊在「簡介」上面：原本 .ritual__focus-info (bottom:12%) 跟 .ritual__synopsis (bottom:4% max-height:32vh) 在垂直軸重疊 (4%+32vh ≈ 36% 淹過 12%)；現整合成單一 .ritual__panel (flex column header + synopsis)",
+          "ritual.html 手機 (≤599px) 魔法陣 600px 寫死導致左右切掉、卡片環 ringRadius ~207px 也超出 375px 視口：改 .ritual__floor / .ritual__floor--inner 用 min(92vw, 600px) 響應式、ringRadius 加 viewport*0.42 cap、卡片 cardW 130→110、FOCUS_SCALE 1.6→1.35、FOCUS_FWD 240→180"
+        ],
+        "removed": [],
+        "ui": [
+          "ritual focus 資訊改成單一卡片式面板：底部 92vw / 桌機 560px 玻璃感容器，標題 + 評分 + 年份 header 上、簡介下 (簡介維持 ~2s 延遲淡入)，標題與卡片不再彼此遮擋",
+          "ritual focus 卡片往上挪 (手機 -60px / 桌機 -20px) 騰出底部空間給資訊面板"
+        ],
+        "infra": [
+          "css/ritual.css?v=4 / js/ritual.js?v=4：cache-busting bump",
+          "body.ritual width 100vw → 100% (避免 scrollbar 寬度造成水平溢出)"
+        ]
+      }
+    },
+    {
       "version": "1.0.9",
       "date": "2026-05-12",
       "summary": "召喚陣：手勢操控的隨機 10 部 3D 環狀展示頁 (MediaPipe + Alpine)",

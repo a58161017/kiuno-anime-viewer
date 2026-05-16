@@ -1,9 +1,10 @@
 // kiuno-anime-viewer · ritual.html 手勢偵測
 // - 嘗試啟動 MediaPipe Tasks Vision GestureRecognizer
 // - 失敗（拒絕授權 / 無攝影機 / 模型載入錯誤）→ 回傳 mode: 'keyboard'，呼叫端用鍵盤事件
-// - 成功 → 每偵測 frame 呼叫 onFrame({ gesture, x })
+// - 成功 → 每偵測 frame 呼叫 onFrame({ gesture, x, y })
 //   - gesture: 'Closed_Fist' | 'Open_Palm' | 'Pointing_Up' | ... | null
-//   - x: 0..1，手中央 (landmark[9]) 的 normalized x
+//   - x: 0..1，手中央 (landmark[9]) 的 normalized x (已反轉成「使用者視角」)
+//   - y: 0..1，手中央的 normalized y (0=上 1=下，未反轉，用來做石頭手勢的簡介 scroll)
 
 const MP_BUNDLE_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
 const MP_WASM_ROOT  = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
@@ -12,7 +13,7 @@ const MP_MODEL_URL  = "https://storage.googleapis.com/mediapipe-models/gesture_r
 /**
  * @param {Object} opts
  * @param {HTMLVideoElement} opts.video
- * @param {(payload: { gesture: string|null, x: number|null }) => void} opts.onFrame
+ * @param {(payload: { gesture: string|null, score: number, x: number|null, y: number|null }) => void} opts.onFrame
  * @returns {Promise<{ mode: 'camera'|'keyboard', error?: Error, stop?: () => void }>}
  */
 export async function startGesture({ video, onFrame }) {
@@ -76,10 +77,13 @@ export async function startGesture({ video, onFrame }) {
         // 視訊是 mirrored（CSS scaleX(-1)），所以實際手是「使用者視角」的 x。
         // landmark.x 是相機座標 (左右相對相機而言)。我們把它做 1-x 反轉，讓「手往右」推到「環往右」。
         const x = landmark ? (1 - landmark.x) : null;
+        // y 不反轉：landmark.y 0=畫面上 1=畫面下 → 手往下移 = dy > 0 = 簡介往下捲
+        const y = landmark ? landmark.y : null;
         onFrame({
           gesture: gestureCat?.categoryName || null,
           score: gestureCat?.score || 0,
           x,
+          y,
         });
       } catch (e) { /* 偶發 frame error，忽略 */ }
     }

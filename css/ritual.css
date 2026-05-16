@@ -18,7 +18,7 @@ html, body {
 
 body.ritual {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   height: 100dvh;
 }
@@ -44,13 +44,13 @@ body.ritual::before {
   z-index: 1;
 }
 
-/* ===== Floor 魔法陣 ===== */
+/* ===== Floor 魔法陣 (mobile-first：用 min(vw, px) 才能在 375px 手機完整顯示) ===== */
 .ritual__floor {
   position: absolute;
   left: 50%;
   bottom: 4%;
-  width: 600px;
-  height: 600px;
+  width: min(92vw, 600px);
+  height: min(92vw, 600px);
   transform: translate(-50%, 30%) rotateX(76deg);
   transform-style: preserve-3d;
   pointer-events: none;
@@ -74,8 +74,8 @@ body.ritual::before {
   position: absolute;
   left: 50%;
   bottom: 4%;
-  width: 290px;
-  height: 290px;
+  width: min(46vw, 290px);
+  height: min(46vw, 290px);
   transform: translate(-50%, 30%) rotateX(76deg);
   transform-style: preserve-3d;
   pointer-events: none;
@@ -158,70 +158,91 @@ body.ritual::before {
   border-color: #ffd6a8;
 }
 
-/* ===== Focus 詳細區 (focus 狀態的標題、星等、簡介) ===== */
-.ritual__focus-info {
+/* ===== Focus 資訊面板：標題 + 評分 + 年份 + 簡介 (mobile-first) =====
+   合併原先 .ritual__focus-info (bottom:12%) 跟 .ritual__synopsis (bottom:4% max-height:32vh) —
+   兩者會在 focus 時垂直重疊 (4% + 32vh ≈ 36% > 12%)，現在整合成單一 flex 容器解決 */
+.ritual__panel {
   position: fixed;
   left: 50%;
-  bottom: 12%;
-  transform: translateX(-50%);
-  text-align: center;
-  z-index: 80;
-  pointer-events: none;
+  bottom: 3%;
+  transform: translateX(-50%) translateY(8px);
+  width: min(92vw, 420px);
+  max-height: 44vh;
+  padding: 14px 16px;
+  background: rgba(20,12,8,0.82);
+  border: 1px solid rgba(255,174,93,0.4);
+  border-radius: 12px;
+  box-shadow:
+    0 0 18px rgba(255,174,93,0.3),
+    inset 0 0 12px rgba(255,174,93,0.08);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   opacity: 0;
-  transition: opacity 0.5s 0.1s;
-  max-width: 92vw;
-  padding: 0 12px;
+  pointer-events: none;
+  transition: opacity 0.5s, transform 0.5s;
+  z-index: 75;
+  overflow: hidden;
 }
 
-.ritual__focus-info.show { opacity: 1; }
+.ritual__panel.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
-.ritual__focus-info h2 {
+.ritual__panel-header {
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,174,93,0.18);
+}
+
+.ritual__panel-title {
   margin: 0 0 6px;
-  font-size: 18px;
+  font-size: 16px;
   color: #ffd6a8;
   text-shadow: 0 0 12px rgba(255,174,93,0.7), 0 0 24px rgba(255,140,60,0.4);
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  line-height: 1.25;
 }
 
-.ritual__focus-info .stars {
+.ritual__panel-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: rgba(255,214,168,0.7);
+}
+
+.ritual__panel-meta .stars {
   color: #ffc857;
-  font-size: 14px;
-  text-shadow: 0 0 8px rgba(255,200,87,0.7);
-  margin-bottom: 4px;
-}
-
-.ritual__focus-info .year {
-  color: rgba(255,214,168,0.65);
   font-size: 12px;
+  text-shadow: 0 0 8px rgba(255,200,87,0.6);
+  letter-spacing: 0.5px;
 }
 
-/* 簡介 — focus 2 秒後淡入 */
-.ritual__synopsis {
-  position: fixed;
-  bottom: 4%;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 92vw;
-  max-height: 32vh;
-  padding: 14px 18px;
-  background: rgba(20,12,8,0.78);
-  border: 1px solid rgba(255,174,93,0.35);
-  border-radius: 10px;
-  color: #ffd6a8;
+.ritual__panel-synopsis {
+  margin: 0;
   font-size: 12px;
   line-height: 1.65;
+  color: #ffd6a8;
   overflow-y: auto;
-  z-index: 70;
+  max-height: 28vh;
   opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.8s, transform 0.8s;
-  box-shadow: 0 0 18px rgba(255,174,93,0.3);
-  backdrop-filter: blur(6px);
+  transition: opacity 0.7s;
+  /* 自訂 scrollbar (Webkit) */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,174,93,0.4) transparent;
 }
 
-.ritual__synopsis.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-4px);
+.ritual__panel-synopsis.show { opacity: 1; }
+
+.ritual__panel-synopsis::-webkit-scrollbar { width: 4px; }
+.ritual__panel-synopsis::-webkit-scrollbar-thumb {
+  background: rgba(255,174,93,0.4);
+  border-radius: 2px;
 }
 
 /* ===== HUD：模式提示 + 回首頁 + loading ===== */
@@ -397,16 +418,16 @@ body.ritual::before {
   text-shadow: 0 1px 2px #000;
 }
 
-/* ========== 桌機 / 大螢幕 ========== */
+/* ========== 平板 / 桌機 ========== */
 @media (min-width: 600px) {
   .ritual__floor {
-    width: 920px;
-    height: 920px;
+    width: min(82vw, 920px);
+    height: min(82vw, 920px);
     bottom: -2%;
   }
   .ritual__floor--inner {
-    width: 440px;
-    height: 440px;
+    width: min(40vw, 440px);
+    height: min(40vw, 440px);
     bottom: -2%;
   }
   .ritual__card {
@@ -426,13 +447,16 @@ body.ritual::before {
     bottom: 14px;
   }
   .ritual__cam-status { bottom: 154px; right: 18px; }
-  .ritual__focus-info h2 { font-size: 26px; }
-  .ritual__focus-info .stars { font-size: 18px; }
-  .ritual__synopsis {
-    max-width: 560px;
-    font-size: 14px;
+  .ritual__panel {
+    width: min(80vw, 560px);
+    bottom: 5%;
     padding: 18px 24px;
+    gap: 12px;
   }
+  .ritual__panel-title { font-size: 22px; letter-spacing: 2px; }
+  .ritual__panel-meta { font-size: 13px; gap: 16px; }
+  .ritual__panel-meta .stars { font-size: 16px; }
+  .ritual__panel-synopsis { font-size: 14px; line-height: 1.7; max-height: 32vh; }
   .ritual__hud { font-size: 12px; }
   .ritual__btn, .ritual__mode-label { font-size: 12px; padding: 6px 14px; }
   .ritual__loading h1 { font-size: 26px; letter-spacing: 6px; }
@@ -442,12 +466,12 @@ body.ritual::before {
 
 @media (min-width: 900px) {
   .ritual__floor {
-    width: 1180px;
-    height: 1180px;
+    width: min(78vw, 1180px);
+    height: min(78vw, 1180px);
   }
   .ritual__floor--inner {
-    width: 560px;
-    height: 560px;
+    width: min(38vw, 560px);
+    height: min(38vw, 560px);
   }
   .ritual__card {
     width: 140px;

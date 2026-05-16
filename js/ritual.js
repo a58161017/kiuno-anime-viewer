@@ -1,7 +1,7 @@
 // kiuno-anime-viewer · ritual.html Alpine app
 // 3D 環狀卡片展示 + 手勢/鍵盤控制狀態機 (含慣性 + 1 指 swipe 切卡)
 
-import { startGesture } from "./ritual-gesture.js?v=3";
+import { startGesture } from "./ritual-gesture.js?v=5";
 
 // ===== 設定常數 =====
 const MOVE_ROT_SCALE = 280;    // 揮手 dx (0..1) 換成多少度/frame
@@ -16,14 +16,19 @@ const SWIPE_DX_THRESHOLD = 0.028; // 觸發 swap 的單 frame dx (越大要越�
 const SWIPE_REARM_MS = 600;       // 一次 swipe 完成後多久才能再觸發
 const SWAP_ANIM_MS = 480;         // 卡片 swap 動畫長度
 const ENTER_FOCUS_DISARM_MS = 400; // 剛進 focus 多久內不認 swipe (避免握拳手抖誤觸)
-// 在 focus 內可以觸發 swap 的手勢：除了「布」以外的識別手勢
+// 在 focus 內可以觸發 swap 的手勢：除了「布」跟「石頭」以外的識別手勢
+// (石頭 ✊ 在 focus 中專用來上下捲動簡介，不再做切卡)
 const SWIPE_GESTURES = new Set([
-  'Closed_Fist', 'Pointing_Up', 'Victory',
+  'Pointing_Up', 'Victory',
   'Thumb_Up', 'Thumb_Down', 'ILoveYou',
 ]);
-const FOCUS_FWD_MOBILE = 240;
+const FIST_SCROLL_SCALE = 800;   // dy (0..1 normalized) × scale = scrollTop 變化量 (px)
+const FIST_SCROLL_DEADZONE = 0.003;
+// 石頭握住起點到當前 y 的累積位移要超過 4% 畫面高才開始 scroll，避免手抖誤觸
+const FIST_SCROLL_START_THRESHOLD = 0.04;
+const FOCUS_FWD_MOBILE = 180;     // 手機別推太前 (面板要在下方有空間)
 const FOCUS_FWD_DESKTOP = 320;
-const FOCUS_SCALE_MOBILE = 1.6;
+const FOCUS_SCALE_MOBILE = 1.35;  // 手機留空間給下方資訊面板
 const FOCUS_SCALE_DESKTOP = 1.9;
 const RING_TILT_DEG = 18;      // ring 的 rotateX 度數
 
@@ -60,6 +65,10 @@ export function ritualData() {
     _gStable: null,
     _gStableStart: 0,
     _lastHandX: null,
+    _lastHandY: null,
+    _fistAnchorY: null,        // 石頭手勢起點 y (用來算累積位移、判定 scroll 啟動門檻)
+    _fistScrollActive: false,  // 累積位移過門檻後才開啟 scroll
+    _synopsisEl: null,    // 快取 .ritual__panel-synopsis 避免每 frame 查 DOM
     _gestureHandle: null,
     _synopsisTimer: null,
     _focusIdxClearTimer: null,
@@ -229,18 +238,24 @@ export function ritualData() {
       this._gestureHandle = null;
     },
 
-    _onGestureFrame({ gesture, score, x }) {
+    _onGestureFrame({ gesture, score, x, y }) {
       const now = performance.now();
       const rawG = (gesture && score > 0.6) ? gesture : null;
       this.lastGesture = rawG;
 
-      // ---- 算 dx (不管手勢，都追蹤) ----
-      let dx = 0;
+      // ---- 算 dx / dy (不管手勢，都追蹤) ----
+      let dx = 0, dy = 0;
       if (typeof x === 'number') {
         if (this._lastHandX != null) dx = x - this._lastHandX;
         this._lastHandX = x;
       } else {
         this._lastHandX = null;
+      }
+      if (typeof y === 'number') {
+        if (this._lastHandY != null) dy = y - this._lastHandY;
+        this._lastHandY = y;
+      } else {
+        this._lastHandY = null;
       }
 
       // ---- 布 + 揮動：給 rotationVelocity (慣性接手) ----
@@ -248,11 +263,34 @@ export function ritualData() {
         this.rotationVelocity = dx * MOVE_ROT_SCALE;
       }
 
-      // ---- 快速撥動：swap 卡片 (focus 內，除了「布」以外的手勢都算) ----
+      // ---- 快速撥動：swap 卡片 (focus 內，除了「布 / 石頭」以外的手勢) ----
       if (this.state === 'focus' && SWIPE_GESTURES.has(rawG)
           && this._swipeArmed && Math.abs(dx) > SWIPE_DX_THRESHOLD) {
         // dx > 0 = 手往右 → 右撇 → delta = -1 (前一張 / 視覺上左邊的卡進中央)
         this._tryStartSwap(dx > 0 ? -1 : +1);
+      }
+
+      // ---- 石頭 + 上下移動：滾動簡介 (focus 中、非 swap 中、簡介已淡入) ----
+      // 流程：握石頭瞬間記 anchor y → 累積位移過 START_THRESHOLD 才「啟動」scroll
+      // → 啟動後用 dy 持續滾。手勢一變或離開 focus 就重設 anchor。
+      const fistScrollEligible = this.state === 'focus' && !this.swapping
+                              && this.synopsisShown && rawG === 'Closed_Fist'
+                              && typeof y === 'number';
+      if (fistScrollEligible) {
+        if (this._fistAnchorY === null) {
+          this._fistAnchorY = y;
+          this._fistScrollActive = false;
+        } else if (!this._fistScrollActive
+                   && Math.abs(y - this._fistAnchorY) > FIST_SCROLL_START_THRESHOLD) {
+          this._fistScrollActive = true;
+        }
+        if (this._fistScrollActive && Math.abs(dy) > FIST_SCROLL_DEADZONE) {
+          this._scrollSynopsis(dy * FIST_SCROLL_SCALE);
+        }
+      } else {
+        // 換手勢 / 離開 focus / swap 中：清除 anchor，下次重新握石頭重新計算
+        this._fistAnchorY = null;
+        this._fistScrollActive = false;
       }
 
       // ---- 時間式手勢防抖 (進 / 出 focus) ----
@@ -295,6 +333,18 @@ export function ritualData() {
       this._focusIdxClearTimer = setTimeout(() => {
         if (this.state === 'ring') this.focusIdx = null;
       }, 600);
+      this._synopsisEl = null;   // 下次 focus 重新拿 DOM ref (簡介容器可能被 Alpine 重渲染)
+    },
+
+    _scrollSynopsis(deltaPx) {
+      // 找 .ritual__panel-synopsis (Alpine x-show 切換時 DOM 還在，所以可以快取)
+      if (!this._synopsisEl || !this._synopsisEl.isConnected) {
+        this._synopsisEl = document.querySelector('.ritual__panel-synopsis');
+      }
+      if (!this._synopsisEl) return;
+      const max = this._synopsisEl.scrollHeight - this._synopsisEl.clientHeight;
+      if (max <= 0) return;  // 內容不需要滾
+      this._synopsisEl.scrollTop = Math.max(0, Math.min(max, this._synopsisEl.scrollTop + deltaPx));
     },
 
     _computeFocusIdx() {
@@ -324,6 +374,8 @@ export function ritualData() {
       this._swapDelta = delta;
       this._swapPhase = 'init';
       this.synopsisShown = false;
+      // 切卡時把簡介捲回頂端，下一張內容才從頭顯示
+      if (this._synopsisEl && this._synopsisEl.isConnected) this._synopsisEl.scrollTop = 0;
       if (this._synopsisTimer) clearTimeout(this._synopsisTimer);
 
       this._swipeArmed = false;
@@ -356,9 +408,10 @@ export function ritualData() {
       if (N <= 1) return 0;
       const cardW = this.viewportW >= 900 ? 200
                   : this.viewportW >= 600 ? 170
-                  : 130;
+                  : 110;                              // 手機卡片間距收緊 (130→110)
       const r = (cardW * N) / (2 * Math.PI);
-      return Math.max(160, r);
+      const cap = this.viewportW * 0.42;              // 半徑 ≤ 視口寬 42%，避免 ring 兩側超出
+      return Math.max(130, Math.min(r, cap));
     },
 
     get ringTransform() {
@@ -385,8 +438,9 @@ export function ritualData() {
       const fwd = this.viewportW >= 600 ? FOCUS_FWD_DESKTOP : FOCUS_FWD_MOBILE;
       const scl = this.viewportW >= 600 ? FOCUS_SCALE_DESKTOP : FOCUS_SCALE_MOBILE;
       const exitDist = this.viewportW >= 600 ? 700 : 480;
+      const yOff = this.viewportW >= 600 ? -20 : -60;  // focus 時往上挪，讓出底部給資訊面板
       // 展開卡片 base transform（抵消 ring 的 rotateX 跟 rotateY → 正面對相機，不俯視）
-      const focusBase = `rotateY(${counter}deg) rotateX(${RING_TILT_DEG}deg) translateZ(${fwd}px) scale(${scl})`;
+      const focusBase = `rotateY(${counter}deg) rotateX(${RING_TILT_DEG}deg) translateY(${yOff}px) translateZ(${fwd}px) scale(${scl})`;
 
       // ---- Swap 中 ----
       if (this.swapping) {
@@ -394,13 +448,13 @@ export function ritualData() {
           if (this._swapPhase === 'init') return focusBase;
           // animate: 滑出去 (delta=-1 右撇 → 往右滑、delta=+1 左撇 → 往左滑)
           const dir = this._swapDelta === -1 ? exitDist : -exitDist;
-          return `rotateY(${counter}deg) rotateX(${RING_TILT_DEG}deg) translateX(${dir}px) translateZ(${fwd}px) scale(${scl})`;
+          return `rotateY(${counter}deg) rotateX(${RING_TILT_DEG}deg) translateY(${yOff}px) translateX(${dir}px) translateZ(${fwd}px) scale(${scl})`;
         }
         if (i === this._swapNewIdx) {
           if (this._swapPhase === 'init') {
             // 起點：對側邊緣
             const dir = this._swapDelta === -1 ? -exitDist : exitDist;
-            return `rotateY(${counter}deg) rotateX(${RING_TILT_DEG}deg) translateX(${dir}px) translateZ(${fwd}px) scale(${scl})`;
+            return `rotateY(${counter}deg) rotateX(${RING_TILT_DEG}deg) translateY(${yOff}px) translateX(${dir}px) translateZ(${fwd}px) scale(${scl})`;
           }
           return focusBase;
         }

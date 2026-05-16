@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
 <meta name="theme-color" content="#070510" />
 <title>召喚陣 · kiuno-anime-viewer</title>
-<link rel="stylesheet" href="css/ritual.css?v=3" />
+<link rel="stylesheet" href="css/ritual.css?v=5" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔮%3C/text%3E%3C/svg%3E">
 <style>[x-cloak]{display:none!important}</style>
 </head>
@@ -97,22 +97,21 @@
     </div>
   </div>
 
-  <!-- Focus 模式：中央卡片下方的標題、星等、年份 -->
-  <div class="ritual__focus-info" :class="{ show: state === 'focus' && focusCard }" x-show="!loading && !loadError">
-    <h2 x-text="focusCard ? cardTitle(focusCard) : ''"></h2>
-    <div class="stars">
-      <span x-text="focusCard ? renderStars(focusCard.rating?.score) : ''"></span>
-    </div>
-    <div class="year">
-      <span x-show="focusCard?.year" x-text="`${focusCard?.year} · ${focusCard?.season || ''} · ${focusCard?.episodes || '?'} 集`"></span>
-    </div>
-  </div>
-
-  <!-- Synopsis：focus 約 2 秒後淡入 -->
-  <div class="ritual__synopsis"
-       :class="{ show: synopsisShown && state === 'focus' && focusCard }"
+  <!-- Focus 資訊面板：標題 / 評分 / 簡介 統一容器 (mobile-first) -->
+  <div class="ritual__panel"
+       :class="{ show: state === 'focus' && focusCard }"
        x-show="!loading && !loadError">
-    <span x-text="focusCard?.synopsis_zh || '(Bangumi 暫無中文簡介)'"></span>
+    <header class="ritual__panel-header">
+      <h2 class="ritual__panel-title" x-text="focusCard ? cardTitle(focusCard) : ''"></h2>
+      <div class="ritual__panel-meta">
+        <span class="stars" x-text="focusCard ? renderStars(focusCard.rating?.score) : ''"></span>
+        <span class="year" x-show="focusCard?.year"
+              x-text="`${focusCard?.year} · ${focusCard?.season || ''} · ${focusCard?.episodes || '?'} 集`"></span>
+      </div>
+    </header>
+    <p class="ritual__panel-synopsis"
+       :class="{ show: synopsisShown }"
+       x-text="focusCard?.synopsis_zh || '(Bangumi 暫無中文簡介)'"></p>
   </div>
 
   <!-- HUD -->
@@ -138,7 +137,7 @@
 
   <!-- 操作提示 -->
   <div class="ritual__hint" x-show="!loading && !loadError">
-    <span x-show="mode === 'camera'">✋ 布 + 揮動 = 旋轉 (帶慣性)　·　✊ 石頭 = 展開　·　展開後「非布」快速撥動 = 切卡　·　✋ 收回</span>
+    <span x-show="mode === 'camera'">✋ 布 + 揮動 = 旋轉 (帶慣性)　·　✊ 石頭 = 展開／在展開後上下移動 = 滾簡介　·　展開後 ✌️☝👍 撥動 = 切卡　·　✋ 收回</span>
     <span x-show="mode === 'keyboard'">← → ring 旋轉 / focus 切卡　·　空白鍵 切換　·　Esc 返回</span>
   </div>
 
@@ -152,7 +151,7 @@
 
 <script type="module">
 import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
-import { ritualData } from "./js/ritual.js?v=3";
+import { ritualData } from "./js/ritual.js?v=6";
 
 Alpine.data("ritualData", ritualData);
 window.Alpine = Alpine;
