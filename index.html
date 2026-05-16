@@ -3,17 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0f1115" />
+<meta name="theme-color" content="#0F172A" />
 <title>kiuno-anime-viewer</title>
-<link rel="stylesheet" href="styles.css?v=3" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📺%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css?v=4" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23818CF8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='15' x='2' y='3' rx='2' ry='2'/%3E%3Cpath d='M8 21h8'/%3E%3Cpath d='M12 17v4'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 </head>
 <body x-data="viewer" x-cloak>
 
 <header class="header">
   <div class="header__row1">
-    <div class="header__title">📺 動漫<small>kiuno</small></div>
+    <div class="header__title">
+      <svg class="i i--lg" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="15" x="2" y="3" rx="2" ry="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+      kiuno<small>anime</small>
+    </div>
     <div class="header__nav">
       <a href="index.html" class="active">卡片</a>
       <a href="graph.html">知識圖</a>
@@ -33,7 +36,7 @@
     <button class="toggle"
             :aria-pressed="showFavoritesOnly"
             @click="showFavoritesOnly = !showFavoritesOnly">
-      <span x-text="showFavoritesOnly ? '♥' : '♡'"></span>
+      <svg class="i" :class="showFavoritesOnly ? 'i--solid' : ''" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
       <span>我的最愛</span>
       <span x-show="favoritesList.length > 0" x-text="`(${favoritesList.length})`" style="opacity:0.7"></span>
     </button>
@@ -47,28 +50,40 @@
     </select>
 
     <button class="pill-btn" @click="$refs.starsModal.showModal()" :title="`最低星級 ≥ ${minStarsRaw}`">
-      ⭐ ≥ <span x-text="minStarsRaw"></span>
+      <svg class="i i--solid" viewBox="0 0 24 24" style="color:var(--star)" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      ≥ <span x-text="minStarsRaw"></span>
     </button>
 
-    <button class="pill-btn" @click="exportFavorites()" :disabled="favoritesList.length === 0" title="匯出我的最愛">⇪</button>
-    <button class="pill-btn" @click="$refs.favImport.click()" title="匯入我的最愛">⇩</button>
+    <button class="pill-btn" @click="exportFavorites()" :disabled="favoritesList.length === 0" aria-label="匯出我的最愛" title="匯出我的最愛">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+    <button class="pill-btn" @click="$refs.favImport.click()" aria-label="匯入我的最愛" title="匯入我的最愛">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </button>
     <input type="file" accept="application/json,.json" x-ref="favImport" @change="importFavorites($event)" style="display:none" />
-    <button class="pill-btn" @click="resetFilters()" title="重設過濾">↻</button>
-    <button class="pill-btn ritual-btn-all" @click="openRitual('all')" title="召喚陣：從全部動畫隨機抽 10 部 3D 展示">🔮</button>
+    <button class="pill-btn" @click="resetFilters()" aria-label="重設過濾" title="重設過濾">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><polyline points="21 3 21 8 16 8"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><polyline points="3 21 3 16 8 16"/></svg>
+    </button>
+    <button class="pill-btn ritual-btn-all" @click="openRitual('all')" aria-label="召喚陣" title="召喚陣：從全部動畫隨機抽 10 部 3D 展示">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3-1.91 5.18L4.91 10.09 10.09 13.91 12 19.09 13.91 13.91 19.09 10.09 13.91 8.18z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+    </button>
 
     <span class="count" x-text="`${filtered.length} / ${all.length}`"></span>
   </div>
 </header>
 
 <!-- 最低星級 modal (mobile-friendly) -->
-<dialog x-ref="starsModal" style="border:none; border-radius:14px; padding:20px; background:var(--bg-elev); color:var(--fg); min-width:280px;">
-  <form method="dialog" style="display:flex; flex-direction:column; gap:12px;">
-    <h3 style="margin:0; font-size:16px;">最低星級 ≥ <span x-text="minStarsRaw"></span></h3>
+<dialog x-ref="starsModal" style="border:1px solid var(--border); border-radius:var(--radius-lg); padding:var(--space-5); background:var(--bg-elev); color:var(--fg); min-width:280px; box-shadow:var(--shadow-xl);">
+  <form method="dialog" style="display:flex; flex-direction:column; gap:var(--space-4);">
+    <h3 style="margin:0; font:600 var(--fs-h3) var(--font-display); display:flex; align-items:center; gap:var(--space-2);">
+      <svg class="i i--solid" viewBox="0 0 24 24" style="color:var(--star)" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      最低星級 ≥ <span x-text="minStarsRaw" style="color:var(--accent); font-variant-numeric:tabular-nums;"></span>
+    </h3>
     <input type="range" min="0" max="5" step="0.5"
            :value="minStarsRaw"
            @input="minStarsRaw = $event.target.value; minStars = $event.target.value"
-           style="width:100%;" />
-    <div style="display:flex; gap:8px; justify-content:flex-end;">
+           style="width:100%; accent-color:var(--accent);" />
+    <div style="display:flex; gap:var(--space-2); justify-content:flex-end;">
       <button type="submit" class="pill-btn">關閉</button>
     </div>
   </form>
@@ -82,7 +97,9 @@
     <span class="updated" x-show="seasonPicks.updated_at"
           x-text="`更新 ${seasonPicks.updated_at}`"></span>
     <div class="actions">
-      <button class="ritual-btn" @click="openRitual('season')" title="召喚陣：從這個清單隨機抽 10 部 3D 展示">🔮</button>
+      <button class="ritual-btn" @click="openRitual('season')" aria-label="召喚陣" title="召喚陣：從這個清單隨機抽 10 部 3D 展示">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3-1.91 5.18L4.91 10.09 10.09 13.91 12 19.09 13.91 13.91 19.09 10.09 13.91 8.18z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+      </button>
       <button x-show="seasonPicks.ids.length > seasonDefaultLimit"
               @click="seasonExpanded = !seasonExpanded"
               x-text="seasonExpanded ? '收合' : `+${seasonPicks.ids.length - seasonDefaultLimit}`"></button>
@@ -105,8 +122,12 @@
     <span>久野的推薦清單</span>
     <span class="count" x-text="`${recommendList.length}`"></span>
     <div class="actions">
-      <button class="ritual-btn" @click="openRitual('recommend')" title="召喚陣：從這個清單隨機抽 10 部 3D 展示">🔮</button>
-      <button x-show="recommendList.length > 1" @click="reshuffleRecommend()">🔀</button>
+      <button class="ritual-btn" @click="openRitual('recommend')" aria-label="召喚陣" title="召喚陣：從這個清單隨機抽 10 部 3D 展示">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3-1.91 5.18L4.91 10.09 10.09 13.91 12 19.09 13.91 13.91 19.09 10.09 13.91 8.18z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+      </button>
+      <button x-show="recommendList.length > 1" @click="reshuffleRecommend()" aria-label="重新洗牌" title="重新洗牌">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+      </button>
       <button x-show="recommendList.length > recommendDefaultLimit" @click="recommendExpanded = !recommendExpanded"
               x-text="recommendExpanded ? '收合' : `+${recommendList.length - recommendDefaultLimit}`"></button>
     </div>
@@ -136,31 +157,38 @@
 <!-- Banner: 載入錯誤 / 本機模式 -->
 <div class="banner" x-show="loadError" x-cloak style="color:var(--review)" x-text="loadError"></div>
 <div class="banner local-mode" x-show="isOwnerMode && !isReadOnlyShared && storageMode === 'local' && recommendList.length > 0" x-cloak>
-  <span>💾 推薦清單為本機模式</span>
+  <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+  <span>推薦清單為本機模式</span>
   <button @click="resetToShared()">重新讀取分享</button>
 </div>
 
 <!-- 卡片 grid -->
 <main class="cards" :class="{'with-detail': !!selected}">
   <template x-for="rec in displayed" :key="rec.id">
-    <div class="card" @click="select(rec)">
+    <div class="card" @click="select(rec)" tabindex="0" @keydown.enter="select(rec)">
       <div class="cover" :style="`background-image:url('${coverFor(rec)}')`">
         <template x-if="isOwnerMode">
-          <div class="icon star"
-               :class="isRecommended(rec.id) ? 'filled' : 'empty'"
-               @click.stop="toggleRecommend(rec.id)"
-               :title="isRecommended(rec.id) ? '從推薦移除' : '加入推薦'"
-               x-text="isRecommended(rec.id) ? '★' : '☆'"></div>
+          <button type="button" class="icon star"
+                  :class="isRecommended(rec.id) ? 'filled' : ''"
+                  @click.stop="toggleRecommend(rec.id)"
+                  :aria-label="isRecommended(rec.id) ? '從推薦移除' : '加入推薦'"
+                  :title="isRecommended(rec.id) ? '從推薦移除' : '加入推薦'">
+            <svg class="i" :class="isRecommended(rec.id) ? 'i--solid' : ''" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+          </button>
         </template>
-        <div class="icon share"
-             @click.stop="shareAnime(rec)"
-             title="分享這部動畫"
-             x-text="'⇪'"></div>
-        <div class="icon heart"
-             :class="isFavorite(rec.id) ? 'filled' : 'empty'"
-             @click.stop="toggleFavorite(rec.id)"
-             :title="isFavorite(rec.id) ? '從我的最愛移除' : '加入我的最愛'"
-             x-text="isFavorite(rec.id) ? '♥' : '♡'"></div>
+        <button type="button" class="icon share"
+                @click.stop="shareAnime(rec)"
+                aria-label="分享這部動畫"
+                title="分享這部動畫">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+        <button type="button" class="icon heart"
+                :class="isFavorite(rec.id) ? 'filled' : ''"
+                @click.stop="toggleFavorite(rec.id)"
+                :aria-label="isFavorite(rec.id) ? '從我的最愛移除' : '加入我的最愛'"
+                :title="isFavorite(rec.id) ? '從我的最愛移除' : '加入我的最愛'">
+          <svg class="i" :class="isFavorite(rec.id) ? 'i--solid' : ''" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
+        </button>
       </div>
       <div class="info">
         <div class="title" x-text="rec.titles.primary_zh || rec.titles.ja_romaji || rec.id"></div>
@@ -181,7 +209,9 @@
 <div class="drawer-backdrop" :class="{open: !!selected}" @click="close()"></div>
 <aside class="drawer" :class="{open: !!selected}" role="dialog" aria-modal="true">
   <div class="drawer__handle" @click="close()"></div>
-  <button class="drawer__close" @click="close()" aria-label="關閉">×</button>
+  <button class="drawer__close" @click="close()" aria-label="關閉">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
   <div class="drawer__body">
     <template x-if="selected">
       <div>
@@ -257,7 +287,8 @@
             </div>
 
             <div class="anime-comment__banner" x-show="!fbConfigured" x-cloak>
-              ⚠ 留言系統尚未設定（本機 firebase-config.js 未填值）
+              <svg class="i" viewBox="0 0 24 24" style="color:var(--destructive)" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+              <span>留言系統尚未設定（本機 firebase-config.js 未填值）</span>
             </div>
             <div class="anime-comment__empty"
                  x-show="fbConfigured && !firebaseReady" x-cloak>載入留言系統中…</div>
@@ -296,9 +327,6 @@
                             :disabled="commentSubmitting"
                             x-text="commentSubmitting ? '送出中…' : '送出留言'"></button>
                   </div>
-                  <p class="anime-comment-form__note">
-                    📋 提交即同意儲存 IP / 瀏覽器資訊作為防濫用紀錄。
-                  </p>
                 </form>
               </div>
             </template>
