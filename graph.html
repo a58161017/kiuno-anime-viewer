@@ -3,122 +3,172 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0a0d14" />
+  <meta name="theme-color" content="#0F172A" />
   <title>kiuno-anime-viewer · 知識圖</title>
-  <link rel="stylesheet" href="styles.css?v=3" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📺%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23818CF8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='5' r='3'/%3E%3Ccircle cx='5' cy='19' r='3'/%3E%3Ccircle cx='19' cy='19' r='3'/%3E%3Cline x1='12' y1='8' x2='5' y2='16'/%3E%3Cline x1='12' y1='8' x2='19' y2='16'/%3E%3C/svg%3E">
   <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/cose-base@2.2.0/cose-base.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js"></script>
   <style>
-    body, html { background: #0a0d14; overscroll-behavior: none; }
+    body, html { background: var(--bg); overscroll-behavior: none; }
     #cy {
       width: 100%; height: calc(100vh - 110px);
-      background: radial-gradient(ellipse at center, #1a1f2e 0%, #0a0d14 70%);
+      background: radial-gradient(ellipse at 50% 40%, rgba(129,140,248,0.08), var(--bg) 65%);
       touch-action: none;
     }
     .graph-controls {
-      display: flex; gap: 8px; align-items: center; padding: 8px 12px;
+      display: flex; gap: var(--space-2); align-items: center;
+      padding: var(--space-2) var(--space-3);
       border-bottom: 1px solid var(--border);
-      background: rgba(20, 24, 36, 0.85); backdrop-filter: blur(8px);
+      background: rgba(15,23,42,0.85); backdrop-filter: blur(12px) saturate(180%);
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
     .graph-controls::-webkit-scrollbar { display: none; }
     .breadcrumb {
-      display: flex; gap: 4px; align-items: center; flex: 1; min-width: 0;
+      display: flex; gap: var(--space-1); align-items: center; flex: 1; min-width: 0;
       flex-wrap: nowrap;
     }
     .breadcrumb .crumb {
-      cursor: pointer; padding: 6px 12px; border-radius: 999px;
-      background: var(--bg-elev-2); border: 1px solid var(--border); color: var(--fg);
-      font-size: 12px; white-space: nowrap; flex: 0 0 auto;
+      cursor: pointer;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+      font: 500 var(--fs-body-sm) var(--font-body);
+      white-space: nowrap;
+      flex: 0 0 auto;
       -webkit-tap-highlight-color: transparent;
+      transition: background var(--dur-fast) var(--ease-out),
+                  border-color var(--dur-fast) var(--ease-out),
+                  color var(--dur-fast) var(--ease-out);
     }
-    .breadcrumb .crumb.current { background: var(--accent); color: #000; cursor: default; }
+    .breadcrumb .crumb:hover { background: var(--bg-elev-2); color: var(--fg); border-color: var(--border-strong); }
+    .breadcrumb .crumb.current {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      cursor: default;
+      font-weight: 600;
+    }
     .breadcrumb .sep { color: var(--fg-faint); flex: 0 0 auto; }
 
     .graph-controls button.fit {
       flex: 0 0 auto;
-      padding: 6px 12px;
-      background: var(--bg-elev-2);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      background: var(--bg-elev);
       border: 1px solid var(--border);
       color: var(--fg);
-      border-radius: 999px;
-      font-size: 12px;
+      border-radius: var(--radius-sm);
+      font: 500 var(--fs-body-sm) var(--font-body);
       white-space: nowrap;
+      cursor: pointer;
+      transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+    }
+    .graph-controls button.fit:hover { background: var(--bg-elev-2); border-color: var(--border-strong); }
+    .graph-controls button.fit:focus-visible {
+      outline: none; border-color: var(--accent); box-shadow: var(--focus-ring);
     }
 
-    /* Mobile: node-info 改成底部 sheet */
+    /* Mobile: node-info 改成底部 sheet (對齊 drawer token) */
     #node-info {
       position: fixed; left: 0; right: 0; bottom: 0;
       max-height: 70vh;
       background: var(--bg-elev);
       border-top: 1px solid var(--border);
-      border-radius: 16px 16px 0 0;
-      padding: 14px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: var(--space-4);
       display: none;
       overflow-y: auto;
-      font-size: 14px;
-      box-shadow: 0 -8px 32px rgba(0,0,0,0.6);
-      padding-bottom: max(14px, env(safe-area-inset-bottom));
+      font: 400 var(--fs-body-sm) var(--font-body);
+      box-shadow: var(--shadow-xl);
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
       z-index: 60;
     }
-    #node-info img { width: 100%; max-height: 220px; object-fit: contain; background: #000; border-radius: 8px; }
-    #node-info h3 { margin: 10px 0 4px; font-size: 17px; }
-    #node-info .close {
-      position: absolute; right: 8px; top: 4px;
-      width: 36px; height: 36px;
-      display: grid; place-items: center;
-      cursor: pointer; color: var(--fg-muted);
-      font-size: 22px; line-height: 1;
-      -webkit-tap-highlight-color: transparent;
+    #node-info img {
+      width: 100%; max-height: 220px;
+      object-fit: contain;
+      background: var(--bg-sunken);
+      border-radius: var(--radius-md);
     }
+    #node-info h3 {
+      margin: var(--space-3) 0 var(--space-1);
+      font: 700 var(--fs-h2) var(--font-display);
+      letter-spacing: -0.01em;
+    }
+    #node-info .close {
+      position: absolute; right: var(--space-2); top: var(--space-2);
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      background: var(--bg-elev-2);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+      border-radius: 50%;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background var(--dur-fast) var(--ease-out),
+                  border-color var(--dur-fast) var(--ease-out),
+                  color var(--dur-fast) var(--ease-out);
+    }
+    #node-info .close:hover { background: var(--bg-elev); border-color: var(--border-strong); color: var(--fg); }
 
     /* Desktop: side panel */
     @media (min-width: 900px) {
       #node-info {
         left: auto; bottom: auto;
-        right: 12px; top: 130px;
-        width: 320px; max-height: 75vh;
-        border-radius: 12px;
+        right: var(--space-3); top: 130px;
+        width: 360px; max-height: 75vh;
+        border-radius: var(--radius-lg);
         border: 1px solid var(--border);
       }
     }
 
     .level-banner {
-      background: rgba(124, 142, 255, 0.12);
+      background: var(--bg-elev);
+      border-left: 3px solid var(--accent);
       border-bottom: 1px solid var(--border);
       color: var(--fg-muted);
-      font-size: 12px;
-      padding: 6px 14px;
-      text-align: center;
+      font: 400 var(--fs-body-sm)/1.55 var(--font-body);
+      padding: var(--space-3) var(--space-4);
       display: none;
     }
     .level-banner.show { display: block; }
     .level-banner b { color: var(--accent); font-weight: 700; }
 
+    /* level-toast 用 styles.css 全域 .toast 樣式即可，這頁的 inline override 拿掉 */
     .level-toast {
       position: fixed; left: 50%; top: max(80px, env(safe-area-inset-top));
-      transform: translateX(-50%);
-      background: rgba(93,210,255,0.95); color: #000;
-      padding: 10px 22px; border-radius: 999px;
-      font-weight: bold; font-size: 13px;
-      box-shadow: 0 4px 16px rgba(93,210,255,0.4);
+      transform: translate(-50%, -8px);
+      background: var(--bg-elev-2);
+      border: 1px solid var(--accent);
+      color: var(--fg);
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-pill);
+      font: 600 var(--fs-body-sm) var(--font-body);
+      box-shadow: var(--shadow-lg), 0 0 24px var(--accent-soft);
       pointer-events: none; opacity: 0;
-      transition: opacity 0.2s;
+      transition: opacity var(--dur-base) var(--ease-out),
+                  transform var(--dur-base) var(--ease-out);
       z-index: 100;
     }
-    .level-toast.show { opacity: 1; }
+    .level-toast.show { opacity: 1; transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
 
 <header class="header">
   <div class="header__row1">
-    <div class="header__title">📺 知識圖<small>kiuno</small></div>
+    <div class="header__title">
+      <svg class="i i--lg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg>
+      知識圖<small>kiuno</small>
+    </div>
     <div class="header__nav">
       <a href="index.html">卡片</a>
       <a href="graph.html" class="active">知識圖</a>
@@ -131,7 +181,10 @@
 
 <div class="graph-controls">
   <div class="breadcrumb" id="breadcrumb"></div>
-  <button class="fit" onclick="cy && cy.fit(null, 60)">置中</button>
+  <button class="fit" onclick="cy && cy.fit(null, 60)" aria-label="置中" title="置中">
+    <svg class="i i--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+    <span>置中</span>
+  </button>
 </div>
 
 <div class="level-banner" id="levelBanner"></div>
@@ -188,63 +241,63 @@ function initCytoscape() {
     minZoom: 0.05, maxZoom: 6,
     wheelSensitivity: 0.3,
     style: [
-      // ---- category ----
+      // ---- category (indigo accent — 主分類用主色) ----
       {
         selector: 'node[type = "category"]',
         style: {
-          'background-color': '#7c8eff',
+          'background-color': '#6366F1',      // accent-strong
           'background-fit': 'cover',
           'background-opacity': 0.95,
-          'background-blacken': -0.1,
+          'background-blacken': -0.05,
           'label': 'data(label)',
-          'color': '#fff',
+          'color': '#F1F5F9',
           'font-size': 16, 'font-weight': 'bold',
           'text-halign': 'center', 'text-valign': 'center',
           'text-wrap': 'wrap', 'text-max-width': 100,
-          'text-outline-color': '#1a1f2e', 'text-outline-width': 2,
+          'text-outline-color': '#0F172A', 'text-outline-width': 2,
           'width': ele => 70 + Math.sqrt(ele.data('count')) * 8,
           'height': ele => 70 + Math.sqrt(ele.data('count')) * 8,
           'border-width': 3,
-          'border-color': '#a07fff',
+          'border-color': '#A5B4FC',          // accent-hover
           'border-opacity': 0.85,
-          'shadow-blur': 30,
-          'shadow-color': '#7c8eff',
-          'shadow-opacity': 0.6,
+          'shadow-blur': 32,
+          'shadow-color': '#818CF8',          // accent
+          'shadow-opacity': 0.55,
           'shadow-offset-x': 0, 'shadow-offset-y': 0,
         },
       },
-      // ---- tag ----
+      // ---- tag (violet — 次要層級用紫色) ----
       {
         selector: 'node[type = "tag"]',
         style: {
-          'background-color': '#ffae5d',
+          'background-color': '#A78BFA',      // violet
           'background-opacity': 0.95,
           'label': 'data(label)',
-          'color': '#1a1f2e',
+          'color': '#0F172A',
           'font-size': 12, 'font-weight': 'bold',
           'text-halign': 'center', 'text-valign': 'center',
           'text-wrap': 'wrap', 'text-max-width': 80,
           'width': ele => 44 + Math.sqrt(ele.data('count')) * 6,
           'height': ele => 44 + Math.sqrt(ele.data('count')) * 6,
           'border-width': 2.5,
-          'border-color': '#ffc857',
+          'border-color': '#C4B5FD',
           'shadow-blur': 22,
-          'shadow-color': '#ffae5d',
-          'shadow-opacity': 0.55,
+          'shadow-color': '#A78BFA',
+          'shadow-opacity': 0.5,
           'shadow-offset-x': 0, 'shadow-offset-y': 0,
         },
       },
-      // ---- anime ----
+      // ---- anime (cover image foreground, score-tinted border) ----
       {
         selector: 'node[type = "anime"]',
         style: {
-          'background-color': '#5dd2ff',
+          'background-color': '#192134',      // bg-elev fallback while image loads
           'background-image': 'data(cover)',
           'background-fit': 'cover cover',
           'label': 'data(label)',
-          'color': '#e6e8ee',
+          'color': '#F1F5F9',
           'font-size': 9,
-          'text-outline-color': '#0a0d14',
+          'text-outline-color': '#0F172A',
           'text-outline-width': 2,
           'text-valign': 'bottom',
           'text-margin-y': 6,
@@ -254,23 +307,23 @@ function initCytoscape() {
           'border-width': 2,
           'border-color': ele => {
             const s = ele.data('score') || 0;
-            if (s >= 4.5) return '#ffc857';
-            if (s >= 4.0) return '#5dd2ff';
-            return '#5a627a';
+            if (s >= 4.5) return '#FCD34D';   // star (gold) — 高分
+            if (s >= 4.0) return '#818CF8';   // accent indigo — 中高分
+            return '#475569';                  // slate — 一般
           },
           'shadow-blur': 14,
           'shadow-color': '#000',
           'shadow-opacity': 0.5,
         },
       },
-      { selector: 'node.hover', style: { 'border-width': 5, 'border-color': '#ffae5d', 'z-compound-depth': 'top' } },
+      { selector: 'node.hover', style: { 'border-width': 5, 'border-color': '#FCD34D', 'z-compound-depth': 'top' } },
       { selector: 'node.dim', style: { opacity: 0.18 } },
 
       // ---- edges ----
       {
         selector: 'edge[etype = "category-link"]',
         style: {
-          'line-color': '#a07fff', 'opacity': 'data(opacity)',
+          'line-color': '#818CF8', 'opacity': 'data(opacity)',     // accent indigo
           'width': ele => 1 + Math.sqrt(ele.data('weight') || 1),
           'curve-style': 'haystack',
         },
@@ -278,14 +331,14 @@ function initCytoscape() {
       {
         selector: 'edge[etype = "tag-link"]',
         style: {
-          'line-color': '#ffc857', 'opacity': 'data(opacity)',
+          'line-color': '#A78BFA', 'opacity': 'data(opacity)',     // violet
           'width': ele => 1 + Math.sqrt(ele.data('weight') || 1) * 0.7,
           'curve-style': 'haystack',
         },
       },
-      { selector: 'edge[etype = "franchise"]', style: { 'line-color': '#ff7a59', 'width': 2.5, 'target-arrow-color': '#ff7a59', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'opacity': 0.9 } },
-      { selector: 'edge[etype = "same_studio"]', style: { 'line-color': '#5dd2ff', 'width': 1, 'opacity': 0.5, 'curve-style': 'haystack' } },
-      { selector: 'edge[etype = "shared_tag"]', style: { 'line-color': '#ffae5d', 'width': 1, 'opacity': 0.4, 'curve-style': 'haystack' } },
+      { selector: 'edge[etype = "franchise"]', style: { 'line-color': '#FB7185', 'width': 2.5, 'target-arrow-color': '#FB7185', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'opacity': 0.9 } },  // heart pink — 系列關係保留暖色暗示
+      { selector: 'edge[etype = "same_studio"]', style: { 'line-color': '#818CF8', 'width': 1, 'opacity': 0.45, 'curve-style': 'haystack' } },
+      { selector: 'edge[etype = "shared_tag"]', style: { 'line-color': '#A78BFA', 'width': 1, 'opacity': 0.35, 'curve-style': 'haystack' } },
       { selector: 'edge.dim', style: { 'opacity': 0.05 } },
     ],
   });
@@ -570,18 +623,20 @@ function showAnimeInfo(node) {
   const studios = (rec.studios || []).join(' · ');
   const synopsis = rec.synopsis_zh || '(暫無中文簡介)';
   box.innerHTML = `
-    <span class="close" onclick="hideInfo()">×</span>
-    ${cover ? `<img src="${escapeHtml(cover)}" />` : ''}
+    <button class="close" onclick="hideInfo()" aria-label="關閉">
+      <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    ${cover ? `<img src="${escapeHtml(cover)}" alt="${escapeHtml(rec.titles.primary_zh || '')}" />` : ''}
     <h3>${escapeHtml(rec.titles.primary_zh || rec.titles.ja_romaji || '')}</h3>
-    <div style="color: var(--fg-dim); font-size: 11px;">
+    <div style="color: var(--fg-muted); font: 500 var(--fs-caption) var(--font-body); margin-top: var(--space-1); font-variant-numeric: tabular-nums;">
       ${rec.year || '?'} · ${escapeHtml(rec.format || '')} · ${rec.episodes || '?'} 集 · ${escapeHtml(studios)}
     </div>
-    <div style="color: var(--star); margin: 8px 0; font-size: 16px; font-weight: bold;">
+    <div style="color: var(--star); margin: var(--space-3) 0; font: 700 var(--fs-h3) var(--font-display); font-variant-numeric: tabular-nums;">
       ${score != null ? score.toFixed(1) + ' ★' : '—'}
     </div>
-    <div style="font-size: 12px; color: #cdd2dc; max-height: 220px; overflow-y: auto; margin-top: 8px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(synopsis)}</div>
-    <div style="margin-top: 8px; font-size: 11px; color: var(--fg-dim);">分類: ${(rec.categories || []).join(', ')}</div>
-    <div style="margin-top: 8px;"><a href="index.html" style="color: var(--accent); font-size: 12px;">在卡片視圖開啟</a></div>
+    <div style="font: 400 var(--fs-body-sm)/1.7 var(--font-body); color: var(--fg); max-height: 220px; overflow-y: auto; margin-top: var(--space-3); white-space: pre-wrap;">${escapeHtml(synopsis)}</div>
+    <div style="margin-top: var(--space-3); font: 500 var(--fs-caption) var(--font-body); color: var(--fg-faint);">分類: ${(rec.categories || []).join(', ')}</div>
+    <div style="margin-top: var(--space-3);"><a href="index.html?id=${encodeURIComponent(id)}" style="color: var(--accent); font: 500 var(--fs-body-sm) var(--font-body);">在卡片視圖開啟 →</a></div>
   `;
   box.style.display = 'block';
 }
