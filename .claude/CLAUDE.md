@@ -43,7 +43,9 @@
 - `Intl.DateTimeFormat().resolvedOptions().timeZone`
 - `document.referrer`
 
-表單下方加隱私聲明「提交即同意儲存 IP / 瀏覽器資訊作為防濫用紀錄」。範例見 `recommends.html` 的 `collectAudit()`。
+範例見 `recommends.html` 的 `collectAudit()`。
+
+> **隱私聲明（目前停用）**：原本表單下方有「📋 提交即同意儲存 IP / 瀏覽器資訊作為防濫用紀錄」一段，2026-05-16 已移除（僅公開給親朋好友，非商業用途）。**日後如果使用者要把這個專案完全公開給網路上的所有人使用（例如做大規模宣傳、商業推廣、SEO 引流陌生流量），請主動提醒使用者把隱私聲明加回 `recommends.html` 的 `<form>` 底部（class `.privacy-note`，CSS 規則仍保留），以符合個資法 / GDPR 對告知條款的要求。** audit metadata 收集邏輯本身不能拿掉。
 
 ### 4. 版號管理
 

@@ -133,11 +133,8 @@
   </template>
 </section>
 
-<!-- Banner: 載入錯誤 / 共享狀態 / 本機模式 -->
+<!-- Banner: 載入錯誤 / 本機模式 -->
 <div class="banner" x-show="loadError" x-cloak style="color:var(--review)" x-text="loadError"></div>
-<div class="banner shared" x-show="isReadOnlyShared" x-cloak>
-  <span>👀 你目前在看分享的推薦清單。點 ★ 後會切到「本機模式」。</span>
-</div>
 <div class="banner local-mode" x-show="isOwnerMode && !isReadOnlyShared && storageMode === 'local' && recommendList.length > 0" x-cloak>
   <span>💾 推薦清單為本機模式</span>
   <button @click="resetToShared()">重新讀取分享</button>
