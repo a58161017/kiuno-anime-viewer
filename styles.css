@@ -211,6 +211,33 @@ a { color: var(--accent); text-decoration: none; }
   box-shadow: 0 0 0 2px var(--bg);
 }
 
+/* 召喚陣 nav link — 橘黃 sub-theme cue + 脈動動畫指引 */
+.nav-link-ritual {
+  color: #ffae5d !important;
+  border: 1px solid rgba(255,174,93,0.4);
+  background: linear-gradient(135deg, rgba(255,174,93,0.10), rgba(255,140,60,0.05));
+  box-shadow: inset 0 0 8px rgba(255,174,93,0.10);
+  animation: ritual-link-pulse 3s var(--ease-in-out) infinite;
+}
+.nav-link-ritual:hover {
+  background: linear-gradient(135deg, rgba(255,174,93,0.18), rgba(255,140,60,0.08));
+  border-color: rgba(255,174,93,0.6);
+  box-shadow: inset 0 0 8px rgba(255,174,93,0.15), 0 0 12px rgba(255,174,93,0.3);
+}
+.nav-link-ritual.active {
+  animation: none;
+  background: rgba(255,174,93,0.18);
+  border-color: rgba(255,174,93,0.7);
+  box-shadow: inset 0 0 10px rgba(255,174,93,0.2);
+}
+@keyframes ritual-link-pulse {
+  0%, 100% { box-shadow: inset 0 0 8px rgba(255,174,93,0.10); }
+  50%      { box-shadow: inset 0 0 12px rgba(255,174,93,0.18), 0 0 14px rgba(255,174,93,0.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-link-ritual { animation: none; }
+}
+
 .search {
   flex: 1;
   position: relative;

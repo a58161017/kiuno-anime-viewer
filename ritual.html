@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#070510" />
 <title>召喚陣 · kiuno-anime-viewer</title>
 <link rel="stylesheet" href="styles.css?v=4" />
-<link rel="stylesheet" href="css/ritual.css?v=6" />
+<link rel="stylesheet" href="css/ritual.css?v=9" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔮%3C/text%3E%3C/svg%3E">
 <style>[x-cloak]{display:none!important}</style>
 </head>
@@ -89,14 +89,31 @@
     <div class="ritual__ring" :style="`transform: ${ringTransform};`">
       <template x-for="(c, i) in cards" :key="c.id">
         <div class="ritual__card"
-             :class="{ focused: isCardFocused(i), hidden: isCardHidden(i) }"
-             :style="`transform: ${cardTransform(i)}; background-image:url('${coverFor(c)}');`"
+             :class="{ focused: isCardFocused(i), hidden: isCardHidden(i), 'flying-out': shuffling && shufflePhase === 'fly-out', 'dealing-in': shuffling && shufflePhase === 'deal' }"
+             :style="`transform: ${cardTransform(i)}; background-image:url('${coverFor(c)}'); --i:${i};`"
              :data-title="cardTitle(c)"
              @click="clickCard(i)"
              :title="cardTitle(c)"></div>
       </template>
     </div>
   </div>
+
+  <!-- 洗牌中央 stack (5 張卡背重疊 + shake 動畫) -->
+  <div class="ritual__shuffle-stack" x-show="shuffling && shufflePhase === 'shuffling'" x-cloak>
+    <div class="ritual__card-back" style="--i:0"></div>
+    <div class="ritual__card-back" style="--i:1"></div>
+    <div class="ritual__card-back" style="--i:2"></div>
+    <div class="ritual__card-back" style="--i:3"></div>
+    <div class="ritual__card-back" style="--i:4"></div>
+  </div>
+  <!-- 洗牌中央提示文字 -->
+  <div class="ritual__shuffle-text" x-show="shuffling" x-cloak>
+    <span x-show="shufflePhase === 'fly-out'">送走當前命運…</span>
+    <span x-show="shufflePhase === 'shuffling'">重新洗牌…</span>
+    <span x-show="shufflePhase === 'deal'">召喚新緣分…</span>
+  </div>
+  <!-- 洗牌失敗提示 (pool 抽完) -->
+  <div class="ritual__shuffle-error" x-show="shuffleError" x-cloak x-text="shuffleError"></div>
 
   <!-- Focus 資訊面板：標題 / 評分 / 簡介 統一容器 (mobile-first) -->
   <div class="ritual__panel"
@@ -144,8 +161,26 @@
 
   <!-- 操作提示 -->
   <div class="ritual__hint" x-show="!loading && !loadError">
-    <span x-show="mode === 'camera'">✋ 布 + 揮動 = 旋轉 (帶慣性)　·　✊ 石頭 = 展開／在展開後上下移動 = 滾簡介　·　展開後 ✌️☝👍 撥動 = 切卡　·　✋ 收回</span>
-    <span x-show="mode === 'keyboard'">← → ring 旋轉 / focus 切卡　·　空白鍵 切換　·　Esc 返回</span>
+    <span x-show="mode === 'camera'">✋揮動旋轉　·　✊展開／上下滾簡介　·　✌️☝撥動切卡　·　雙手 ✋✋ 0.8s 洗牌　·　👍 拇指朝上 1s 離開</span>
+    <span x-show="mode === 'keyboard'">← → 旋轉／切卡　·　空白鍵展開／收回　·　R 洗牌　·　Esc 離開</span>
+  </div>
+
+  <!-- 手勢偵測進度框 (debug，鏡頭模式才顯示) -->
+  <div class="ritual__gesture-debug"
+       x-show="mode === 'camera' && showCam && !loading && !loadError"
+       x-cloak>
+    <div class="ritual__gesture-row" :class="{ active: _palmProgress > 0.05 }">
+      <span class="ritual__gesture-label">雙手 ✋✋</span>
+      <div class="ritual__gesture-bar">
+        <div class="ritual__gesture-bar-fill" :style="`width:${_palmProgress * 100}%`"></div>
+      </div>
+    </div>
+    <div class="ritual__gesture-row" :class="{ active: _thumbUpProgress > 0.05 }">
+      <span class="ritual__gesture-label">👍 朝上</span>
+      <div class="ritual__gesture-bar">
+        <div class="ritual__gesture-bar-fill" :style="`width:${_thumbUpProgress * 100}%`"></div>
+      </div>
+    </div>
   </div>
 
   <!-- 攝影機預覽 -->
@@ -158,7 +193,7 @@
 
 <script type="module">
 import Alpine from "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/module.esm.js";
-import { ritualData } from "./js/ritual.js?v=6";
+import { ritualData } from "./js/ritual.js?v=9";
 
 Alpine.data("ritualData", ritualData);
 window.Alpine = Alpine;

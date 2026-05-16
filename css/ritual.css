@@ -519,3 +519,191 @@ body.ritual::before {
   .ritual__floor, .ritual__floor--inner { animation-duration: 240s; }
   .ritual__ring { transition: none; }
 }
+
+/* ============================================================
+   洗牌動畫 (v1.2.0)
+   ============================================================ */
+
+/* Phase 1: 既有卡片往左飛出 (stagger by --i) */
+.ritual__card.flying-out {
+  animation: ritual-card-fly-out 0.6s var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 30ms);
+  pointer-events: none;
+}
+@keyframes ritual-card-fly-out {
+  to {
+    transform: translate(-1500px, 0) rotate(-12deg) !important;
+    opacity: 0;
+  }
+}
+
+/* Phase 3: 從中央發牌進環狀 (只動 opacity + filter blur，避免覆蓋 ring transform) */
+.ritual__card.dealing-in {
+  animation: ritual-card-deal-in 0.5s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+@keyframes ritual-card-deal-in {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+/* Phase 2: 中央洗牌 stack (5 張卡背重疊 shake) */
+.ritual__shuffle-stack {
+  position: fixed;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 140px;
+  pointer-events: none;
+  z-index: 90;
+  perspective: 800px;
+}
+.ritual__card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,174,93,0.25) 0%, transparent 60%),
+    linear-gradient(135deg, #1a0f1d 0%, #110a16 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow:
+    0 0 18px rgba(255,174,93,0.5),
+    inset 0 0 12px rgba(255,174,93,0.2);
+  transform-origin: center;
+  animation: ritual-shuffle-shake 0.8s var(--ease-in-out) infinite;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+.ritual__card-back::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,174,93,0.4);
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 30%, rgba(255,174,93,0.12) 50%, transparent 60%);
+}
+.ritual__card-back::after {
+  /* 中央符文點綴 */
+  content: "✦";
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(255,174,93,0.7);
+}
+@keyframes ritual-shuffle-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25%      { transform: translate(-14px, -4px) rotate(-6deg); }
+  50%      { transform: translate(0, -6px) rotate(0); }
+  75%      { transform: translate(14px, -4px) rotate(6deg); }
+}
+
+/* 洗牌中央提示文字 */
+.ritual__shuffle-text {
+  position: fixed;
+  left: 50%;
+  top: calc(50% + 100px);
+  transform: translateX(-50%);
+  z-index: 91;
+  font: 700 16px var(--font-display, sans-serif);
+  letter-spacing: 0.1em;
+  color: var(--fg);
+  text-shadow: 0 0 12px rgba(255,174,93,0.7);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* 洗牌失敗 (pool 抽完) 提示 */
+.ritual__shuffle-error {
+  position: fixed;
+  left: 50%; top: max(80px, env(safe-area-inset-top));
+  transform: translateX(-50%);
+  z-index: 105;
+  background: rgba(20,12,8,0.92);
+  border: 1px solid var(--destructive, #FB7185);
+  color: var(--fg);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font: 600 13px var(--font-body, sans-serif);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ritual__card.flying-out { animation-duration: 0.2s; }
+  .ritual__card.dealing-in { animation-duration: 0.2s; }
+  .ritual__card-back { animation: none; }
+}
+
+/* ============================================================
+   手勢偵測進度框 (v1.2.1 debug，鏡頭模式下顯示觸發進度)
+   ============================================================ */
+.ritual__gesture-debug {
+  position: fixed;
+  right: 10px;
+  /* 放在鏡頭預覽 (.ritual__cam, bottom: 10px, height: 90px) 正上方 */
+  bottom: 110px;
+  z-index: 62;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(20,12,8,0.78);
+  border: 1px solid rgba(255,174,93,0.25);
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  min-width: 132px;
+  max-width: 92vw;
+}
+.ritual__gesture-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 500 10px var(--font-body, sans-serif);
+  color: rgba(255,214,168,0.55);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.ritual__gesture-row.active {
+  color: var(--accent);
+  text-shadow: 0 0 6px rgba(255,174,93,0.4);
+}
+.ritual__gesture-label {
+  flex: 0 0 auto;
+  width: 56px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.ritual__gesture-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,174,93,0.10);
+  border: 1px solid rgba(255,174,93,0.18);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.ritual__gesture-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-strong, #ff9233), var(--accent, #ffae5d));
+  box-shadow: 0 0 8px rgba(255,174,93,0.5);
+  border-radius: 2px;
+  transition: width 80ms linear;
+}
+.ritual__gesture-row.active .ritual__gesture-bar-fill {
+  box-shadow: 0 0 12px rgba(255,174,93,0.7);
+}
+
+@media (min-width: 600px) {
+  .ritual__gesture-debug {
+    right: 14px;
+    bottom: 155px;   /* 桌機鏡頭較大 (height: 135px)，往上挪 */
+    min-width: 160px;
+    padding: 8px 10px;
+  }
+  .ritual__gesture-row { font-size: 11px; }
+  .ritual__gesture-label { width: 64px; }
+}

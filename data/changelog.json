@@ -1,6 +1,92 @@
 {
   "versions": [
     {
+      "version": "1.2.2",
+      "date": "2026-05-16",
+      "summary": "ritual 洗牌手勢從「雙手矩形」改成「雙手 ✋✋」(MediaPipe 內建 Open_Palm × 2)",
+      "changes": {
+        "added": [
+          "雙手 ✋ Open_Palm 洗牌：兩隻手都被偵測 + 兩手都 Open_Palm + score > 0.6 + 連續 3 幀穩定 + 持續 0.8s → 觸發洗牌。MediaPipe 內建模型，比自寫雙手矩形 landmark 穩定許多",
+          "_detectDualPalm 函式 (3 行)：hands.length === 2 && hands.every(h => gesture === 'Open_Palm' && score > 0.6)"
+        ],
+        "fixed": [
+          "雙手矩形手勢太難觸發：自訂 landmark 邏輯 (4 點圍矩形 + 面積 + 對角線比 + 角度) 即使 v1.2.1 大幅放寬 threshold 仍不穩，改用內建 Open_Palm 兩手判定"
+        ],
+        "removed": [
+          "ritual.js 移除 _detectRectangle 函式 (35 行) + RECT_TIP_DIST_THRESHOLD / RECT_MIN_AREA / RECT_MAX_AREA / RECT_DIAG_RATIO_MIN / RECT_DIAG_RATIO_MAX / RECT_STABLE_FRAMES 共 6 個常數"
+        ],
+        "ui": [
+          "HUD hint 文字「雙手框矩形 0.8s 洗牌」→「雙手 ✋✋ 0.8s 洗牌」",
+          "debug 進度框 label「雙手矩形」→「雙手 ✋✋」"
+        ],
+        "infra": [
+          "ritual.js _onGestureFrame 「布揮動旋轉」段加 `!dualPalmOK` 條件：雙手 ✋ 洗牌計時中不算單手揮動旋轉，避免衝突",
+          "state rename: _rectStableFrames/Since/Progress → _palmStableFrames/Since/Progress；常數 DUAL_PALM_STABLE_FRAMES = 3",
+          "cache-bust ritual.css?v=8 → ?v=9、ritual.js?v=8 → ?v=9"
+        ]
+      }
+    },
+    {
+      "version": "1.2.1",
+      "date": "2026-05-16",
+      "summary": "ritual 手勢修正：放寬雙手矩形 threshold、改用 MediaPipe 內建 Thumb_Up、加 debug 進度框",
+      "changes": {
+        "added": [
+          "鏡頭預覽上方加手勢偵測進度框 (.ritual__gesture-debug)：兩列「雙手矩形」/「👍 朝上」橘黃 glow 進度條，使用者比手勢時即時看到累積進度，過 5% 加 .active 強化對比；訓練期幫忙 trial-and-error，未來手勢熟了可移除",
+          "改用 MediaPipe 內建 Thumb_Up 手勢取代離開頁面：任一手手勢辨識為 Thumb_Up (score > 0.6) 持續 1 秒 → exit()。內建模型遠比自寫 landmark 穩定"
+        ],
+        "fixed": [
+          "雙手矩形手勢觸發不出來：threshold 互相矛盾 (兩 tip 距離 < 0.25 vs 4 點面積 > 0.02 兼顧難)，且 5 連幀 + 1.2s 持續太嚴。放寬為 兩 tip 距離 < 0.6、面積 0.008-0.4、3 連幀、0.8s 持續",
+          "拇指朝右離開觸發不出來：horizontal threshold < 0.06 要求拇指極水平 (< 3.5° 斜角)，但搭便車自然有 15-30° 斜上；四指全收條件容易因某指沒完全彎 fail。改用內建 Thumb_Up 拋棄自寫邏輯"
+        ],
+        "removed": [
+          "ritual.js 移除 _detectThumbRight 自訂 landmark 函式 (45 行) 與相關常數 THUMB_RIGHT_HORIZ_THRESHOLD / THUMB_EXTEND_RATIO / FINGER_CURL_RATIO / THUMB_RIGHT_DEBOUNCE_MS"
+        ],
+        "ui": [
+          "HUD hint 文字更新：camera mode 「雙手框矩形 1.2s 洗牌 · 👉 拇指朝右 1.2s 離開」→「雙手框矩形 0.8s 洗牌 · 👍 拇指朝上 1s 離開」"
+        ],
+        "infra": [
+          "ritual.js: 加 RECT_MAX_AREA = 0.40 上限避免兩手張到極致誤觸；加 THUMB_UP_DEBOUNCE_MS = 1000；state 新增 _rectProgress / _thumbUpProgress (0..1) 給 debug UI；_thumbRightStableSince → _thumbUpStableSince",
+          "cache-bust ritual.css?v=7 → ?v=8、ritual.js?v=7 → ?v=8"
+        ]
+      }
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-05-16",
+      "summary": "召喚陣加強：nav 入口顯眼化、雙手矩形洗牌、拇指朝右離開",
+      "changes": {
+        "added": [
+          "全站 nav 加「召喚陣」link (橘黃 glow + 脈動動畫指引)：使用者一眼看到「另一種瀏覽方式」入口，主站 sleek indigo 跟 ritual 橘黃形成 dual-theme cue",
+          "ritual.html 新功能「重新洗牌抽 10 張」：手勢觸發 → 既有卡 stagger 30ms 往左飛出 → 中央 5 張卡背重疊 shake 動畫 (橘黃 glow + 符文 ✦) → 從 remaining pool 抽 10 張 stagger 50ms blur fade-in",
+          "雙手矩形手勢辨識 (自訂 landmark 邏輯，非 MediaPipe 內建)：兩手都偵測到 + 兩食指 tip 距離 < 0.25 + 兩拇指 tip 距離 < 0.25 + 4 點圍面積 > 0.02 + 對角線比 0.5-2.0 (≈矩形) + 連續 5 幀通過 + 持續 1.2s → 觸發洗牌。不強制手指比法，比 7、比 L、五指張開都可，只要食指拇指 tip 對齊組矩形",
+          "拇指朝右離開手勢 (搭便車姿勢，自訂 landmark)：拇指伸出 + 水平 + 朝使用者右側 + 其他四指收起 + 持續 1.2s → 跳回 index.html",
+          "sessionStorage ritualPool 機制：index.html openRitual 跳轉前把整個 source pool 存進 sessionStorage，ritual.html 讀取做「不重複抽」 (`_initialPool` + `_usedIds: Set` + `_remainingPool` getter)；離開頁面清 sessionStorage → 下次重進 pool 重置",
+          "ritual.html init fallback：sessionStorage 沒 ritualPool 且 URL 沒 ids 但 src=all (從 nav link 跳來) → 從 anime.json 全部隨機抽 10",
+          "鍵盤對應：R 鍵 = 洗牌、Esc = 離開 (既有)；HUD hint 文字更新含新手勢"
+        ],
+        "fixed": [],
+        "removed": [
+          "Thumb_Up / Thumb_Down / ILoveYou 從 SWIPE_GESTURES 移除：focus 中切卡只剩 Pointing_Up / Victory，騰出空間讓 Thumb_Down 跟 ILoveYou 給其他用途 (本版實際只用 landmark 自寫拇指朝右，不依賴 Thumb_Up)"
+        ],
+        "ui": [
+          "HUD hint camera mode 文字精煉：「✋揮動旋轉 · ✊展開/上下滾簡介 · ✌️☝撥動切卡 · 雙手框矩形 1.2s 洗牌 · 👉拇指朝右 1.2s 離開」",
+          "HUD hint keyboard mode 加 R 洗牌：「← → 旋轉/切卡 · 空白鍵展開/收回 · R 洗牌 · Esc 離開」",
+          ".nav-link-ritual: 橘黃漸層底 + 邊框 + 3s 脈動動畫 (`ritual-link-pulse` keyframes)，hover 強化 box-shadow，active state 不脈動但加深背景；prefers-reduced-motion 關掉動畫",
+          "洗牌中央 ritual__shuffle-stack: 5 張卡背重疊 + 橘黃發光 + 中央 ✦ 符文，shake 動畫 (`translate ±14px + rotate ±6deg` 來回)，stagger 80ms 讓 5 張錯位震動",
+          "洗牌提示文字 ritual__shuffle-text 三階段：「送走當前命運…」「重新洗牌…」「召喚新緣分…」",
+          "洗牌失敗 ritual__shuffle-error toast：紅邊框 + 「已抽完未看過的卡片，離開頁面重進可重置」(3 秒自動消失)"
+        ],
+        "infra": [
+          "ritual-gesture.js GestureRecognizer config numHands: 1 → 2；onFrame payload 加 hands: [{gesture, score, landmarks, handedness}, ...] array；既有 gesture/x/y backward compat 取第一隻手",
+          "ritual.js 新增 _detectRectangle (4 點 + sanity check) 與 _detectThumbRight (5 條件 landmark) 自訂偵測函式；新增 _reshuffle async state machine (3 phase: fly-out / shuffling / deal)；新增 _resetStableCounters / canReshuffle / _remainingPool",
+          "ritual.html cache-bust: ritual.css?v=6 → ?v=7、ritual.js?v=6 → ?v=7、ritual-gesture.js?v=5 → ?v=7",
+          "css/ritual.css 新增 @keyframes ritual-card-fly-out / ritual-card-deal-in / ritual-shuffle-shake / .ritual__shuffle-stack / .ritual__card-back / .ritual__shuffle-text / .ritual__shuffle-error；prefers-reduced-motion 弱化動畫",
+          "styles.css 新增 .nav-link-ritual + @keyframes ritual-link-pulse"
+        ]
+      }
+    },
+    {
       "version": "1.1.0",
       "date": "2026-05-16",
       "summary": "全站 UI/UX 重設計 — sleek modern (slate-900 + indigo/violet)；ritual 維持橘黃 sub-theme",

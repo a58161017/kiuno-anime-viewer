@@ -1,7 +1,7 @@
 // kiuno-anime-viewer · ritual.html Alpine app
 // 3D 環狀卡片展示 + 手勢/鍵盤控制狀態機 (含慣性 + 1 指 swipe 切卡)
 
-import { startGesture } from "./ritual-gesture.js?v=5";
+import { startGesture } from "./ritual-gesture.js?v=7";
 
 // ===== 設定常數 =====
 const MOVE_ROT_SCALE = 280;    // 揮手 dx (0..1) 換成多少度/frame
@@ -32,13 +32,37 @@ const FOCUS_SCALE_MOBILE = 1.35;  // 手機留空間給下方資訊面板
 const FOCUS_SCALE_DESKTOP = 1.9;
 const RING_TILT_DEG = 18;      // ring 的 rotateX 度數
 
+// ===== 雙手 ✋ Open_Palm 手勢 (重新洗牌) =====
+// v1.2.2: 從「雙手矩形」(自訂 landmark 邏輯，threshold 難調) 改回 MediaPipe 內建
+// Open_Palm × 2，最穩；與「單手 ✋ 揮動旋轉」用 hands.length === 2 區分
+const DUAL_PALM_STABLE_FRAMES = 3;        // 連續 N 幀都通過才開始計時
+const RESHUFFLE_DEBOUNCE_MS = 800;        // 計時累積此時間才觸發
+
+// ===== 拇指朝上手勢 (離開頁面) — MediaPipe 內建 Thumb_Up =====
+// v1.2.1: 改用內建手勢取代自寫拇指朝右 (穩定度遠高於 landmark 自寫)
+const THUMB_UP_DEBOUNCE_MS = 1000;        // 持續此時間才觸發離開
+
+// ===== 洗牌動畫時長 =====
+const SHUFFLE_FLYOUT_MS = 600;
+const SHUFFLE_SHAKE_MS = 800;
+const SHUFFLE_DEAL_MS = 500;
+
 export function ritualData() {
   return {
     // ===== 資料 =====
     cards: [],
     sourceLabel: "",
+    sourceKey: "",        // 'season' | 'recommend' | 'all'
     loadError: "",
     loading: true,
+    _animeById: {},        // anime.json 全部 (for 抽新牌)
+    _initialPool: [],      // 此 session 可抽的全部 ids (從 sessionStorage 或 URL)
+    _usedIds: null,        // Set<id>: 已展示過的 (含當前 cards)
+
+    // ===== 洗牌動畫狀態 =====
+    shuffling: false,
+    shufflePhase: null,    // 'fly-out' | 'shuffling' | 'deal' | null
+    shuffleError: "",      // 「已抽完」等提示
 
     // ===== 狀態 =====
     state: 'ring',            // 'ring' | 'focus'
@@ -68,6 +92,11 @@ export function ritualData() {
     _lastHandY: null,
     _fistAnchorY: null,        // 石頭手勢起點 y (用來算累積位移、判定 scroll 啟動門檻)
     _fistScrollActive: false,  // 累積位移過門檻後才開啟 scroll
+    _palmStableFrames: 0,      // 雙手 ✋ 連續通過幀數
+    _palmStableSince: 0,       // 達 STABLE_FRAMES 後的計時起點
+    _thumbUpStableSince: 0,    // 拇指朝上計時起點
+    _palmProgress: 0,          // 雙手 ✋ 觸發進度 0..1 (debug UI 用)
+    _thumbUpProgress: 0,       // 拇指朝上觸發進度 0..1 (debug UI 用)
     _synopsisEl: null,    // 快取 .ritual__panel-synopsis 避免每 frame 查 DOM
     _gestureHandle: null,
     _synopsisTimer: null,
@@ -88,30 +117,66 @@ export function ritualData() {
       const params = new URLSearchParams(location.search);
       const idsStr = params.get('ids') || '';
       const src = params.get('src') || '';
+      this.sourceKey = src;
       this.sourceLabel = ({
         season: '本季新番',
         recommend: '我的推薦',
         all: '全部動畫',
       })[src] || '';
 
-      const ids = idsStr.split(',').map(s => s.trim()).filter(Boolean);
-      if (ids.length === 0) {
+      let ids = idsStr.split(',').map(s => s.trim()).filter(Boolean);
+
+      // Fallback: 沒帶 ids 但 src=all (從 nav link 跳來) → 先 fetch anime.json 再 random 抽 10
+      const noIdsButCanFallback = ids.length === 0 && src === 'all';
+
+      if (ids.length === 0 && !noIdsButCanFallback) {
         this.loadError = "沒帶 ids 參數，無法召喚";
         this.loading = false;
         return;
       }
+
+      // sessionStorage 帶整個 pool (給洗牌「不重複抽」用)，fallback 為 URL ids
+      let poolFromStorage = null;
+      try {
+        const raw = sessionStorage.getItem('ritualPool');
+        if (raw) {
+          const obj = JSON.parse(raw);
+          if (obj && Array.isArray(obj.pool) && obj.source === src) {
+            poolFromStorage = obj.pool;
+          }
+        }
+      } catch (e) {}
 
       try {
         const resp = await fetch("data/anime.json", { cache: "no-cache" });
         if (!resp.ok) throw new Error(resp.status + " " + resp.statusText);
         const db = await resp.json();
         const byId = db.anime || {};
+        this._animeById = byId;
+
+        // Fallback: 沒帶 ids 時從 anime.json 全部隨機抽 10
+        if (noIdsButCanFallback) {
+          const allIds = Object.keys(byId);
+          for (let i = allIds.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allIds[i], allIds[j]] = [allIds[j], allIds[i]];
+          }
+          ids = allIds.slice(0, 10);
+        }
+
         this.cards = ids.map(id => byId[id]).filter(Boolean);
         if (this.cards.length === 0) {
           this.loadError = "找不到帶入的動漫資料";
           this.loading = false;
           return;
         }
+
+        // Pool 維護：initialPool 從 sessionStorage 或 fallback 為 URL ids
+        // 對於 fallback 從 anime.json 全抽的情境，pool 就是全部 anime
+        const basePool = poolFromStorage ||
+                         (noIdsButCanFallback ? Object.keys(byId) : ids);
+        this._initialPool = basePool.filter(id => byId[id]);
+        this._usedIds = new Set(this.cards.map(c => c.id));  // 當前展示算「已用」
       } catch (e) {
         console.error(e);
         this.loadError = "載入 anime.json 失敗：" + (e.message || e);
@@ -194,6 +259,11 @@ export function ritualData() {
           self.exit();
           return;
         }
+        if (ev.key === 'r' || ev.key === 'R') {
+          ev.preventDefault();
+          if (!self.shuffling) self._reshuffle();
+          return;
+        }
       };
       this._kbdHandler = handler;
       // 雙重防禦：window + document，capture phase 確保 button focus 時也攔得到
@@ -238,10 +308,64 @@ export function ritualData() {
       this._gestureHandle = null;
     },
 
-    _onGestureFrame({ gesture, score, x, y }) {
+    _onGestureFrame({ gesture, score, x, y, hands }) {
       const now = performance.now();
       const rawG = (gesture && score > 0.6) ? gesture : null;
       this.lastGesture = rawG;
+
+      // 動畫期間 (洗牌中) 完全跳過手勢處理，避免狀態混亂
+      if (this.shuffling) {
+        this._resetStableCounters();
+        return;
+      }
+
+      // ---- 雙手 ✋ Open_Palm → 重新洗牌 ----
+      // 兩隻手都被偵測到且都辨識為 Open_Palm。跟單手 ✋ 揮動旋轉用 hands.length 區分
+      const dualPalmOK = this._detectDualPalm(hands);
+      if (dualPalmOK) {
+        this._palmStableFrames++;
+        if (this._palmStableFrames === DUAL_PALM_STABLE_FRAMES) {
+          this._palmStableSince = now;
+        }
+        if (this._palmStableFrames >= DUAL_PALM_STABLE_FRAMES) {
+          const elapsed = now - this._palmStableSince;
+          this._palmProgress = Math.min(1, elapsed / RESHUFFLE_DEBOUNCE_MS);
+          if (elapsed >= RESHUFFLE_DEBOUNCE_MS) {
+            this._palmStableFrames = 0;
+            this._palmStableSince = 0;
+            this._palmProgress = 0;
+            this._reshuffle();
+            return;
+          }
+        } else {
+          // 連幀累積階段顯示前 30% 進度
+          this._palmProgress = (this._palmStableFrames / DUAL_PALM_STABLE_FRAMES) * 0.3;
+        }
+      } else {
+        this._palmStableFrames = 0;
+        this._palmStableSince = 0;
+        this._palmProgress = 0;
+      }
+
+      // ---- 拇指朝上 (任一手是 Thumb_Up) → 離開頁面 ----
+      // 任一手手勢被偵測為 Thumb_Up (score > 0.6 已在外層判定，但需要遍歷 hands array)
+      const thumbUpOK = (hands || []).some(h => h && h.gesture === 'Thumb_Up' && h.score > 0.6);
+      if (thumbUpOK) {
+        if (this._thumbUpStableSince === 0) {
+          this._thumbUpStableSince = now;
+        }
+        const elapsed = now - this._thumbUpStableSince;
+        this._thumbUpProgress = Math.min(1, elapsed / THUMB_UP_DEBOUNCE_MS);
+        if (elapsed >= THUMB_UP_DEBOUNCE_MS) {
+          this._thumbUpStableSince = 0;
+          this._thumbUpProgress = 0;
+          this.exit();
+          return;
+        }
+      } else {
+        this._thumbUpStableSince = 0;
+        this._thumbUpProgress = 0;
+      }
 
       // ---- 算 dx / dy (不管手勢，都追蹤) ----
       let dx = 0, dy = 0;
@@ -259,7 +383,8 @@ export function ritualData() {
       }
 
       // ---- 布 + 揮動：給 rotationVelocity (慣性接手) ----
-      if (this.state === 'ring' && rawG === 'Open_Palm' && Math.abs(dx) > MOVE_DEADZONE) {
+      // 但雙手 ✋ 時 (洗牌觸發中) 不算單手旋轉，避免衝突
+      if (!dualPalmOK && this.state === 'ring' && rawG === 'Open_Palm' && Math.abs(dx) > MOVE_DEADZONE) {
         this.rotationVelocity = dx * MOVE_ROT_SCALE;
       }
 
@@ -345,6 +470,78 @@ export function ritualData() {
       const max = this._synopsisEl.scrollHeight - this._synopsisEl.clientHeight;
       if (max <= 0) return;  // 內容不需要滾
       this._synopsisEl.scrollTop = Math.max(0, Math.min(max, this._synopsisEl.scrollTop + deltaPx));
+    },
+
+    _resetStableCounters() {
+      this._palmStableFrames = 0;
+      this._palmStableSince = 0;
+      this._palmProgress = 0;
+      this._thumbUpStableSince = 0;
+      this._thumbUpProgress = 0;
+    },
+
+    // ===== 雙手 ✋ 判定 (重新洗牌觸發) =====
+    // 條件：兩隻手都被偵測到 + 兩手都辨識為 Open_Palm + score 都 > 0.6
+    // 跟單手 ✋ 揮動旋轉用 hands.length === 2 區分；MediaPipe 內建模型，
+    // 比自寫 landmark 邏輯 (雙手矩形) 穩定許多
+    _detectDualPalm(hands) {
+      if (!Array.isArray(hands) || hands.length < 2) return false;
+      return hands.every(h => h && h.gesture === 'Open_Palm' && h.score > 0.6);
+    },
+
+    get _remainingPool() {
+      if (!this._initialPool || !this._usedIds) return [];
+      return this._initialPool.filter(id => !this._usedIds.has(id));
+    },
+
+    canReshuffle() {
+      return !this.shuffling && this._remainingPool.length > 0;
+    },
+
+    async _reshuffle() {
+      if (this.shuffling) return;
+      const remaining = this._remainingPool;
+      if (remaining.length === 0) {
+        this.shuffleError = "已抽完未看過的卡片，離開頁面重進可重置";
+        setTimeout(() => { this.shuffleError = ""; }, 3000);
+        return;
+      }
+
+      // 若在 focus 狀態先 exit 縮回環，等動畫
+      if (this.state === 'focus') {
+        this._exitFocus();
+        await new Promise(r => setTimeout(r, 600));
+      }
+
+      this.shuffling = true;
+      this._resetStableCounters();
+
+      // Phase 1: 既有卡往左飛
+      this.shufflePhase = 'fly-out';
+      await new Promise(r => setTimeout(r, SHUFFLE_FLYOUT_MS));
+
+      // Phase 2: 中央洗牌動畫
+      this.shufflePhase = 'shuffling';
+      await new Promise(r => setTimeout(r, SHUFFLE_SHAKE_MS));
+
+      // Phase 3: 從 remaining pool 抽 10 張新卡 (Fisher-Yates)
+      this.shufflePhase = 'deal';
+      const pool = remaining.slice();
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      const newIds = pool.slice(0, 10);
+      newIds.forEach(id => this._usedIds.add(id));
+      this.cards = newIds.map(id => this._animeById[id]).filter(Boolean);
+      this.globalRotation = 0;
+      this.rotationVelocity = 0;
+      this.focusIdx = null;
+
+      await new Promise(r => setTimeout(r, SHUFFLE_DEAL_MS));
+
+      this.shuffling = false;
+      this.shufflePhase = null;
     },
 
     _computeFocusIdx() {
@@ -512,6 +709,8 @@ export function ritualData() {
     },
 
     exit() {
+      // 清掉 ritualPool 確保下次重進 pool 重置
+      try { sessionStorage.removeItem('ritualPool'); } catch (e) {}
       location.href = 'index.html';
     },
 

@@ -21,6 +21,7 @@
       <a href="index.html" class="active">卡片</a>
       <a href="graph.html">知識圖</a>
       <a href="recommends.html" class="nav-link-recommends">留言</a>
+      <a href="ritual.html?src=all" class="nav-link-ritual">召喚陣</a>
       <a href="changelog.html" class="version-link nav-link-changelog" x-text="appVersion ? `v${appVersion}` : ''"></a>
     </div>
     <div class="search">
@@ -638,12 +639,21 @@ Alpine.data("viewer", () => ({
         showToast("這個清單目前是空的，沒辦法召喚");
         return;
       }
-      // Fisher-Yates
-      for (let i = pool.length - 1; i > 0; i--) {
+
+      // 把整個 pool 存進 sessionStorage，給 ritual.html 做「不重複抽」用
+      try {
+        sessionStorage.setItem('ritualPool', JSON.stringify({
+          pool, source, savedAt: Date.now(),
+        }));
+      } catch (e) { /* sessionStorage 可能被 disable，fallback 用 URL ids */ }
+
+      // Fisher-Yates 抽前 10 張當初始顯示
+      const shuffled = pool.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [pool[i], pool[j]] = [pool[j], pool[i]];
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-      const picks = pool.slice(0, 10);
+      const picks = shuffled.slice(0, 10);
       location.href = `ritual.html?ids=${encodeURIComponent(picks.join(','))}&src=${encodeURIComponent(source)}`;
     },
     reshuffleRecommend() {
