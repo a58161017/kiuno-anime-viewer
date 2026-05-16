@@ -1,6 +1,56 @@
 {
   "versions": [
     {
+      "version": "1.1.0",
+      "date": "2026-05-16",
+      "summary": "全站 UI/UX 重設計 — sleek modern (slate-900 + indigo/violet)；ritual 維持橘黃 sub-theme",
+      "changes": {
+        "added": [
+          "design-system/kiuno-anime-viewer/MASTER.md：完整 design system 文件（依 ~/.claude/CLAUDE.md 全域 UI/UX 工作流產出，手動覆寫 ui-ux-pro-max --design-system 對 anime library 品類的 fallback 錯誤）",
+          "styles.css :root 完整 design tokens：色票 (Sleep Tracker palette indigo/violet on slate-900) + 字體 (Inter + Noto Sans TC 全 sans) + 字級階層 (display/h1/h2/h3/body/body-sm/caption/micro/mono) + 間距 (4/8/12/16/24/32/48/64) + 圓角 (xs/sm/md/lg/pill) + 陰影 (sm/md/lg/xl) + focus-ring + 動畫 timing (ease-out/in-out/spring + dur-fast/base/slow) + --tap-min 44px",
+          ".i utility class：Lucide-style inline SVG icon system (currentColor + i--solid/sm/lg/xl 尺寸)",
+          "global .spinner / --sm / --lg + prefers-reduced-motion 支援",
+          "Index 卡片可鍵盤 focus（tabindex + Enter）",
+          "Index drawer detail__links 加 SVG external-link icon",
+          "Changelog timeline 視覺：垂直 gradient line + 每版號 timeline node dot；current version 紫 glow ring + accent-soft 徽章"
+        ],
+        "fixed": [
+          "Index 卡片 icon (♥/⭐/share) 觸碰目標從 26px → 36px 視覺 + 44px hit area (::before 擴展)，符合 iOS HIG min tap target",
+          "Index header pill-btn 從 36px → 44px，所有按鈕觸碰目標達標",
+          "Recommends 留言表單 input/textarea 升至 44px，加 focus ring"
+        ],
+        "removed": [
+          "所有頁面 UI 控制 emoji 替換為 Lucide SVG：📺 monitor、📋 message-square-text、💬 message-square、🔍 search、♥ heart、⭐ star、⇪ download、⇩ upload、↻ refresh-ccw、🔮 sparkles、🔀 shuffle、× close、⚠ alert-triangle、💾 hard-drive、🎴 cards 等",
+          "Changelog labelText emoji (✨🔧🗑🎨🛠) 移除，視覺辨識靠左邊圓點顏色",
+          "Banner.shared (👀「你目前在看分享的推薦清單」整段移除) 與 recommends/index drawer 留言表單 privacy-note (📋「提交即同意儲存 IP」) 已於 1.0.11 commit 移除，本版 CSS 也清乾淨"
+        ],
+        "ui": [
+          "色系：主站從青藍 #5dd2ff → 紫藍 indigo #818CF8 (accent) / #6366F1 (accent-strong) / violet #A78BFA 體系；背景從 #0f1115 → slate-900 #0F172A；前景從 #e6e8ee → #F1F5F9 (AAA 15.8:1 對比)",
+          "字體：system font → Inter (Latin) + Noto Sans TC (CJK) 全 sans + Google Fonts import + font-feature-settings ss01/cv11 (Inter 替代字形) + tabular-nums 給數字欄位 (評分/年份/時間/百分比) 避免抖動",
+          "Index header: title 從「📺 動漫 kiuno」→ SVG monitor + sleek wordmark；nav 連結 active 從實心藍 → accent-soft 軟底；backdrop blur + saturate 180%",
+          "Index 卡片：hover 從 scale 變 translateY(-3) + shadow-lg + border-strong；卡片可鍵盤 focus 帶紫 glow ring；cover placeholder 從半透明紫 → bg-sunken",
+          "Index drawer：對齊 token (radius-lg/shadow-xl/scrim with blur)；標題用 display font；簡介 line-height 1.75；分類標籤 chip hover → 紫軟底紫文字；外部連結加 SVG external-link icon",
+          "Index toast：從 cyan 實心 + 黑字 → sleek 紫 glow toast，slide-down 進場",
+          "Season bar 標題粉色 → violet；Recommend bar 標題用 display font + ★ icon",
+          "Ritual entry button (.ritual-btn) 保留橘黃 cue 作為 dual-theme bridge，但去掉 !important 與華麗陰影改為精煉樣式 (與全站 sleek 風格並存而非衝突)",
+          "Recommends 表單：input/textarea sleek bg-sunken + 紫 focus ring；chip-pill matched 改「紫軟底 + check SVG icon + 紫文字」明顯選中對比；unmatched 用 dashed border + 灰文字；自動完成 hover 紫軟底；主提交按鈕 solid accent-strong + 白字",
+          "Recommends 1 層回覆 thread：縮排視覺強化 - 左 3px accent border + 左→右 accent-soft 漸層底，明顯指出 nested replies；reply-toggle 圖示動態切換 (摺疊用 message icon，展開用 chevron-down)",
+          "Recommends 動畫名連結 .comment-anime 從黃 → violet (留黃給 ⭐ rating 用，紫系內部對話)；時間欄位 mono tabular-nums",
+          "Graph 面包屑 current 從實心紫藍 → accent-soft + 紫邊框 + 紫文字 (與全站 selected pattern 一致)；level-banner 從紫色淡底 → 左 accent border；node-info panel 對齊 drawer token；level-toast sleek 紫 glow",
+          "Graph Cytoscape 節點/邊配色更新：category indigo #6366F1、tag 紫 #A78BFA (取代橘黃 — 避免與 ritual 子主題衝突，紫色是主站範圍內次要層級)、anime border 依評分金/紫/灰；edges category-link indigo、tag-link violet、franchise pink、same_studio indigo、shared_tag violet；node.hover 框金黃",
+          "Changelog: h1 用 display font (32-40 clamp)，version-block timeline 視覺強化，current version 紫 glow ring，change-label 左邊圓 dot + uppercase tracking",
+          "Ritual.html：保留橘黃魔法陣主視覺；透過 body.ritual scope 覆寫主站 tokens 為橘黃版 (--accent #FFAE5D 等)；其他 base tokens (spacing/typography/radius/motion) 沿用全站定義 — single source of truth pattern。HUD 「← 回卡片」「⏭ 跳過載入」改 SVG icon + 文字"
+        ],
+        "infra": [
+          "styles.css 全面重構：頂部加完整 :root design tokens + Google Fonts import + .i SVG icon utility，組件區段 (header / nav / button / chip / banner / card / drawer / detail / anime-comment / recommend-form / chip-pill / comment-card / reply-thread / season-bar / recommend-bar / toast / spinner / empty) 全部對齊 token，cache-bust ?v=3 → ?v=4",
+          "css/ritual.css：頂部加 body.ritual scope token override；HUD 按鈕 / mode-label 對齊 token；cache-bust ?v=5 → ?v=6",
+          "ritual.html 新增 link styles.css (取得 base tokens) - 順序在 ritual.css 前讓 ritual sub-theme override",
+          "所有頁面 theme-color 從 #0f1115 → #0F172A；所有 favicon emoji → Lucide-style SVG (indigo stroke)",
+          "Index 卡片 icon 從 <div> → <button> 含 aria-label/title (a11y)；drawer/dialog/banner 全部對齊 token"
+        ]
+      }
+    },
+    {
       "version": "1.0.11",
       "date": "2026-05-16",
       "summary": "召喚陣 ritual.html：focus 中石頭手勢上下移動 = 滾動簡介",
