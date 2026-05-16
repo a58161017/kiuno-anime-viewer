@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
 <meta name="theme-color" content="#070510" />
 <title>召喚陣 · kiuno-anime-viewer</title>
-<link rel="stylesheet" href="css/ritual.css?v=5" />
+<link rel="stylesheet" href="styles.css?v=4" />
+<link rel="stylesheet" href="css/ritual.css?v=6" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔮%3C/text%3E%3C/svg%3E">
 <style>[x-cloak]{display:none!important}</style>
 </head>
@@ -117,12 +118,18 @@
   <!-- HUD -->
   <div class="ritual__hud" x-show="!loading && !loadError">
     <div class="ritual__hud-left">
-      <button class="ritual__btn" @click="exit()">← 回卡片</button>
+      <button class="ritual__btn" @click="exit()">
+        <svg class="i i--sm" viewBox="0 0 24 24" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>回卡片</span>
+      </button>
       <span class="ritual__mode-label" :class="{ kbd: mode === 'keyboard' }" x-text="modeLabel"></span>
-      <span x-show="sourceLabel" class="ritual__mode-label" x-text="`🎴 ${sourceLabel} (${cards.length})`"></span>
+      <span x-show="sourceLabel" class="ritual__mode-label" x-text="`${sourceLabel} (${cards.length})`"></span>
     </div>
     <div class="ritual__hud-right">
-      <button class="ritual__btn" @click="skipGesture()" x-show="gestureStatus === 'loading'">⏭ 跳過載入，直接用鍵盤</button>
+      <button class="ritual__btn" @click="skipGesture()" x-show="gestureStatus === 'loading'">
+        <svg class="i i--sm" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        <span>跳過載入，直接用鍵盤</span>
+      </button>
       <button class="ritual__btn" @click="toggleCam()" x-show="mode === 'camera'" x-text="showCam ? '隱藏鏡頭' : '顯示鏡頭'"></button>
     </div>
   </div>
