@@ -1,6 +1,21 @@
 {
   "versions": [
     {
+      "version": "1.3.2",
+      "date": "2026-08-06",
+      "summary": "OpenSpec 文件：歸檔 import-new-anime-july-2026、主清單同步需求併入主 spec",
+      "changes": {
+        "added": [],
+        "fixed": [],
+        "removed": [],
+        "ui": [],
+        "infra": [
+          "OpenSpec change 歸檔至 archive/2026-08-06-import-new-anime-july-2026",
+          "「主清單同步」需求併入 openspec/specs/data-pipeline/spec.md"
+        ]
+      }
+    },
+    {
       "version": "1.3.1",
       "date": "2026-08-06",
       "summary": "主清單同步：新增 80 部動畫（含 2026 七月新番），季別橫幅換為七月，我推的孩子拆分三季",
