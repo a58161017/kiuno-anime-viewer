@@ -1,0 +1,46 @@
+schema: spec-driven
+
+context: |
+  專案：kiuno-anime-viewer — 個人動漫資料庫 + 卡片 Viewer + 知識圖 + 手勢儀式抽卡。
+  部署：GitHub Pages 純靜態（https://a58161017.github.io/kiuno-anime-viewer/），
+  附 Firebase Firestore 後端做訪客留言。
+
+  技術棧：
+  - 前端：純 HTML/CSS + Alpine.js（ES module import + Alpine.start()，不用 defer script）、
+    Cytoscape.js（知識圖）、MediaPipe（ritual 手勢辨識）
+  - 後端 pipeline：Python 3.10+（requests / rapidfuzz / Pillow / opencc），本地執行，
+    產出靜態 JSON + 封面
+  - 資料來源：AniList GraphQL（主）、Jikan/MAL REST、Bangumi v0 REST
+  - 訪客留言：Firebase Firestore（firestore.rules 管控）
+
+  命名慣例：
+  - ID 格式 `anilist:<n>`；stub / 自建條目用 `anilist:9000000+`
+  - 中文一律繁體（簡體用 OpenCC s2twp 轉換）
+  - 標題優先用使用者 doc 的中文標題（保留季別後綴）
+  - 封面 max 600px JPEG，存 `data/covers/anilist-<n>.jpg`
+
+  鐵則（詳見 .claude/CLAUDE.md）：
+  1. CSS 一律 mobile-first（預設手機 ≤599px，min-width 600px 往上加）
+  2. 功能變更後不立即 push，先讓使用者本地驗證（http://127.0.0.1:8000/kiuno-anime-viewer/）
+  3. 訪客提交內容必須收 audit metadata（IP/UA/螢幕/時區等，不公開顯示）
+  4. 每次 push 都要 bump data/version.json + 在 data/changelog.json 最前面插 changelog 條目
+  5. firebase-config.js 只 commit placeholder，真值由 GitHub Actions secrets 注入
+
+rules:
+  proposal:
+    - 影響 UI 的提案必須說明手機（375px）與桌機兩種呈現
+    - 涉及訪客提交內容的提案必須包含 audit metadata 與反濫用設計
+  specs:
+    - spec 內容用繁體中文撰寫；Requirement / Scenario 結構關鍵字保留英文
+  tasks:
+    - 部署相關 task 必須包含「版號 +1 與 changelog 條目」步驟
+    - 最後一個 task 固定是「本地驗證清單」，不含 git push
+
+operations:
+  apply:
+    guidance:
+      - 改動完成後停在「請使用者本地測試」，等明確確認才 push
+      - 新增/修改/刪除動畫條目時同步整理 changelog changes 分類
+  archive:
+    guidance:
+      - 歸檔前確認 version.json 與 changelog.json 已對應本次變更
