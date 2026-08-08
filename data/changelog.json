@@ -1,6 +1,22 @@
 {
   "versions": [
     {
+      "version": "1.3.3",
+      "date": "2026-08-08",
+      "summary": "推薦清單 +9 部七月新番、納入 OpenSpec 工具目錄",
+      "changes": {
+        "added": [],
+        "fixed": [],
+        "removed": [],
+        "ui": [
+          "推薦清單 (★) 新增 9 部：小書痴的下剋上 領主的養女、黃泉使者、Clevatess Ⅱ、尼古喵喵、GRAND BLUE 碧藍之海 3、無職轉生 第三季、神八小妹不可怕、魔法帽的工作室、我推的孩子 第三季"
+        ],
+        "infra": [
+          ".claude / .agents 的 OpenSpec skills 與 commands 納入版控"
+        ]
+      }
+    },
+    {
       "version": "1.3.2",
       "date": "2026-08-06",
       "summary": "OpenSpec 文件：歸檔 import-new-anime-july-2026、主清單同步需求併入主 spec",
